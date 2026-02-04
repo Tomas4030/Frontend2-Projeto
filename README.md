@@ -1,93 +1,73 @@
-# 🎮 Life RPG: Gamificação da Vida Real
+# React + TypeScript + Vite
 
-> "E se a tua vida funcionasse como um jogo RPG?"
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-A aplicação transforma tarefas do dia a dia em progresso de personagem. Em vez de apenas "ter de estudar", o utilizador foca-se em **"ganhar +25 XP em Inteligência"**. Não é apenas uma to-do list; é um sistema de progressão visual com atributos, níveis e recompensas.
+Currently, two official plugins are available:
 
----
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## 💡 Conceito — Life XP System
+## React Compiler
 
-O utilizador é tratado como um personagem de RPG. Tudo o que ele faz na vida real reflete-se na aplicação, aumentando a sua experiência (XP) e melhorando os seus atributos.
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-### 🧍‍♂️ Atributos do Personagem
+## Expanding the ESLint configuration
 
-| Atributo | Representação na Vida Real |
-| :--- | :--- |
-| **💪 Health** | Exercício, sono, alimentação |
-| **🧠 Mind** | Estudo, leitura, foco |
-| **💼 Career** | Trabalho, projetos |
-| **🤝 Social** | Amigos, networking |
-| **🎨 Creativity** | Hobbies, criatividade |
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-**Cada atributo possui:**
-* XP próprio
-* Nível próprio
-* Progresso independente do nível geral do jogador.
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
----
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-## 🗺️ Estrutura da Aplicação
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-### 🏠 Dashboard (Ecrã Principal)
-Visual inspirado em painéis de jogos:
-* **Status:** Nível geral e barra de XP total.
-* **Atributos:** Barras individuais de progresso.
-* **Quests:** Missões de hoje e "Missão do Dia" em destaque.
-* **Streak:** Contador de dias consecutivos.
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-### 📜 Missões (O Coração da App)
-O utilizador cria tarefas como se fossem *Quests*.
-* **Exemplo:** Nome: *Estudar React* | Atributo: *Mind* | XP: *20*.
-* **Ações:** Concluir, Editar, Apagar.
-* **Feedback:** Ao concluir, o sistema dispara animações de ganho de XP e verificação de Level Up.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-### 📊 Stats (Análise de Dados)
-Página focada em métricas para impressionar (e motivar):
-* Gráfico semanal de produtividade.
-* Atributo mais treinado (dominância).
-* Rácio de missões concluídas vs. falhadas.
-
-### 🧍 Perfil
-* Customização de Avatar.
-* **Títulos Desbloqueáveis:** "Iniciante", "Disciplinado", "Mestre da Consistência".
-
----
-
-## ⚙️ Lógica do Sistema
-
-### 🧮 Sistema de Níveis
-A progressão segue uma fórmula matemática para garantir desafio crescente:
-$$XP\_Necessário = Nível^2 \times 50$$
-
-### 🔥 Streak System (Multiplicadores)
-A consistência é premiada com bónus de XP:
-* **3 dias:** +10% XP
-* **7 dias:** +20% XP
-* **30 dias:** Título especial e medalha de mestre.
-
----
-
-## 🖥️ Arquitetura de Dados (Backend)
-
-Estrutura simplificada para performance e clareza:
-
-* **Users:** `id, nome, email, nivel, xp_total`
-* **Skills:** `id, user_id, nome, xp`
-* **Missions:** `id, user_id, nome, skill_id, xp_reward, frequencia`
-* **MissionLogs:** `id, mission_id, data_conclusao`
-
-> **Nota:** Os cálculos de progresso são feitos no Frontend para uma UI reativa, mantendo o Backend como uma API limpa de persistência.
-
----
-
-## 🧩 Por que este projeto se destaca?
-
-Para um recrutador, este projeto demonstra muito mais do que código básico:
-1.  **Estado Complexo:** Gestão de múltiplos atributos e níveis.
-2.  **Lógica Personalizada:** Algoritmos de XP e sistemas de Streak.
-3.  **UX/UI Thought:** Design focado em psicologia comportamental e gamificação.
-4.  **Produto Real:** Não é apenas um tutorial; é uma solução pensada para o utilizador.
-
----
-*Projeto concebido para elevar o portfólio de "App de Tarefas" para "Sistema de Engenharia de Gamificação".* 🚀
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
