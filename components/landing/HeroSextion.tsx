@@ -34,7 +34,7 @@ const HeroSection = () => {
               </Button>
               <Button variant="secondary" size="lg" className="text-sm">
                 <Play className="h-4 w-4 mr-1" />
-                Ver Demo
+                Ver exemplos
               </Button>
             </div>
 
@@ -64,7 +64,7 @@ const HeroSection = () => {
           >
             <div className="hidden rpg-border overflow-hidden animate-float w-full h-64 md:block lg:h-100 rounded-lg">
               <Image
-                src="/static/hero-illustration.png"
+                src="/static/hero.png"
                 alt="QuestLife - Mundo RPG gamificado"
                 fill // ocupa todo o container
                 className="object-cover rounded-lg"
