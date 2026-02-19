@@ -7,7 +7,7 @@ import { Sparkles, Play } from "lucide-react";
 
 const HeroSection = () => {
   return (
-    <section className="gradient-hero pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden">
+    <section className="gradient-hero pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden flex items-center min-h-screen">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left content */}
@@ -64,7 +64,7 @@ const HeroSection = () => {
           >
             <div className="hidden rpg-border overflow-hidden animate-float w-full h-64 md:block lg:h-100 rounded-lg">
               <Image
-                src="/static/hero.png"
+                src="/static/heroo.png"
                 alt="QuestLife - Mundo RPG gamificado"
                 fill // ocupa todo o container
                 className="object-cover rounded-lg"

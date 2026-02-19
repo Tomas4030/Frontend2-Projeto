@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Press_Start_2P } from "next/font/google";
-import "./globals.css";
+import "../app/globals.css";
 import Navbar from "@/components/landing/Navbar";
 
 const pixel = Press_Start_2P({

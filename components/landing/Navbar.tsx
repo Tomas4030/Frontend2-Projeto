@@ -14,7 +14,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Sword className="h-6 w-6 text-primary" />
-          <Link href="/" className="font-pixel text-xs text-primary">
+          <Link href="/" className="font-pixel text-lg text-primary">
             QuestLife
           </Link>
         </div>
@@ -23,19 +23,19 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-6">
           <Link
             href="#features"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Funcionalidades
           </Link>
           <Link
             href="#gamificacao"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Gamificação
           </Link>
           <Link
             href="#beneficios"
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Benefícios
           </Link>

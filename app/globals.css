@@ -170,6 +170,11 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+
 /* ======================================================
    ANIMATIONS
 ====================================================== */
@@ -211,3 +216,13 @@
 .animate-glow-pulse {
   animation: glow-pulse 2s ease-in-out infinite;
 }
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+

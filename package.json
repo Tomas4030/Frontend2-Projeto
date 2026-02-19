@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
+    "@fontsource/press-start-2p": "^5.2.7",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-toast": "^1.2.15",
     "@supabase/supabase-js": "^2.95.3",
