@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Sparkles, Play } from "lucide-react";
+import { Sparkles, Lightbulb } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -33,8 +33,8 @@ const HeroSection = () => {
                 Começar Aventura
               </Button>
               <Button variant="secondary" size="lg" className="text-sm">
-                <Play className="h-4 w-4 mr-1" />
-                Ver exemplos
+                <Lightbulb className="h-4 w-4 mr-1" />
+                Descobrir Inspiração
               </Button>
             </div>
 
@@ -57,9 +57,13 @@ const HeroSection = () => {
 
           {/* Right image */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+            animate={{ y: -16 }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "mirror",
+              ease: "easeInOut",
+            }}
             className="relative"
           >
             <div className="hidden rpg-border overflow-hidden animate-float w-full h-64 md:block lg:h-100 rounded-lg">
@@ -77,7 +81,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 }}
-              className="absolute -bottom-4 -left-4 bg-card rpg-border px-4 py-3 rounded-lg"
+              className="hidden md:block absolute -bottom-4 -left-4 bg-card rpg-border px-4 py-3 rounded-lg"
             >
               <p className="font-pixel text-[10px] text-primary">+250 XP</p>
               <p className="text-xs text-muted-foreground">Missão completa!</p>

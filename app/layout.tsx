@@ -1,12 +1,13 @@
-"use client"; // <<< IMPORTANTE
-
 import type { ReactNode } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import type { Metadata } from "next";
 import { Press_Start_2P } from "next/font/google";
 import "../app/globals.css";
 import Navbar from "@/components/landing/Navbar";
+import { Providers } from "./providers";
+
+export const metadata: Metadata = {
+  title: "Veydral",
+};
 
 const pixel = Press_Start_2P({
   weight: "400",
@@ -14,19 +15,14 @@ const pixel = Press_Start_2P({
   variable: "--font-pixel",
 });
 
-const queryClient = new QueryClient();
-
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-PT">
       <body className={pixel.variable}>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Sonner />
-            <Navbar />
-            {children}
-          </TooltipProvider>
-        </QueryClientProvider>
+        <Providers>
+          <Navbar />
+          {children}
+        </Providers>
       </body>
     </html>
   );

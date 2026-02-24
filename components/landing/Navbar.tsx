@@ -15,7 +15,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <Sword className="h-6 w-6 text-primary" />
           <Link href="/" className="font-pixel text-lg text-primary">
-            QuestLife
+            Veydral
           </Link>
         </div>
 
