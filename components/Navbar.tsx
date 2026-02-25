@@ -33,12 +33,6 @@ const Navbar = () => {
           >
             Gamificação
           </Link>
-          <Link
-            href="#beneficios"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Benefícios
-          </Link>
           <Button
             variant="ghost"
             size="sm"

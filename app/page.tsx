@@ -1,6 +1,7 @@
-import Navbar from "@/components/landing/Navbar";
+import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/landing/HeroSextion";
 import FeaturesSection from "@/components/landing/FeaturesSection";
+import GamifiedSection from "@/components/landing/Progress";
 
 export default function Home() {
   return (
@@ -8,6 +9,7 @@ export default function Home() {
       <Navbar />
       <HeroSection />
       <FeaturesSection />
+      <GamifiedSection />
     </div>
   );
 }

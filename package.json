@@ -33,6 +33,7 @@
     "ogl": "^1.0.11",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
+    "react-datetime": "^3.3.1",
     "react-day-picker": "^9.13.2",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.71.2",

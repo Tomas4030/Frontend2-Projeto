@@ -68,7 +68,7 @@ const HeroSection = () => {
           >
             <div className="hidden rpg-border overflow-hidden animate-float w-full h-64 md:block lg:h-100 rounded-lg">
               <Image
-                src="/static/heroo.png"
+                src="/static/hero.png"
                 alt="QuestLife - Mundo RPG gamificado"
                 fill // ocupa todo o container
                 className="object-cover rounded-lg"
