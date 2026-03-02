@@ -1,13 +1,19 @@
-"use client"; // importante em Next.js 13 para componentes client-side
+"use client";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Sword /*LogOut*/ } from "lucide-react";
+import { Menu, X, Sword } from "lucide-react";
 import Link from "next/link";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+  const pathname = usePathname();
+
+  const isLandingPage = pathname === "/";
+  const isAuthPage = pathname === "/auth";
+
+  const [isAuth, setIsAuth] = useState(false);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -21,32 +27,52 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-6">
-          <Link
-            href="#features"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Funcionalidades
+          {isLandingPage && (
+            <>
+              <Link
+                href="#features"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Funcionalidades
+              </Link>
+
+              <Link
+                href="#gamificacao"
+                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Gamificação
+              </Link>
+            </>
+          )}
+
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm">
+              Dashboard
+            </Button>
           </Link>
-          <Link
-            href="#gamificacao"
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Gamificação
-          </Link>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/dashboard")}
-          >
-            Dashboard
-          </Button>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => router.push("/auth")}
-          >
-            Entrar
-          </Button>
+
+          {isAuth && (
+            <Link href="/logout">
+              <Button variant="ghost" size="sm">
+                Sair
+              </Button>
+            </Link>
+          )}
+          {!isAuth && (
+            <div className="flex gap-3">
+              <Link href="/login">
+                <Button variant="default" size="sm">
+                  Entrar
+                </Button>
+              </Link>
+
+              <Link href="/register">
+                <Button variant="default" size="sm">
+                  Register
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -61,47 +87,54 @@ const Navbar = () => {
       {/* Mobile menu */}
       {isOpen && (
         <div className="md:hidden bg-card border-b border-border px-4 py-4 space-y-3">
-          <Link
-            href="#features"
-            className="block text-sm text-muted-foreground hover:text-foreground"
-          >
-            Funcionalidades
-          </Link>
-          <Link
-            href="#gamificacao"
-            className="block text-sm text-muted-foreground hover:text-foreground"
-          >
-            Gamificação
-          </Link>
-          <Link
-            href="#beneficios"
-            className="block text-sm text-muted-foreground hover:text-foreground"
-          >
-            Benefícios
-          </Link>
+          {isLandingPage && (
+            <>
+              <Link
+                href="#features"
+                className="block text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => setIsOpen(false)}
+              >
+                Funcionalidades
+              </Link>
+
+              <Link
+                href="#gamificacao"
+                className="block text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => setIsOpen(false)}
+              >
+                Gamificação
+              </Link>
+
+              <Link
+                href="#beneficios"
+                className="block text-sm text-muted-foreground hover:text-foreground"
+                onClick={() => setIsOpen(false)}
+              >
+                Benefícios
+              </Link>
+            </>
+          )}
+
           <div className="flex gap-2 pt-2">
-            <Button
-              variant="ghost"
-              size="sm"
+            <Link
+              href="/dashboard"
               className="flex-1"
-              onClick={() => {
-                router.push("/dashboard");
-                setIsOpen(false);
-              }}
+              onClick={() => setIsOpen(false)}
             >
-              Dashboard
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
+              <Button variant="ghost" size="sm" className="w-full">
+                Dashboard
+              </Button>
+            </Link>
+
+            <Link
+              href="/auth"
               className="flex-1"
-              onClick={() => {
-                router.push("/auth");
-                setIsOpen(false);
-              }}
+              onClick={() => setIsOpen(false)}
             >
-              Entrar
-            </Button>
+              <Button variant="default" size="sm" className="w-full">
+                Entrar
+              </Button>
+            </Link>
           </div>
         </div>
       )}

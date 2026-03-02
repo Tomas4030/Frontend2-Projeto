@@ -6,18 +6,18 @@ const formattedDate = new Intl.DateTimeFormat("pt-BR", {
 
 const Footer = () => {
   return (
-    <>
-      <footer className="text-white py-4 container mx-auto">
+    <footer className="w-full mt-auto">
+      <div className="text-white py-4 container mx-auto">
         <div className="flex flex-wrap items-baseline justify-between gap-4">
           <p className="text-sm">
             &copy; {formattedDate} Veydral. Todos os direitos reservados.
           </p>
           <p className="text-xs mt-2">Veydral</p>
         </div>
-      </footer>
+      </div>
 
-      {/* Imagem abaixo do footer, full-width */}
-      <div className="relative w-full h-48 ">
+      {/* Imagem full width */}
+      <div className="relative w-full h-48">
         <Image
           src="https://habitica.com/assets/midground_foreground_extended2-BDqZdEwW.png"
           alt="Descrição da imagem"
@@ -26,7 +26,7 @@ const Footer = () => {
           priority
         />
       </div>
-    </>
+    </footer>
   );
 };
 
