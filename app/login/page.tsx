@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,74 +28,80 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted/40 px-4">
-      <Card className="w-full max-w-md shadow-xl">
-        <form onSubmit={handleSubmit}>
-          <CardHeader className="space-y-2 text-center">
-            <CardTitle className="text-2xl font-bold">
-              Bem-vindo de volta 👋
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <Card className="py-0 w-full max-w-5xl grid md:grid-cols-2 overflow-hidden rounded-2xl shadow-2xl border border-zinc-800 bg-zinc-900/70 backdrop-blur">
+        {/* Left Side - Form */}
+        <div className="p-10 flex flex-col justify-center">
+          <CardHeader className="px-0 pb-8">
+            <CardTitle className="text-3xl font-bold text-white">
+              Bem-vindo 👋
             </CardTitle>
-            <CardDescription>
-              Entre na sua conta para continuar
+            <CardDescription className="text-zinc-400">
+              Entre com suas credenciais para acessar sua conta
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="grid gap-5">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                required
-              />
-            </div>
-
-            <div className="grid gap-2 relative">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Digite sua senha"
-                required
-              />
-
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-sm text-muted-foreground hover:text-foreground"
-              >
-                {showPassword ? "Ocultar" : "Mostrar"}
-              </button>
-
-              <div className="text-right">
-                <a
-                  href="#"
-                  className="text-sm text-primary hover:underline"
-                >
-                  Esqueci minha senha
-                </a>
+          <CardContent className="px-0">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-zinc-300">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
+                />
               </div>
-            </div>
+
+              <div className="space-y-2 relative">
+                <Label htmlFor="password" className="text-zinc-300">
+                  Senha
+                </Label>
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  className="bg-zinc-800 border-zinc-700 pr-10 focus:ring-2 focus:ring-white"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-[50%] text-zinc-400 hover:text-white transition"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-white text-black hover:bg-zinc-200 transition-all"
+                disabled={loading}
+              >
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+
+              <p className="text-sm text-zinc-500 text-center">
+                Não tem conta?{" "}
+                <span className="text-white hover:underline cursor-pointer">
+                  <Link href="/register">Criar agora</Link>
+                </span>
+              </p>
+            </form>
           </CardContent>
+        </div>
 
-          <CardFooter className="flex flex-col gap-4">
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
-              {loading ? "Entrando..." : "Entrar"}
-            </Button>
-
-            <p className="text-sm text-muted-foreground text-center">
-              Não tem conta?{" "}
-              <a href="#" className="text-primary hover:underline">
-                Criar conta
-              </a>
-            </p>
-          </CardFooter>
-        </form>
+        {/* Right Side - Image */}
+        <div className="hidden md:block relative">
+          <img
+            src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772657207/n5mdiixbggyimoadgzdq.png"
+            alt="Login"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 " />
+        </div>
       </Card>
     </div>
   );

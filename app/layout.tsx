@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { use, type ReactNode } from "react";
 import type { Metadata } from "next";
 import { Press_Start_2P } from "next/font/google";
 import "../app/globals.css";
@@ -9,6 +9,8 @@ import { Footer } from "@/components/Footer";
 export const metadata: Metadata = {
   title: "Veydral",
 };
+
+
 
 const pixel = Press_Start_2P({
   weight: "400",
@@ -24,10 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Navbar />
 
           {/* Conteúdo principal cresce */}
-          <main className="flex-1">
-            {children}
-          </main>
-
+          <main className="flex-1">{children}</main>
           <Footer />
         </Providers>
       </body>

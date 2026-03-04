@@ -1,10 +1,15 @@
-import Image from "next/image";
+"use client";
 
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 const formattedDate = new Intl.DateTimeFormat("pt-BR", {
   year: "numeric",
 }).format(new Date());
 
 const Footer = () => {
+  const pathname = usePathname();
+  const hideFooter = pathname === "/login" || pathname === "/register";
+  if (hideFooter) return null;
   return (
     <footer className="w-full mt-auto">
       <div className="text-white py-4 container mx-auto">
@@ -15,7 +20,6 @@ const Footer = () => {
           <p className="text-xs mt-2">Veydral</p>
         </div>
       </div>
-
       {/* Imagem full width */}
       <div className="relative w-full h-48">
         <Image

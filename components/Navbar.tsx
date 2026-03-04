@@ -11,9 +11,13 @@ const Navbar = () => {
   const pathname = usePathname();
 
   const isLandingPage = pathname === "/";
-  const isAuthPage = pathname === "/auth";
+  const isLoginPage = pathname === "/login" || pathname === "/register";
 
+  // Simulação de autenticação
   const [isAuth, setIsAuth] = useState(false);
+
+  // Não mostra navbar nas páginas de login/register
+  if (isLoginPage) return null;
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -45,20 +49,20 @@ const Navbar = () => {
             </>
           )}
 
-          <Link href="/dashboard">
-            <Button variant="ghost" size="sm">
-              Dashboard
-            </Button>
-          </Link>
-
-          {isAuth && (
-            <Link href="/logout">
-              <Button variant="ghost" size="sm">
-                Sair
-              </Button>
-            </Link>
-          )}
-          {!isAuth && (
+          {isAuth ? (
+            <div className="flex gap-3">
+              <Link href="/dashboard">
+                <Button variant="ghost" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
+              <Link href="/logout">
+                <Button variant="ghost" size="sm">
+                  Sair
+                </Button>
+              </Link>
+            </div>
+          ) : (
             <div className="flex gap-3">
               <Link href="/login">
                 <Button variant="default" size="sm">
@@ -68,7 +72,7 @@ const Navbar = () => {
 
               <Link href="/register">
                 <Button variant="default" size="sm">
-                  Register
+                  Registrar
                 </Button>
               </Link>
             </div>
@@ -115,26 +119,51 @@ const Navbar = () => {
             </>
           )}
 
-          <div className="flex gap-2 pt-2">
-            <Link
-              href="/dashboard"
-              className="flex-1"
-              onClick={() => setIsOpen(false)}
-            >
-              <Button variant="ghost" size="sm" className="w-full">
-                Dashboard
-              </Button>
-            </Link>
+          <div className="flex flex-col gap-2 pt-2">
+            {isAuth ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Button variant="ghost" size="sm" className="w-full">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Link
+                  href="/logout"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Button variant="ghost" size="sm" className="w-full">
+                    Sair
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Button variant="default" size="sm" className="w-full">
+                    Entrar
+                  </Button>
+                </Link>
 
-            <Link
-              href="/auth"
-              className="flex-1"
-              onClick={() => setIsOpen(false)}
-            >
-              <Button variant="default" size="sm" className="w-full">
-                Entrar
-              </Button>
-            </Link>
+                <Link
+                  href="/register"
+                  className="w-full"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Button variant="default" size="sm" className="w-full">
+                    Registrar
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
