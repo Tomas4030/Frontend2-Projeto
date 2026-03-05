@@ -39,7 +39,7 @@ const Auth = () => {
       alert(error.message);
     } else {
       console.log("Login feito:", data);
-      router.push("/dashboard"); // redireciona para dashboard
+      router.push("/create-character"); // redireciona para dashboard
     }
 
     setLoading(false);
