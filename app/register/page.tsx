@@ -13,19 +13,62 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 const Register = () => {
+  const supabase = createClient();
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert("As senhas não coincidem!");
+      return;
+    }
+
     setLoading(true);
 
-    setTimeout(() => {
+    // Criar conta no Supabase
+    const { data: userData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (signUpError) {
+      alert(signUpError.message);
       setLoading(false);
-    }, 2000);
+      return;
+    }
+
+    // Opcional: criar perfil do utilizador
+    if (userData.user) {
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          id: userData.user.id,
+          name,
+          email,
+        },
+      ]);
+
+      if (profileError) {
+        console.log("Erro ao criar perfil:", profileError.message);
+      }
+    }
+
+    setLoading(false);
+    alert("Conta criada com sucesso! Faça login.");
+    router.push("/login");
   };
 
   return (
@@ -51,6 +94,8 @@ const Register = () => {
                 <Input
                   id="name"
                   type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                   className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
                 />
@@ -63,6 +108,8 @@ const Register = () => {
                 <Input
                   id="email"
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   required
                   className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
                 />
@@ -75,6 +122,8 @@ const Register = () => {
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   required
                   className="bg-zinc-800 border-zinc-700 pr-10 focus:ring-2 focus:ring-white"
                 />
@@ -94,6 +143,8 @@ const Register = () => {
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                   className="bg-zinc-800 border-zinc-700 pr-10 focus:ring-2 focus:ring-white"
                 />
