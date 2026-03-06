@@ -4,7 +4,7 @@
 import React, { useRef, useEffect, useState, TouchEvent } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useIsMobile } from "../hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import Link from "next/link";
 
 export interface ThreeDCarouselItem {
@@ -100,10 +100,10 @@ const ThreeDCarousel = ({
     >
       <div
         className="w-full px-4 sm:px-6 lg:px-8 
-      min-w-[350px] md:min-w-[1000px] max-w-7xl  "
+      min-w-87.5 md:min-w-250 max-w-7xl  "
       >
         <div
-          className="relative overflow-hidden h-[550px] "
+          className="relative overflow-hidden h-137.5 "
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
           onTouchStart={onTouchStart}
@@ -141,14 +141,14 @@ const ThreeDCarousel = ({
                     </div>
                   </div>
 
-                  <CardContent className="p-6 flex flex-col flex-grow">
+                  <CardContent className="p-6 flex flex-col grow">
                     <h3 className="text-xl font-bold mb-1 text-foreground">
                       {item.title}
                     </h3>
                     <p className="text-gray-500 text-sm font-medium mb-2">
                       {item.brand}
                     </p>
-                    <p className="text-gray-600 text-sm flex-grow">
+                    <p className="text-gray-600 text-sm grow">
                       {item.description}
                     </p>
 
