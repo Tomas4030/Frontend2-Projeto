@@ -1,14 +1,9 @@
 // components/ThreeDCarousel.tsx
 "use client";
 
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  TouchEvent,
-} from "react";
+import React, { useRef, useEffect, useState, TouchEvent } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import { Card, CardContent } from "@/app/component2/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useIsMobile } from "../hooks/use-mobile";
 import Link from "next/link";
 
@@ -64,7 +59,7 @@ const ThreeDCarousel = ({
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setIsInView(entry.isIntersecting),
-      { threshold: 0.2 }
+      { threshold: 0.2 },
     );
     return () => observer.disconnect();
   }, []);
@@ -121,7 +116,7 @@ const ThreeDCarousel = ({
               <div
                 key={item.id}
                 className={`absolute top-0 w-full max-w-md transform transition-all duration-500 ${getCardAnimationClass(
-                  index
+                  index,
                 )}`}
               >
                 <Card
