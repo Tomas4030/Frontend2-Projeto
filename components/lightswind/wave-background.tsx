@@ -55,7 +55,7 @@ const blurClassMap: Record<BlurSize, string> = {
 function WaveBackground({
   backdropBlurAmount = "sm",
   className = "",
-}: WaveBackgroundProps): JSX.Element {
+}: WaveBackgroundProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -68,7 +68,10 @@ function WaveBackground({
       return;
     }
 
-    const compileShader = (type: number, source: string): WebGLShader | null => {
+    const compileShader = (
+      type: number,
+      source: string,
+    ): WebGLShader | null => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source);
@@ -82,7 +85,10 @@ function WaveBackground({
     };
 
     const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
-    const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fragmentShaderSource);
+    const fragmentShader = compileShader(
+      gl.FRAGMENT_SHADER,
+      fragmentShaderSource,
+    );
     if (!vertexShader || !fragmentShader) return;
 
     const program = gl.createProgram();
@@ -103,7 +109,7 @@ function WaveBackground({
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW
+      gl.STATIC_DRAW,
     );
 
     const positionLocation = gl.getAttribLocation(program, "a_position");

@@ -3,10 +3,10 @@ import * as React from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
 import { motion, useInView, HTMLMotionProps } from "framer-motion";
 import { twMerge } from "tailwind-merge";
-import clsx from "clsx";
+import clsx, { ClassValue } from "clsx";
 
 // Re-implementing the 'cn' utility function directly for self-containment
-function cn(...inputs: clsx.ClassValue[]) {
+function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
@@ -22,14 +22,14 @@ interface SidebarContextType {
     height: number;
   }>;
   menuItemRefs: React.MutableRefObject<Map<string, HTMLDivElement | null>>;
-  menuRef: React.RefObject<HTMLDivElement>;
+  menuRef: React.RefObject<HTMLDivElement | null>;
   updateIndicatorPosition: (id: string | null) => void;
   // New: Function to notify provider when a menu item ref is added/removed
   notifyMenuItemRefChange: () => void;
 }
 
 const SidebarContext = React.createContext<SidebarContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface SidebarProviderProps {
@@ -47,7 +47,7 @@ export function SidebarProvider({
 }: SidebarProviderProps) {
   const [expanded, setExpanded] = React.useState(defaultExpanded);
   const [activeMenuItem, setActiveMenuItem] = React.useState<string | null>(
-    null
+    null,
   );
   const menuItemPosition = React.useRef({
     left: 0,
@@ -56,7 +56,7 @@ export function SidebarProvider({
     height: 0,
   });
   const menuItemRefs = React.useRef<Map<string, HTMLDivElement | null>>(
-    new Map()
+    new Map(),
   );
   const menuRef = React.useRef<HTMLDivElement>(null);
 
@@ -79,7 +79,7 @@ export function SidebarProvider({
       }
       onExpandedChangeRef.current?.(value);
     },
-    [isControlled]
+    [isControlled],
   );
 
   // NEW: Callback to increment the version when a menu item ref is added/removed
@@ -91,7 +91,7 @@ export function SidebarProvider({
   const updateIndicatorPosition = React.useCallback(
     (id: string | null) => {
       const indicator = menuRef.current?.querySelector(
-        ".sidebar-menu-indicator"
+        ".sidebar-menu-indicator",
       ) as HTMLElement | null;
 
       if (id && menuRef.current) {
@@ -128,7 +128,7 @@ export function SidebarProvider({
         }
       }
     },
-    [menuItemRefs, menuRef, menuItemPosition]
+    [menuItemRefs, menuRef, menuItemPosition],
   );
 
   // Effect to set active menu item from URL
@@ -216,7 +216,7 @@ export function Sidebar({ className, children, ...props }: SidebarProps) {
         "bg-background border-r   shadow-sm",
         "fixed lg:sticky top-0 md:top-0",
         expanded ? "left-0" : "md:left-0 -left-full",
-        className
+        className,
       )}
       role="complementary"
       data-collapsed={!expanded}
@@ -227,8 +227,7 @@ export function Sidebar({ className, children, ...props }: SidebarProps) {
   );
 }
 
-interface SidebarTriggerProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+interface SidebarTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export function SidebarTrigger({ className, ...props }: SidebarTriggerProps) {
   const { expanded, onChange } = useSidebar();
@@ -239,7 +238,7 @@ export function SidebarTrigger({ className, ...props }: SidebarTriggerProps) {
       className={cn(
         "inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         "fixed md:static z-50 left-4 top-20",
-        className
+        className,
       )}
       onClick={() => onChange(!expanded)}
       aria-label={expanded ? "Close sidebar" : "Open sidebar"}
@@ -271,7 +270,7 @@ export function SidebarHeader({
       className={cn(
         "flex h-16 items-center border-b   px-4",
         expanded ? "justify-between" : "justify-center",
-        className
+        className,
       )}
       {...props}
     >
@@ -293,7 +292,7 @@ export function SidebarContent({
     <div
       className={cn(
         "flex-1 overflow-hidden h-[calc(100vh-4rem)] space-y-4 ",
-        className
+        className,
       )}
       {...props}
     >
@@ -335,7 +334,7 @@ export function SidebarGroupLabel({
     <div
       className={cn(
         "mb-2 px-2 text-md md:text-sm font-semibold md:font-bold tracking-tight",
-        className
+        className,
       )}
       {...props}
     >
@@ -344,8 +343,7 @@ export function SidebarGroupLabel({
   );
 }
 
-interface SidebarGroupContentProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+interface SidebarGroupContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function SidebarGroupContent({
   className,
@@ -375,7 +373,7 @@ export function SidebarFooter({
         expanded
           ? "flex-row items-center justify-between"
           : "flex-col justify-center",
-        className
+        className,
       )}
       {...props}
     >
@@ -412,15 +410,10 @@ export function SidebarMenu({
 }
 
 // FIX: Omit conflicting framer-motion props from HTMLDivElement attributes
-interface SidebarMenuItemProps
-  extends Omit<
-    React.HTMLAttributes<HTMLDivElement>,
-    | "onDrag"
-    | "onDragStart"
-    | "onDragEnd"
-    | "onAnimationStart"
-    | "onAnimationEnd"
-  > {
+interface SidebarMenuItemProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart" | "onAnimationEnd"
+> {
   value?: string;
 }
 
@@ -528,16 +521,17 @@ export function SidebarMenuButton({
         >
           {React.Children.map(children, (child) => {
             if (React.isValidElement(child)) {
+              const childProps = child.props as Record<string, unknown>;
               return React.cloneElement(child, {
-                ...child.props,
+                ...childProps,
                 className: cn(
                   sharedClassName,
                   "justify-center p-2",
                   "hover:bg-primary/10 hover:scale-110",
                   isActive ? "text-primary font-medium" : "",
-                  child.props?.className
+                  childProps?.className as string | undefined,
                 ),
-              });
+              } as React.Attributes);
             }
             return child;
           })}
@@ -552,7 +546,7 @@ export function SidebarMenuButton({
           "justify-center p-2",
           "hover:bg-primary/10 hover:scale-110",
           isActive ? "text-primary font-medium" : "",
-          className
+          className,
         )}
         data-active={isActive ? "true" : "false"}
         onClick={handleClick}
@@ -560,7 +554,7 @@ export function SidebarMenuButton({
       >
         {React.Children.toArray(children).filter(
           (child) =>
-            React.isValidElement(child) && typeof child.type !== "string"
+            React.isValidElement(child) && typeof child.type !== "string",
         )}
       </div>
     );
@@ -576,16 +570,17 @@ export function SidebarMenuButton({
       >
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
+            const childProps = child.props as Record<string, unknown>;
             return React.cloneElement(child, {
-              ...child.props,
+              ...childProps,
               className: cn(
                 sharedClassName,
                 "justify-start gap-2",
                 "hover:bg-primary/10 hover:translate-x-1",
                 isActive ? "text-primary font-medium" : "",
-                child.props?.className
+                childProps?.className as string | undefined,
               ),
-            });
+            } as React.Attributes);
           }
           return child;
         })}
@@ -600,7 +595,7 @@ export function SidebarMenuButton({
         "justify-start gap-2",
         "hover:bg-primary/10 hover:translate-x-1",
         isActive ? "text-primary font-medium" : "",
-        className
+        className,
       )}
       data-active={isActive ? "true" : "false"}
       onClick={handleClick}

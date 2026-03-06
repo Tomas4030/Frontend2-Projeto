@@ -1,9 +1,20 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
   images: {
-    domains: ["habitica.com", "res.cloudinary.com"], // ✅ add the external host here
-
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "habitica.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
   },
 };
 

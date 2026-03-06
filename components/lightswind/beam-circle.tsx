@@ -64,7 +64,10 @@ const BeamCircle: React.FC<BeamCircleProps> = ({
   orbits: customOrbits,
   centerIcon,
 }) => {
-  const orbitsData = useMemo(() => customOrbits || defaultOrbits, [customOrbits]);
+  const orbitsData = useMemo(
+    () => customOrbits || defaultOrbits,
+    [customOrbits],
+  );
   const halfSize = size / 2;
 
   // --- Define linear easing manually ---
@@ -92,7 +95,7 @@ const BeamCircle: React.FC<BeamCircleProps> = ({
         )}
       </motion.div>
     ),
-    [halfSize, centerIcon]
+    [halfSize, centerIcon],
   );
 
   return (
@@ -108,7 +111,9 @@ const BeamCircle: React.FC<BeamCircleProps> = ({
               {/* Orbit Line */}
               <div
                 className={`absolute rounded-full border border-dashed ${
-                  orbit.orbitColor ? "" : "border-foreground/30 dark:border-foreground/40"
+                  orbit.orbitColor
+                    ? ""
+                    : "border-foreground/30 dark:border-foreground/40"
                 }`}
                 style={{
                   width: orbitDiameter,
@@ -142,9 +147,12 @@ const BeamCircle: React.FC<BeamCircleProps> = ({
                     animate={{ rotate: -360 }}
                     transition={rotationTransition(orbit.speed)}
                   >
-                    {React.cloneElement(orbit.icon as React.ReactElement, {
-                      size: orbit.iconSize * 0.6,
-                    })}
+                    {React.cloneElement(
+                      orbit.icon as React.ReactElement,
+                      {
+                        size: orbit.iconSize * 0.6,
+                      } as React.Attributes,
+                    )}
                   </motion.div>
                 </div>
               </motion.div>
@@ -153,7 +161,9 @@ const BeamCircle: React.FC<BeamCircleProps> = ({
         })}
 
         {/* Central Icon */}
-        <div className="absolute inset-0 grid place-content-center z-10">{CenterIcon}</div>
+        <div className="absolute inset-0 grid place-content-center z-10">
+          {CenterIcon}
+        </div>
       </div>
 
       <style jsx global>{`

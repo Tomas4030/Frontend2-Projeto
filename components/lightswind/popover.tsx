@@ -11,7 +11,7 @@ interface PopoverContextType {
 }
 
 const PopoverContext = React.createContext<PopoverContextType | undefined>(
-  undefined
+  undefined,
 );
 
 interface PopoverProps {
@@ -46,7 +46,7 @@ const Popover: React.FC<PopoverProps> = ({
         onOpenChange(newValue);
       }
     },
-    [isControlled, onOpenChange, open]
+    [isControlled, onOpenChange, open],
   );
 
   // Close popover when clicking outside (now conditional)
@@ -59,7 +59,7 @@ const Popover: React.FC<PopoverProps> = ({
 
     const handleClickOutside = (event: MouseEvent) => {
       const popoverContents = document.querySelectorAll(
-        "[data-popover-content]"
+        "[data-popover-content]",
       );
       let isClickInside = false;
 
@@ -131,14 +131,16 @@ const PopoverTrigger: React.FC<PopoverTriggerProps> = ({
       <>
         {React.Children.map(children, (child) => {
           if (React.isValidElement(child)) {
+            const existingProps = child.props as Record<string, unknown>;
             const childProps = {
-              ...child.props,
+              ...existingProps,
               onClick: (e: React.MouseEvent) => {
                 handleClick(e as React.MouseEvent<HTMLElement>);
-                if (child.props.onClick) child.props.onClick(e);
+                if (typeof existingProps.onClick === "function")
+                  existingProps.onClick(e);
               },
             };
-            return React.cloneElement(child, childProps);
+            return React.cloneElement(child, childProps as React.Attributes);
           }
           return child;
         })}
@@ -181,7 +183,7 @@ const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
           className={cn(
             "fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-auto max-w-[90vw] rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
             "max-h-[calc(100vh-2rem)] overflow-y-auto",
-            className
+            className,
           )}
           {...props}
         >
@@ -195,7 +197,7 @@ const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentProps>(
         </div>
       </>
     );
-  }
+  },
 );
 PopoverContent.displayName = "PopoverContent";
 

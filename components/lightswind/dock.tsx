@@ -15,8 +15,8 @@ function useDockItemSize(
   baseItemSize: number,
   magnification: number,
   distance: number,
-  ref: React.RefObject<HTMLDivElement>,
-  spring: { mass: number; stiffness: number; damping: number }
+  ref: React.RefObject<HTMLDivElement | null>,
+  spring: { mass: number; stiffness: number; damping: number },
 ) {
   const mouseDistance = useTransform(mouseX, (val) => {
     if (typeof val !== "number" || isNaN(val)) return 0;
@@ -30,7 +30,7 @@ function useDockItemSize(
   const targetSize = useTransform(
     mouseDistance,
     [-distance, 0, distance],
-    [baseItemSize, magnification, baseItemSize]
+    [baseItemSize, magnification, baseItemSize],
   );
 
   return useSpring(targetSize, spring);
@@ -67,13 +67,13 @@ function DockItem({
     magnification,
     distance,
     ref,
-    spring
+    spring,
   );
   const [showLabel, setShowLabel] = useState(false);
 
   useEffect(() => {
     const unsubscribe = isHovered.on("change", (value) =>
-      setShowLabel(value === 1)
+      setShowLabel(value === 1),
     );
     return () => unsubscribe();
   }, [isHovered]);
@@ -153,12 +153,12 @@ export default function Dock({
 
   const maxHeight = useMemo(
     () => Math.max(dockHeight, magnification + magnification / 2 + 4),
-    [magnification, dockHeight]
+    [magnification, dockHeight],
   );
 
   const animatedHeight = useSpring(
     useTransform(isHovered, [0, 1], [panelHeight, maxHeight]),
-    spring
+    spring,
   );
 
   return (

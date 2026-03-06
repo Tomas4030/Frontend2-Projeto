@@ -17,7 +17,18 @@ export interface VideoTextProps {
   textAnchor?: string;
   dominantBaseline?: string;
   fontFamily?: string;
-  as?: "div" | "span" | "section" | "article" | "p" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  as?:
+    | "div"
+    | "span"
+    | "section"
+    | "article"
+    | "p"
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6";
 }
 
 export function VideoText({
@@ -55,14 +66,33 @@ export function VideoText({
     setSvgMask(newSvgMask);
   }, [content, fontSize, fontWeight, textAnchor, dominantBaseline, fontFamily]);
 
-  const validTags = ["div", "span", "section", "article", "p", "h1", "h2", "h3", "h4", "h5", "h6"] as const;
+  const validTags = [
+    "div",
+    "span",
+    "section",
+    "article",
+    "p",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+  ] as const;
   type ValidTag = (typeof validTags)[number];
 
-  const MotionComponent = motion[validTags.includes(as) ? as : "div"] as React.ElementType;
+  const MotionComponent = motion[
+    validTags.includes(as) ? as : "div"
+  ] as React.ComponentType<
+    { className?: string; children?: React.ReactNode } & HTMLMotionProps<"div">
+  >;
 
   if (!svgMask) {
     return (
-      <MotionComponent className={cn("relative size-full", className)} {...motionProps}>
+      <MotionComponent
+        className={cn("relative size-full", className)}
+        {...motionProps}
+      >
         <span className="sr-only">{content}</span>
       </MotionComponent>
     );
@@ -71,7 +101,10 @@ export function VideoText({
   const dataUrlMask = `url("data:image/svg+xml,${encodeURIComponent(svgMask)}")`;
 
   return (
-    <MotionComponent className={cn("relative overflow-hidden", className)} {...motionProps}>
+    <MotionComponent
+      className={cn("relative overflow-hidden", className)}
+      {...motionProps}
+    >
       <div
         className="absolute inset-0 flex items-center justify-center"
         style={{

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useCallback, useState } from 'react';
-import * as THREE from 'three';
-import { createNoise2D } from 'simplex-noise';
-import { cn } from '../../lib/utils'; // Assuming this utility is correctly set up
+import React, { useEffect, useRef, useCallback, useState } from "react";
+import * as THREE from "three";
+import { createNoise2D } from "simplex-noise";
+import { cn } from "../../lib/utils"; // Assuming this utility is correctly set up
 
 export interface AnimatedWaveProps {
   /** Custom CSS class name */
@@ -23,7 +23,7 @@ export interface AnimatedWaveProps {
   /** Enable mouse interaction (default: true) */
   mouseInteraction?: boolean;
   /** Render quality - higher = more detail but slower (default: 'medium') */
-  quality?: 'low' | 'medium' | 'high';
+  quality?: "low" | "medium" | "high";
   /** Camera field of view (default: 60) */
   fov?: number;
   /** Wave position Y offset (default: -300) */
@@ -70,7 +70,7 @@ const getDeviceInfo = (): DeviceInfo => {
         window.innerWidth ||
           document.documentElement.clientWidth ||
           document.body.clientWidth ||
-          0
+          0,
       ),
     screenHeight: () =>
       Math.max(
@@ -78,7 +78,7 @@ const getDeviceInfo = (): DeviceInfo => {
         window.innerHeight ||
           document.documentElement.clientHeight ||
           document.body.clientHeight ||
-          0
+          0,
       ),
     screenRatio: function () {
       return this.screenWidth() / this.screenHeight();
@@ -103,9 +103,9 @@ const getDeviceInfo = (): DeviceInfo => {
 };
 
 const addEase = (
-  pos: THREE.Vector3,
+  pos: { x: number; y: number; z: number },
   to: { x: number; y: number; z: number },
-  ease: number
+  ease: number,
 ) => {
   pos.x += (to.x - pos.x) / ease;
   pos.y += (to.y - pos.y) / ease;
@@ -143,7 +143,7 @@ const parseColor = (color: string): THREE.Color => {
         return new THREE.Color(
           parseInt(matches[0]) / 255,
           parseInt(matches[1]) / 255,
-          parseInt(matches[2]) / 255
+          parseInt(matches[2]) / 255,
         );
       }
     }
@@ -161,7 +161,7 @@ const parseColor = (color: string): THREE.Color => {
 const isColorDark = (color: THREE.Color): boolean => {
   // Calculate luminance (perceived brightness)
   // Formula: L = 0.299*R + 0.587*G + 0.114*B
-  const luminance = (0.299 * color.r + 0.587 * color.g + 0.114 * color.b);
+  const luminance = 0.299 * color.r + 0.587 * color.g + 0.114 * color.b;
   // A threshold of 0.5 is common, lower values mean 'darker'
   return luminance < 0.5;
 };
@@ -177,7 +177,7 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
   waveColor,
   opacity = 1,
   mouseInteraction = true,
-  quality = 'medium',
+  quality = "medium",
   fov = 60,
   waveOffsetY = -300,
   waveRotation = 29.8,
@@ -272,7 +272,7 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
       // Initial position of the entire wave group in 3D space
       move: new THREE.Vector3(0, waveOffsetY, cameraDistance),
       // Initial rotation of the entire wave group
-      look: new THREE.Vector3((waveRotation * Math.PI) / 180, 0, 0), // Convert degrees to radians for X-axis rotation
+      look: new THREE.Euler((waveRotation * Math.PI) / 180, 0, 0), // Convert degrees to radians for X-axis rotation
 
       // Mouse distortion properties
       mouseDistortionStrength: mouseDistortionStrength,
@@ -298,13 +298,13 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
           4000, // Width of the plane in Three.js units
           2000, // Height of the plane in Three.js units
           geometryWidth, // Number of horizontal segments (vertices)
-          geometryHeight // Number of vertical segments (vertices)
+          geometryHeight, // Number of vertical segments (vertices)
         );
 
         // CRUCIAL: Store the initial (undistorted) vertex positions
         // This array will be used as the base for all calculations in moveNoise.
         this._originalPositions = new Float32Array(
-          this.geometry.attributes.position.array
+          this.geometry.attributes.position.array,
         );
 
         // Set up the material for the plane
@@ -368,19 +368,25 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
             // The `* 0.5` on currentMouseX/Y helps in centering the effect if needed.
             const distX_mouse = originalX - currentMouseX * 0.5;
             const distY_mouse = originalY - currentMouseY * 0.5;
-            const dist_mouse = Math.sqrt(distX_mouse * distX_mouse + distY_mouse * distY_mouse);
+            const dist_mouse = Math.sqrt(
+              distX_mouse * distX_mouse + distY_mouse * distY_mouse,
+            );
 
-            // Generate a 3D Simplex noise value for the ripple.
-            // `this.distortionTime` makes the ripple evolve over time.
-            const mouseRippleNoise = this.simplex(
-              distX_mouse / this.mouseDistortionSmoothness, // Smoothness of the mouse ripple
-              distY_mouse / this.mouseDistortionSmoothness,
-              this.distortionTime // Third dimension for time-based evolution
-            ) * this.mouseDistortionStrength; // Overall strength of the mouse ripple
+            // Generate a 2D Simplex noise value for the ripple.
+            // `this.distortionTime` is added to one axis to make the ripple evolve over time.
+            const mouseRippleNoise =
+              this.simplex(
+                distX_mouse / this.mouseDistortionSmoothness +
+                  this.distortionTime, // Add time to X for evolution
+                distY_mouse / this.mouseDistortionSmoothness,
+              ) * this.mouseDistortionStrength; // Overall strength of the mouse ripple
 
             // Apply a falloff (diminishing effect) as the vertex gets further from the mouse.
             // The effect diminishes further from the mouse. Factor of 2 on radius for wider spread.
-            const zFalloff = Math.max(0, 1 - dist_mouse / (this.mouseShrinkScaleRadius * 2));
+            const zFalloff = Math.max(
+              0,
+              1 - dist_mouse / (this.mouseShrinkScaleRadius * 2),
+            );
 
             // Add the mouse-induced ripple to the base Z offset, scaled by falloff
             zOffset += mouseRippleNoise * this.scale * zFalloff;
@@ -392,13 +398,15 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
             // Calculate distance of the original vertex from the exact mouse position
             const distX_shrink = originalX - currentMouseX;
             const distY_shrink = originalY - currentMouseY;
-            const dist_shrink = Math.sqrt(distX_shrink * distX_shrink + distY_shrink * distY_shrink);
+            const dist_shrink = Math.sqrt(
+              distX_shrink * distX_shrink + distY_shrink * distY_shrink,
+            );
 
             let shrinkFalloff = 0;
             // Only apply effect if within the defined radius
             if (dist_shrink < this.mouseShrinkScaleRadius) {
               // Calculate a normalized falloff: 1 at mouse center, 0 at radius edge
-              shrinkFalloff = 1 - (dist_shrink / this.mouseShrinkScaleRadius);
+              shrinkFalloff = 1 - dist_shrink / this.mouseShrinkScaleRadius;
               // Apply a power curve for a smoother ease-out effect (strongest near mouse, fades out gracefully)
               shrinkFalloff = Math.pow(shrinkFalloff, 2);
             }
@@ -428,7 +436,7 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
         if (mouseInteraction && this.group) {
           // Fix mouse direction: invert X to match natural movement and correct Y direction
           this.move.x = -(mouse.x * 0.04);
-          this.move.y = waveOffsetY + (mouse.y * 0.04); // Add Y movement with corrected direction
+          this.move.y = waveOffsetY + mouse.y * 0.04; // Add Y movement with corrected direction
           addEase(this.group.position, this.move, this.ease);
           addEase(this.group.rotation, this.look, this.ease);
         }
@@ -491,11 +499,11 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
       // Remove the canvas element from the DOM
       if (
         containerRef.current.contains(
-          sceneElementsRef.current.renderer.domElement
+          sceneElementsRef.current.renderer.domElement,
         )
       ) {
         containerRef.current.removeChild(
-          sceneElementsRef.current.renderer.domElement
+          sceneElementsRef.current.renderer.domElement,
         );
       }
       // Reset the ref state to nulls
@@ -521,7 +529,7 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
       fov, // Field of View (vertical)
       device.screenRatio(), // Aspect Ratio (width/height)
       0.1, // Near clipping plane
-      20000 // Far clipping plane (objects beyond this are not rendered)
+      20000, // Far clipping plane (objects beyond this are not rendered)
     );
 
     // 3. Create Renderer
@@ -679,7 +687,7 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
 
     // Update the color of the point light as well
     const pointLight = current.scene.children.find(
-      (child) => child instanceof THREE.PointLight
+      (child) => child instanceof THREE.PointLight,
     ) as THREE.PointLight;
     if (pointLight) {
       pointLight.color.copy(newWaveColor);
@@ -692,9 +700,10 @@ const AnimatedWave: React.FC<AnimatedWaveProps> = ({
     <div style={{ perspective: "900px" }}>
       <div
         ref={containerRef}
-        className={cn( // `cn` for combining TailwindCSS classes if you have it set up
+        className={cn(
+          // `cn` for combining TailwindCSS classes if you have it set up
           "relative inset-0 w-full h-screen z-10 overflow-hidden",
-          className
+          className,
         )}
         style={{
           // `pointerEvents: "none"` allows mouse events to "pass through" this div

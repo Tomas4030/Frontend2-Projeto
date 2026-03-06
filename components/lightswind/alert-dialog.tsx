@@ -9,7 +9,9 @@ interface AlertDialogContextType {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AlertDialogContext = React.createContext<AlertDialogContextType | undefined>(undefined);
+const AlertDialogContext = React.createContext<
+  AlertDialogContextType | undefined
+>(undefined);
 
 interface AlertDialogProps {
   children: React.ReactNode;
@@ -29,15 +31,18 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : uncontrolledOpen;
 
-  const setOpen = React.useCallback((value: boolean | ((prev: boolean) => boolean)) => {
-    if (!isControlled) {
-      setUncontrolledOpen(value);
-    }
-    if (onOpenChange) {
-      const newValue = typeof value === "function" ? value(open) : value;
-      onOpenChange(newValue);
-    }
-  }, [isControlled, onOpenChange, open]);
+  const setOpen = React.useCallback(
+    (value: boolean | ((prev: boolean) => boolean)) => {
+      if (!isControlled) {
+        setUncontrolledOpen(value);
+      }
+      if (onOpenChange) {
+        const newValue = typeof value === "function" ? value(open) : value;
+        onOpenChange(newValue);
+      }
+    },
+    [isControlled, onOpenChange, open],
+  );
 
   return (
     <AlertDialogContext.Provider value={{ open, setOpen }}>
@@ -51,59 +56,57 @@ interface AlertDialogTriggerProps {
   asChild?: boolean;
 }
 
-const AlertDialogTrigger = React.forwardRef<HTMLButtonElement, AlertDialogTriggerProps & React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ children, asChild = false, ...props }, ref) => {
-    const context = React.useContext(AlertDialogContext);
-    if (!context) {
-      throw new Error("AlertDialogTrigger must be used within an AlertDialog");
+const AlertDialogTrigger = React.forwardRef<
+  HTMLButtonElement,
+  AlertDialogTriggerProps & React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ children, asChild = false, ...props }, ref) => {
+  const context = React.useContext(AlertDialogContext);
+  if (!context) {
+    throw new Error("AlertDialogTrigger must be used within an AlertDialog");
+  }
+
+  const { setOpen } = context;
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setOpen(true);
+
+    // Call the original onClick if it exists
+    if (props.onClick) {
+      props.onClick(e);
     }
+  };
 
-    const { setOpen } = context;
+  // Remove onClick from props to avoid duplicate handlers
+  const { onClick, ...otherProps } = props;
 
-    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      setOpen(true);
-
-      // Call the original onClick if it exists
-      if (props.onClick) {
-        props.onClick(e);
-      }
-    };
-
-    // Remove onClick from props to avoid duplicate handlers
-    const { onClick, ...otherProps } = props;
-
-    if (asChild) {
-      return (
-        <>
-          {React.Children.map(children, child => {
-            if (React.isValidElement(child)) {
-              return React.cloneElement(child, {
-                ...child.props,
-                ref,
-                onClick: handleClick
-              });
-            }
-            return child;
-          })}
-        </>
-      );
-    }
-
+  if (asChild) {
     return (
-      <button
-        ref={ref}
-        type="button"
-        onClick={handleClick}
-        {...otherProps}
-      >
-        {children}
-      </button>
+      <>
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, {
+              ...(child.props as Record<string, unknown>),
+              ref,
+              onClick: handleClick,
+            } as React.Attributes);
+          }
+          return child;
+        })}
+      </>
     );
   }
-);
+
+  return (
+    <button ref={ref} type="button" onClick={handleClick} {...otherProps}>
+      {children}
+    </button>
+  );
+});
 AlertDialogTrigger.displayName = "AlertDialogTrigger";
 
-const AlertDialogPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AlertDialogPortal: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return <>{children}</>;
 };
 
@@ -126,10 +129,7 @@ const AlertDialogOverlay = React.forwardRef<
       {open && (
         <div
           ref={ref}
-          className={cn(
-            "fixed inset-0 z-50 bg-black/80",
-            className
-          )}
+          className={cn("fixed inset-0 z-50 bg-black/80", className)}
           {...props}
         />
       )}
@@ -155,7 +155,10 @@ const AlertDialogContent = React.forwardRef<
     if (!open) return;
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (contentRef.current && !contentRef.current.contains(event.target as Node)) {
+      if (
+        contentRef.current &&
+        !contentRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -178,14 +181,17 @@ const AlertDialogContent = React.forwardRef<
               if (typeof ref === "function") {
                 ref(node);
               } else if (ref) {
-                (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+                (ref as React.MutableRefObject<HTMLDivElement | null>).current =
+                  node;
               }
               // Content ref for click outside
-              (contentRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+              (
+                contentRef as React.MutableRefObject<HTMLDivElement | null>
+              ).current = node;
             }}
             className={cn(
               "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border   bg-background p-6 shadow-lg sm:rounded-lg",
-              className
+              className,
             )}
             initial={{ y: "-48%", x: "-50%", opacity: 0, scale: 0.95 }}
             animate={{ y: "-50%", x: "-50%", opacity: 1, scale: 1 }}
@@ -193,15 +199,22 @@ const AlertDialogContent = React.forwardRef<
             transition={{ duration: 0.2, ease: "easeInOut" }}
             // Filter out properties that conflict with Framer Motion's types
             // This is the crucial part for resolving the type error.
-            {...Object.keys(props).reduce((acc: { [key: string]: any }, key) => {
+            {...Object.keys(props).reduce(
+              (acc: { [key: string]: any }, key) => {
                 // Add any other conflicting HTML attributes you might discover here.
                 // 'onDrag' is the most common one.
-                if (key === 'onDrag' || key === 'onAnimationStart' || key === 'onTransitionEnd') {
-                    return acc; // Omit this property
+                if (
+                  key === "onDrag" ||
+                  key === "onAnimationStart" ||
+                  key === "onTransitionEnd"
+                ) {
+                  return acc; // Omit this property
                 }
                 acc[key] = (props as any)[key]; // Keep other properties
                 return acc;
-            }, {})}
+              },
+              {},
+            )}
           >
             {children}
           </motion.div>
@@ -219,7 +232,7 @@ const AlertDialogHeader = ({
   <div
     className={cn(
       "flex flex-col space-y-2 text-center sm:text-left",
-      className
+      className,
     )}
     {...props}
   />
@@ -233,7 +246,7 @@ const AlertDialogFooter = ({
   <div
     className={cn(
       "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
+      className,
     )}
     {...props}
   />
@@ -244,11 +257,7 @@ const AlertDialogTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <h2
-    ref={ref}
-    className={cn("text-lg font-semibold", className)}
-    {...props}
-  />
+  <h2 ref={ref} className={cn("text-lg font-semibold", className)} {...props} />
 ));
 AlertDialogTitle.displayName = "AlertDialogTitle";
 
@@ -331,7 +340,7 @@ const AlertDialogCancel = React.forwardRef<
       className={cn(
         buttonVariants({ variant: "outline" }),
         "mt-2 sm:mt-0",
-        className
+        className,
       )}
       onClick={handleClick}
       {...otherProps}

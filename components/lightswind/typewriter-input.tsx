@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
-import { cn } from '../../lib/utils';
-import { Input } from './input';
+import React, { useState, useEffect, useRef } from "react";
+import { cn } from "../../lib/utils";
+import { Input } from "./input";
 
 export interface TypewriterInputProps {
   /** The value of the input */
@@ -30,13 +30,13 @@ export interface TypewriterInputProps {
   /** Caret color */
   caretColor?: string;
   /** Font weight */
-  fontWeight?: 'normal' | 'medium' | 'semibold' | 'bold' | 'black';
+  fontWeight?: "normal" | "medium" | "semibold" | "bold" | "black";
   /** Font size */
-  fontSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl';
+  fontSize?: "xs" | "sm" | "base" | "lg" | "xl";
   /** Border radius */
-  borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+  borderRadius?: "none" | "sm" | "md" | "lg" | "xl" | "full";
   /** Shadow intensity */
-  shadowIntensity?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  shadowIntensity?: "none" | "sm" | "md" | "lg" | "xl";
   /** Disable input */
   disabled?: boolean;
   /** Make input readonly */
@@ -64,25 +64,25 @@ export interface TypewriterInputProps {
 }
 
 export const TypewriterInput: React.FC<TypewriterInputProps> = ({
-  value = '',
+  value = "",
   onChange,
-  placeholder = 'Type something...',
+  placeholder = "Type something...",
   name,
   id,
   enableAnimation = true,
   animationDuration = 200,
   scaleFactor = 50,
   animationDelay = 300,
-  inputBackground = '#ffffff',
-  textColor = '#000000',
-  caretColor = '#555555',
-  fontWeight = 'black',
-  fontSize = 'sm',
-  borderRadius = 'md',
-  shadowIntensity = 'md',
+  inputBackground = "#ffffff",
+  textColor = "#000000",
+  caretColor = "#555555",
+  fontWeight = "black",
+  fontSize = "sm",
+  borderRadius = "md",
+  shadowIntensity = "md",
   disabled = false,
   readOnly = false,
-  width = '200px',
+  width = "200px",
   className,
   inputClassName,
   textClassName,
@@ -98,38 +98,47 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
   var [showCaret, setShowCaret] = useState(true);
   var [internalValue, setInternalValue] = useState(value);
   var prevValueRef = useRef(value);
-  var timeoutRef = useRef<NodeJS.Timeout>();
+  var timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Update internal value when prop changes
-  useEffect(function () {
-    setInternalValue(value);
-  }, [value]);
+  useEffect(
+    function () {
+      setInternalValue(value);
+    },
+    [value],
+  );
 
   // Handle animation when value changes
-  useEffect(function () {
-    if (!enableAnimation) return;
+  useEffect(
+    function () {
+      if (!enableAnimation) return;
 
-    var prevValue = prevValueRef.current;
-    var currentValue = internalValue;
+      var prevValue = prevValueRef.current;
+      var currentValue = internalValue;
 
-    if (currentValue.length > prevValue.length && currentValue.slice(-1) !== ' ') {
-      setShowCaret(false);
+      if (
+        currentValue.length > prevValue.length &&
+        currentValue.slice(-1) !== " "
+      ) {
+        setShowCaret(false);
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = setTimeout(function () {
+          setIsAnimating(true);
+          setTimeout(function () {
+            setIsAnimating(false);
+            setShowCaret(true);
+          }, animationDuration);
+        }, 50);
       }
 
-      timeoutRef.current = setTimeout(function () {
-        setIsAnimating(true);
-        setTimeout(function () {
-          setIsAnimating(false);
-          setShowCaret(true);
-        }, animationDuration);
-      }, 50);
-    }
-
-    prevValueRef.current = currentValue;
-  }, [internalValue, enableAnimation, animationDuration]);
+      prevValueRef.current = currentValue;
+    },
+    [internalValue, enableAnimation, animationDuration],
+  );
 
   var handleInputChange = function (e: React.ChangeEvent<HTMLInputElement>) {
     var newValue = e.target.value;
@@ -138,44 +147,44 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
   };
 
   var handleKeyDown = function (e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onEnter?.();
     }
   };
 
-  var characters = internalValue.split('');
+  var characters = internalValue.split("");
 
   var fontWeightClasses = {
-    normal: 'font-normal',
-    medium: 'font-medium',
-    semibold: 'font-semibold',
-    bold: 'font-bold',
-    black: 'font-black'
+    normal: "font-normal",
+    medium: "font-medium",
+    semibold: "font-semibold",
+    bold: "font-bold",
+    black: "font-black",
   };
 
   var fontSizeClasses = {
-    xs: 'text-xs',
-    sm: 'text-sm',
-    base: 'text-base',
-    lg: 'text-lg',
-    xl: 'text-xl'
+    xs: "text-xs",
+    sm: "text-sm",
+    base: "text-base",
+    lg: "text-lg",
+    xl: "text-xl",
   };
 
   var borderRadiusClasses = {
-    none: 'rounded-none',
-    sm: 'rounded-sm',
-    md: 'rounded-md',
-    lg: 'rounded-lg',
-    xl: 'rounded-xl',
-    full: 'rounded-full'
+    none: "rounded-none",
+    sm: "rounded-sm",
+    md: "rounded-md",
+    lg: "rounded-lg",
+    xl: "rounded-xl",
+    full: "rounded-full",
   };
 
   var shadowClasses = {
-    none: 'shadow-none',
-    sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg',
-    xl: 'shadow-xl'
+    none: "shadow-none",
+    sm: "shadow-sm",
+    md: "shadow-md",
+    lg: "shadow-lg",
+    xl: "shadow-xl",
   };
 
   return (
@@ -184,13 +193,19 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
         {"\n" +
           "          .typewriter-container {\n" +
           "            position: relative;\n" +
-          "            width: " + width + ";\n" +
+          "            width: " +
+          width +
+          ";\n" +
           "          }\n" +
           "          \n" +
           "          .typewriter-input {\n" +
           "            color: transparent !important;\n" +
-          "            caret-color: " + (showCaret ? caretColor : 'transparent') + ";\n" +
-          "            background-color: " + inputBackground + ";\n" +
+          "            caret-color: " +
+          (showCaret ? caretColor : "transparent") +
+          ";\n" +
+          "            background-color: " +
+          inputBackground +
+          ";\n" +
           "          }\n" +
           "          \n" +
           "          .typewriter-input::placeholder {\n" +
@@ -210,7 +225,9 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
           "            transform: translateY(-50%);\n" +
           "            pointer-events: none;\n" +
           "            letter-spacing: 0;\n" +
-          "            color: " + textColor + ";\n" +
+          "            color: " +
+          textColor +
+          ";\n" +
           "          }\n" +
           "          \n" +
           "          .typewriter-char {\n" +
@@ -219,16 +236,22 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
           "          }\n" +
           "          \n" +
           "          .typewriter-char--animate {\n" +
-          "            animation: typewriter-print " + animationDuration + "ms 1 ease-in-out;\n" +
+          "            animation: typewriter-print " +
+          animationDuration +
+          "ms 1 ease-in-out;\n" +
           "          }\n" +
           "          \n" +
           "          .typewriter-container--shake {\n" +
-          "            animation: typewriter-shake " + animationDuration + "ms 1 ease-in-out;\n" +
+          "            animation: typewriter-shake " +
+          animationDuration +
+          "ms 1 ease-in-out;\n" +
           "          }\n" +
           "          \n" +
           "          @keyframes typewriter-print {\n" +
           "            from {\n" +
-          "              transform: scale(" + scaleFactor + ");\n" +
+          "              transform: scale(" +
+          scaleFactor +
+          ");\n" +
           "              position: absolute;\n" +
           "            }\n" +
           "            99% {\n" +
@@ -255,9 +278,9 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
         className={cn(
           "typewriter-container",
           {
-            "typewriter-container--shake": isAnimating && enableShakeAnimation
+            "typewriter-container--shake": isAnimating && enableShakeAnimation,
           },
-          className
+          className,
         )}
         style={style}
       >
@@ -281,7 +304,7 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
             fontSizeClasses[fontSize],
             borderRadiusClasses[borderRadius],
             shadowClasses[shadowIntensity],
-            inputClassName
+            inputClassName,
           )}
           {...props}
         />
@@ -292,19 +315,17 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
             "typewriter-label",
             fontWeightClasses[fontWeight],
             fontSizeClasses[fontSize],
-            textClassName
+            textClassName,
           )}
         >
           {characters.map(function (char, index) {
             return (
               <span
                 key={char + "-" + index}
-                className={cn(
-                  "typewriter-char",
-                  {
-                    "typewriter-char--animate": isAnimating && index === characters.length - 1
-                  }
-                )}
+                className={cn("typewriter-char", {
+                  "typewriter-char--animate":
+                    isAnimating && index === characters.length - 1,
+                })}
               >
                 {char}
               </span>

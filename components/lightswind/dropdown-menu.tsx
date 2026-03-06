@@ -46,7 +46,7 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({
         onOpenChange(newValue);
       }
     },
-    [isControlled, onOpenChange, open]
+    [isControlled, onOpenChange, open],
   );
 
   return (
@@ -92,7 +92,7 @@ const DropdownMenuTrigger = React.forwardRef<
     if (!triggerRef.current) {
       // Fallback or throw an error if triggerRef.current is not set
       console.warn(
-        "DropdownMenuTrigger ref is null. Ensure children forward their ref when asChild is true."
+        "DropdownMenuTrigger ref is null. Ensure children forward their ref when asChild is true.",
       );
       return document.createElement("button"); // Return a dummy element to satisfy the type
     }
@@ -136,12 +136,13 @@ const DropdownMenuTrigger = React.forwardRef<
 
     if (!React.isValidElement(child)) {
       throw new Error(
-        "DropdownMenuTrigger when asChild is true must have a single valid React element child."
+        "DropdownMenuTrigger when asChild is true must have a single valid React element child.",
       );
     }
 
+    const childProps = child.props as Record<string, unknown>;
     return React.cloneElement(child, {
-      ...child.props,
+      ...childProps,
       ref: (node: HTMLElement | null) => {
         // Update the internal triggerRef
         triggerRef.current = node;
@@ -155,11 +156,15 @@ const DropdownMenuTrigger = React.forwardRef<
         }
 
         // Handle the original ref of the child element
-        const childRef = (child as any).ref;
+        const childRef = (child as React.ReactElement & { ref?: unknown }).ref;
         if (childRef) {
           if (typeof childRef === "function") {
             childRef(node);
-          } else if (childRef.hasOwnProperty("current")) {
+          } else if (
+            childRef &&
+            typeof childRef === "object" &&
+            "current" in childRef
+          ) {
             (childRef as React.MutableRefObject<HTMLElement | null>).current =
               node;
           }
@@ -167,17 +172,19 @@ const DropdownMenuTrigger = React.forwardRef<
       },
       onClick: (e: React.MouseEvent) => {
         handleClick(e as React.MouseEvent<HTMLButtonElement>);
-        if (child.props.onClick) child.props.onClick(e);
+        if (typeof childProps.onClick === "function") childProps.onClick(e);
       },
       onMouseEnter: (e: React.MouseEvent) => {
         handleMouseEnter(e as React.MouseEvent<HTMLElement>);
-        if (child.props.onMouseEnter) child.props.onMouseEnter(e);
+        if (typeof childProps.onMouseEnter === "function")
+          childProps.onMouseEnter(e);
       },
       onMouseLeave: (e: React.MouseEvent) => {
         handleMouseLeaveTrigger(e as React.MouseEvent<HTMLElement>);
-        if (child.props.onMouseLeave) child.props.onMouseLeave(e);
+        if (typeof childProps.onMouseLeave === "function")
+          childProps.onMouseLeave(e);
       },
-    });
+    } as React.Attributes);
   }
 
   return (
@@ -216,25 +223,24 @@ const dropdownMenuContentVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
+  },
 );
 
-interface DropdownMenuContentProps
-  extends Omit<
-    React.HTMLAttributes<HTMLDivElement>,
-    | "onAnimationStart" // Omit this
-    | "onAnimationEnd" // Omit this
-    | "onTransitionEnd" // Omit this
-    | "onTransitionCancel" // Omit this
-    | "onDrag"
-    | "onDragEnd"
-    | "onDragEnter"
-    | "onDragExit"
-    | "onDragLeave"
-    | "onDragOver"
-    | "onDragStart"
-    | "onDrop"
-  > {
+interface DropdownMenuContentProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  | "onAnimationStart" // Omit this
+  | "onAnimationEnd" // Omit this
+  | "onTransitionEnd" // Omit this
+  | "onTransitionCancel" // Omit this
+  | "onDrag"
+  | "onDragEnd"
+  | "onDragEnter"
+  | "onDragExit"
+  | "onDragLeave"
+  | "onDragOver"
+  | "onDragStart"
+  | "onDrop"
+> {
   align?: "start" | "center" | "end";
   alignOffset?: number;
   side?: "top" | "right" | "bottom" | "left";
@@ -256,7 +262,7 @@ const DropdownMenuContent = React.forwardRef<
       variant,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = React.useContext(DropdownMenuContext);
     if (!context) {
@@ -268,7 +274,7 @@ const DropdownMenuContent = React.forwardRef<
     const [position, setPosition] = React.useState({ top: 0, left: 0 });
 
     const contentMouseLeaveTimeoutRef = React.useRef<NodeJS.Timeout | null>(
-      null
+      null,
     );
 
     React.useEffect(() => {
@@ -342,7 +348,7 @@ const DropdownMenuContent = React.forwardRef<
           dummyDiv.style.border = "1px solid";
           dummyDiv.className = cn(
             dropdownMenuContentVariants({ variant }),
-            className
+            className,
           );
           document.body.appendChild(dummyDiv);
           menuRect = dummyDiv.getBoundingClientRect();
@@ -449,7 +455,7 @@ const DropdownMenuContent = React.forwardRef<
               dropdownMenuContentVariants({ variant }),
               "dropdown-scrollbar",
               // "scrollbar-hide",
-              className
+              className,
             )}
             style={{
               position: "fixed",
@@ -472,7 +478,7 @@ const DropdownMenuContent = React.forwardRef<
         )}
       </AnimatePresence>
     );
-  }
+  },
 );
 DropdownMenuContent.displayName = "DropdownMenuContent";
 
@@ -530,7 +536,7 @@ const DropdownMenuItem = React.forwardRef<
         focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground 
         data-[disabled]:pointer-events-none data-[disabled]:opacity-50`,
         inset && "pl-8",
-        className
+        className,
       )}
       onClick={handleClick}
       data-disabled={disabled ? "" : undefined}
@@ -540,8 +546,7 @@ const DropdownMenuItem = React.forwardRef<
 });
 DropdownMenuItem.displayName = "DropdownMenuItem";
 
-interface DropdownMenuSeparatorProps
-  extends React.HTMLAttributes<HTMLDivElement> {}
+interface DropdownMenuSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const DropdownMenuSeparator = React.forwardRef<
   HTMLDivElement,

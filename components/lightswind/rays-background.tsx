@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { cn } from "../utils";
+import { cn } from "../../lib/utils";
 
 interface RaysBackgroundProps {
   /** Theme variant - 'light' or 'dark' */
@@ -51,7 +51,7 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
     <div
       className={cn(
         "absolute left-0 top-0 w-full min-h-screen max-h-screen overflow-hidden bg-background",
-        className
+        className,
       )}
     >
       {/* Color Ray Container */}
@@ -90,8 +90,8 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
             animate={
               animated
                 ? {
-                  rotate: 360,
-                }
+                    rotate: 360,
+                  }
                 : {}
             }
             transition={{
@@ -175,8 +175,8 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
             animate={
               animated
                 ? {
-                  rotate: -360,
-                }
+                    rotate: -360,
+                  }
                 : {}
             }
             transition={{
@@ -249,7 +249,8 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
                   rgba(3, 10, 0, 0.5)
                 )
               `,
-              backgroundBlendMode: "exclusion, exclusion, difference, exclusion",
+              backgroundBlendMode:
+                "exclusion, exclusion, difference, exclusion",
               mixBlendMode: "color-burn",
               WebkitMaskImage:
                 "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
@@ -284,8 +285,8 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
             animate={
               animated
                 ? {
-                  rotate: -360,
-                }
+                    rotate: -360,
+                  }
                 : {}
             }
             transition={{
@@ -325,8 +326,8 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
             animate={
               animated
                 ? {
-                  rotate: -360,
-                }
+                    rotate: -360,
+                  }
                 : {}
             }
             transition={{

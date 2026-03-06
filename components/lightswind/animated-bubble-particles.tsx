@@ -66,11 +66,11 @@ const AnimatedBubbleParticles: React.FC<AnimatedBubbleParticlesProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement>(null);
-  const animationRef = useRef<number>();
-  const intervalRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
+  const intervalRef = useRef<number | undefined>(undefined);
   const particlesArrayRef = useRef<ParticleConfig[]>([]);
   const isPausedRef = useRef(false);
-  const gooIdRef = useRef('goo-' + Math.random().toString(36).substring(2, 11));
+  const gooIdRef = useRef("goo-" + Math.random().toString(36).substring(2, 11));
 
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -90,7 +90,7 @@ const AnimatedBubbleParticles: React.FC<AnimatedBubbleParticlesProps> = ({
 
     const circle = document.createElementNS(
       "http://www.w3.org/2000/svg",
-      "circle"
+      "circle",
     );
     circle.setAttribute("cx", "33.7");
     circle.setAttribute("cy", "33.7");
@@ -117,8 +117,7 @@ const AnimatedBubbleParticles: React.FC<AnimatedBubbleParticlesProps> = ({
     const siner = (dimensions.width / 2.5) * Math.random();
     const rotationDirection = Math.random() > 0.5 ? "+" : "-";
 
-    element.style.transform =
-      "translateX(" + x + "px) translateY(" + y + "px)";
+    element.style.transform = "translateX(" + x + "px) translateY(" + y + "px)";
 
     return {
       x,
@@ -251,8 +250,11 @@ const AnimatedBubbleParticles: React.FC<AnimatedBubbleParticlesProps> = ({
   // Determine the background class to apply
   const backgroundClass = (() => {
     // Check if a 'bg-' class is already present in the user-provided className
-    if (className && className.split(' ').some(cls => cls.startsWith('bg-'))) {
-      return ''; // User provided a background class, don't add default
+    if (
+      className &&
+      className.split(" ").some((cls) => cls.startsWith("bg-"))
+    ) {
+      return ""; // User provided a background class, don't add default
     }
     // If no 'bg-' class is found, use the backgroundColor prop as a Tailwind arbitrary value
     return `bg-[${backgroundColor}]`;
@@ -265,7 +267,7 @@ const AnimatedBubbleParticles: React.FC<AnimatedBubbleParticlesProps> = ({
         "relative overflow-hidden",
         "w-screen h-screen", // Always apply full screen width and height
         backgroundClass, // Apply the determined background class here
-        className // User's className comes last to ensure highest precedence
+        className, // User's className comes last to ensure highest precedence
       )}
       style={{
         zIndex,
@@ -278,7 +280,9 @@ const AnimatedBubbleParticles: React.FC<AnimatedBubbleParticlesProps> = ({
         ref={particlesRef}
         className="absolute inset-0 w-full h-full pointer-events-none z-0"
         style={{
-          filter: enableGooEffect ? "url(#" + gooIdRef.current + ")" : undefined,
+          filter: enableGooEffect
+            ? "url(#" + gooIdRef.current + ")"
+            : undefined,
         }}
       />
 

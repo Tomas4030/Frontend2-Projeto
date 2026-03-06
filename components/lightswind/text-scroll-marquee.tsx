@@ -1,7 +1,6 @@
 "use client";
-'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -10,9 +9,9 @@ import {
   useVelocity,
   useAnimationFrame,
   useMotionValue,
-} from 'motion/react';
-import { wrap } from '@motionone/utils';
-import { cn } from '../../lib/utils';
+} from "framer-motion";
+import { wrap } from "@motionone/utils";
+import { cn } from "../../lib/utils";
 
 interface TextScrollMarqueeProps {
   children: string;
@@ -20,7 +19,7 @@ interface TextScrollMarqueeProps {
   className?: string;
   scrollDependent?: boolean;
   delay?: number;
-  direction?: 'left' | 'right';
+  direction?: "left" | "right";
 }
 
 export default function TextScrollMarquee({
@@ -29,7 +28,7 @@ export default function TextScrollMarquee({
   className,
   scrollDependent = false,
   delay = 0,
-  direction = 'left',
+  direction = "left",
 }: TextScrollMarqueeProps) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
@@ -45,7 +44,7 @@ export default function TextScrollMarquee({
   // ✅ Use modular wrap from -100% to 0% for seamless loop
   const x = useTransform(baseX, (v) => `${wrap(-100, 0, v % 100)}%`);
 
-  const directionFactor = useRef<number>(direction === 'left' ? 1 : -1);
+  const directionFactor = useRef<number>(direction === "left" ? 1 : -1);
   const hasStarted = useRef(false);
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function TextScrollMarquee({
   }, [delay]);
 
   useEffect(() => {
-    directionFactor.current = direction === 'left' ? 1 : -1;
+    directionFactor.current = direction === "left" ? 1 : -1;
   }, [direction]);
 
   useAnimationFrame((t, delta) => {
@@ -85,7 +84,7 @@ export default function TextScrollMarquee({
         style={{ x }}
       >
         {[...Array(4)].map((_, index) => (
-          <span key={index} className={cn('block text-[5vw]', className)}>
+          <span key={index} className={cn("block text-[5vw]", className)}>
             {children}
           </span>
         ))}

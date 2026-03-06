@@ -1,12 +1,7 @@
 "use client";
 
 import { motion, Variants } from "framer-motion";
-import React, {
-  ElementType,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import React, { ElementType, ReactNode, useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
 
 export interface TypingTextProps {
@@ -48,9 +43,9 @@ export const TypingText = ({
       }
       if (
         React.isValidElement(node) &&
-        typeof node.props.children !== "undefined"
+        typeof (node.props as { children?: ReactNode }).children !== "undefined"
       ) {
-        return extractText(node.props.children);
+        return extractText((node.props as { children?: ReactNode }).children);
       }
       return "";
     };
@@ -58,9 +53,9 @@ export const TypingText = ({
     setTextContent(extractText(children));
   }, [children]);
 
-  const characters = textContent.split("").map((char) =>
-    char === " " ? "\u00A0" : char
-  );
+  const characters = textContent
+    .split("")
+    .map((char) => (char === " " ? "\u00A0" : char));
 
   const characterVariants: Variants = {
     hidden: { opacity: 0, scale: 0.95 },
@@ -75,8 +70,13 @@ export const TypingText = ({
     }),
   };
 
+  const DynamicComponent = Component as React.ComponentType<{
+    className?: string;
+    children?: ReactNode;
+  }>;
+
   return (
-    <Component
+    <DynamicComponent
       className={cn(
         "inline-flex",
         className,
@@ -87,8 +87,8 @@ export const TypingText = ({
         align === "center"
           ? "justify-center text-center"
           : align === "right"
-          ? "justify-end text-right"
-          : "justify-start text-left"
+            ? "justify-end text-right"
+            : "justify-start text-left",
       )}
     >
       <motion.span
@@ -111,6 +111,6 @@ export const TypingText = ({
           </motion.span>
         ))}
       </motion.span>
-    </Component>
+    </DynamicComponent>
   );
 };

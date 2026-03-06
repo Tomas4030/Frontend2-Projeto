@@ -89,7 +89,7 @@ function SmokeyBackground({
   backdropBlurAmount = "sm",
   color = "#fff", // Default purple color
   className = "",
-}: SmokeyBackgroundProps): JSX.Element {
+}: SmokeyBackgroundProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
@@ -114,7 +114,7 @@ function SmokeyBackground({
 
     const compileShader = (
       type: number,
-      source: string
+      source: string,
     ): WebGLShader | null => {
       const shader = gl.createShader(type);
       if (!shader) return null;
@@ -131,7 +131,7 @@ function SmokeyBackground({
     const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSmokeySource);
     const fragmentShader = compileShader(
       gl.FRAGMENT_SHADER,
-      fragmentSmokeySource
+      fragmentSmokeySource,
     );
     if (!vertexShader || !fragmentShader) return;
 
@@ -153,7 +153,7 @@ function SmokeyBackground({
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW
+      gl.STATIC_DRAW,
     );
 
     const positionLocation = gl.getAttribLocation(program, "a_position");
@@ -185,7 +185,7 @@ function SmokeyBackground({
       gl.uniform2f(
         iMouseLocation,
         isHovering ? mousePosition.x : 0,
-        isHovering ? height - mousePosition.y : 0
+        isHovering ? height - mousePosition.y : 0,
       );
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);

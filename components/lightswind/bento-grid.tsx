@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 interface BentoCardData {
   title: string;
   description: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   className?: string;
   background?: React.ReactNode;
 }
@@ -26,7 +26,7 @@ export const BentoGrid = ({
     <div
       className={cn(
         `grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-${columns} bg-background`,
-        className
+        className,
       )}
       {...props}
     >
@@ -43,7 +43,7 @@ export const BentoGrid = ({
               "shadow-inner shadow-black/10 dark:shadow-white/10",
               "text-black dark:text-white",
               "group transition-all duration-300 ease-in-out",
-              card.className
+              card.className,
             )}
           >
             {card.background && (
@@ -56,7 +56,7 @@ export const BentoGrid = ({
                 className={cn(
                   "flex flex-col justify-end h-full",
                   "opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0",
-                  "transition-all duration-300 ease-out"
+                  "transition-all duration-300 ease-out",
                 )}
               >
                 <Icon className="h-5 w-5 text-current mb-2" />

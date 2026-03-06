@@ -24,10 +24,7 @@ const RippleLoader: React.FC<RippleLoaderProps> = ({
   }));
 
   return (
-    <div
-      className="relative"
-      style={{ width: size, height: size }}
-    >
+    <div className="relative" style={{ width: size, height: size }}>
       {rippleBoxes.map((box, i) => (
         <motion.div
           key={i}
@@ -71,13 +68,16 @@ const RippleLoader: React.FC<RippleLoaderProps> = ({
             style={{ display: "inline-block", width: "100%", height: "100%" }}
           >
             {icon &&
-              React.cloneElement(icon as React.ReactElement, {
-                style: {
-                  width: "100%",
-                  height: "100%",
-                  fill: "currentColor",
+              React.cloneElement(
+                icon as React.ReactElement<Record<string, unknown>>,
+                {
+                  style: {
+                    width: "100%",
+                    height: "100%",
+                    fill: "currentColor",
+                  },
                 },
-              })}
+              )}
           </span>
         </motion.span>
       </div>

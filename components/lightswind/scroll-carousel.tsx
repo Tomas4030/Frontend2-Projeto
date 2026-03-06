@@ -33,14 +33,14 @@ export interface ScrollCarouselProps {
 
 // --- Custom Hook for Animations ---
 const useFeatureAnimations = (
-  containerRef: React.RefObject<HTMLDivElement>,
-  scrollContainerRef: React.RefObject<HTMLDivElement>,
-  scrollContainerRef2: React.RefObject<HTMLDivElement>,
-  progressBarRef: React.RefObject<HTMLDivElement>,
+  containerRef: React.RefObject<HTMLDivElement | null>,
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>,
+  scrollContainerRef2: React.RefObject<HTMLDivElement | null>,
+  progressBarRef: React.RefObject<HTMLDivElement | null>,
   cardRefs: React.MutableRefObject<HTMLDivElement[]>,
   cardRefs2: React.MutableRefObject<HTMLDivElement[]>,
   isDesktop: boolean,
-  maxScrollHeight?: number
+  maxScrollHeight?: number,
 ) => {
   useLayoutEffect(() => {
     let ctx = gsap.context(() => {
@@ -75,7 +75,7 @@ const useFeatureAnimations = (
           .fromTo(
             scrollContainerRef.current,
             { x: viewportOffset },
-            { x: -finalOffset1 + viewportOffset, ease: "none" }
+            { x: -finalOffset1 + viewportOffset, ease: "none" },
           );
 
         gsap
@@ -121,7 +121,7 @@ const useFeatureAnimations = (
                   toggleActions: "play none none none",
                   once: true,
                 },
-              }
+              },
             );
           }
         });
@@ -165,12 +165,12 @@ export const ScrollCarousel = forwardRef<HTMLDivElement, ScrollCarouselProps>(
       cardRefs,
       cardRefs2,
       isDesktop,
-      maxScrollHeight
+      maxScrollHeight,
     );
 
     const renderFeatureCards = (
       featureSet: FeatureItem[],
-      refs: React.MutableRefObject<HTMLDivElement[]>
+      refs: React.MutableRefObject<HTMLDivElement[]>,
     ) =>
       featureSet.map((feature, index) => (
         <div
@@ -187,7 +187,7 @@ export const ScrollCarousel = forwardRef<HTMLDivElement, ScrollCarouselProps>(
               flex items-center justify-center z-10 
               transition-all duration-300 my-4`,
               `backdrop-blur-lg border text-black dark:text-white`,
-              "group-hover:scale-105 centered:scale-105"
+              "group-hover:scale-105 centered:scale-105",
             )}
           >
             <img
@@ -203,7 +203,7 @@ export const ScrollCarousel = forwardRef<HTMLDivElement, ScrollCarouselProps>(
             <div className="absolute bottom-4 z-10 w-full px-4">
               <div
                 className={cn(
-                  `flex flex-col justify-end h-full opacity-100 translate-y-4 transition-all duration-300 ease-out text-center`
+                  `flex flex-col justify-end h-full opacity-100 translate-y-4 transition-all duration-300 ease-out text-center`,
                 )}
               >
                 <h3 className="text-2xl mb-0 font-bold text-white transition-all duration-300">
@@ -228,7 +228,7 @@ export const ScrollCarousel = forwardRef<HTMLDivElement, ScrollCarouselProps>(
       <section
         className={cn(
           "bg-transparent text-foreground relative overflow-hidden",
-          className
+          className,
         )}
         ref={ref}
       >
@@ -295,7 +295,7 @@ export const ScrollCarousel = forwardRef<HTMLDivElement, ScrollCarouselProps>(
         `}</style>
       </section>
     );
-  }
+  },
 );
 
 ScrollCarousel.displayName = "ScrollCarousel";
