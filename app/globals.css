@@ -239,9 +239,307 @@ html {
   color: #888;
 }
 
+/* ===================================== */
+/*         LOGIN & REGISTER STYLES       */
+/* ===================================== */
+
 .rpg-card {
   @apply bg-card border-2 border-border rounded-lg p-6;
+  font-family: "Press Start 2P", monospace;
+  image-rendering: pixelated;
   box-shadow:
     0 4px 20px hsl(var(--background) / 0.5),
     0 0 0 1px hsl(var(--border));
+}
+
+.rpg-title {
+  font-family: "Press Start 2P", monospace;
+  font-size: 13px;
+  color: #f5c542;
+  letter-spacing: 2px;
+  text-shadow:
+    2px 2px 0 rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(245, 197, 66, 0.4);
+  margin-bottom: 6px;
+}
+
+.rpg-subtitle {
+  font-family: "VT323", monospace;
+  font-size: 17px;
+  color: #6b6480;
+  letter-spacing: 1px;
+}
+
+.rpg-label {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #c9922a;
+  letter-spacing: 1.5px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.rpg-input {
+  width: 100%;
+  background: #0b0915;
+  border: 2px solid #2a2540;
+  color: #e8e0ff;
+  font-family: "VT323", monospace;
+  font-size: 19px;
+  padding: 10px 14px;
+  outline: none;
+  letter-spacing: 1px;
+  border-radius: 0;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.rpg-input:focus {
+  border-color: #9b6dff;
+  box-shadow: 0 0 10px rgba(155, 109, 255, 0.3);
+}
+
+.rpg-input::placeholder {
+  color: #3d3660;
+}
+
+.rpg-btn {
+  width: 100%;
+  background: #5b21b6;
+  border: none;
+  color: #fff;
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #3b0764;
+  transition:
+    background 0.15s,
+    transform 0.1s,
+    box-shadow 0.1s;
+  border-radius: 0;
+}
+
+.rpg-btn:hover {
+  background: #6d28d9;
+}
+
+.rpg-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #3b0764;
+}
+
+.rpg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rpg-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 20px;
+}
+
+.rpg-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #2a2540;
+}
+
+.rpg-divider-dot {
+  color: #c9922a;
+  font-size: 8px;
+}
+
+.rpg-register {
+  font-family: "VT323", monospace;
+  font-size: 15px;
+  color: #6b6480;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.rpg-register a {
+  color: #f5c542;
+  text-decoration: none;
+}
+
+.rpg-register a:hover {
+  color: #9b6dff;
+}
+
+.eye-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b6480;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+
+.eye-btn:hover {
+  color: #9b6dff;
+}
+
+.rpg-border {
+  box-shadow:
+    0 0 0 3px #c9922a,
+    0 0 0 6px #0e0c16,
+    0 0 0 8px #3d3660,
+    0 0 40px rgba(155, 109, 255, 0.15);
+}
+
+/* Class selector grid */
+
+.class-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.class-card {
+  background: #0b0915;
+  border: 2px solid #2a2540;
+  padding: 12px 10px;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border-radius: 0;
+}
+
+.class-card:hover {
+  border-color: #6b6480;
+}
+
+.class-card.selected {
+  border-color: #9b6dff;
+  background: #1a0f2e;
+  box-shadow: 0 0 12px rgba(155, 109, 255, 0.3);
+}
+
+.class-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.class-name {
+  font-family: "Press Start 2P", monospace;
+  font-size: 7px;
+  color: #e8e0ff;
+  letter-spacing: 1px;
+}
+
+.class-desc {
+  font-family: "VT323", monospace;
+  font-size: 13px;
+  color: #6b6480;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.class-card.selected .class-name {
+  color: #f5c542;
+}
+
+.class-card.selected .class-desc {
+  color: #9b6dff;
+}
+
+/* Right panel preview */
+
+.preview-box {
+  background: #0b0915;
+  border: 2px solid #2a2540;
+  padding: 20px;
+  text-align: center;
+}
+
+.preview-icon {
+  font-size: 56px;
+  line-height: 1;
+  margin-bottom: 12px;
+  display: block;
+  filter: drop-shadow(0 0 16px rgba(155, 109, 255, 0.5));
+}
+
+.preview-name {
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  color: #f5c542;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  min-height: 14px;
+}
+
+.preview-class {
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  color: #9b6dff;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+  min-height: 22px;
+}
+
+/* Stat bars */
+
+.stat-row {
+  margin-bottom: 10px;
+}
+
+.stat-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: "Press Start 2P", monospace;
+  font-size: 6px;
+  color: #6b6480;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.stat-track {
+  height: 6px;
+  background: #1a1528;
+  border: 1px solid #2a2540;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.stat-fill.str {
+  background: #e05252;
+}
+.stat-fill.int {
+  background: #5b9bd5;
+}
+.stat-fill.agi {
+  background: #52c97a;
+}
+.stat-fill.fth {
+  background: #f5c542;
+}
+
+.preview-placeholder {
+  font-family: "VT323", monospace;
+  font-size: 15px;
+  color: #3d3660;
+  letter-spacing: 1px;
+  margin-top: 12px;
 }

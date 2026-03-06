@@ -86,7 +86,7 @@ const GamifiedSection = () => {
               transition={{ delay: i * 0.08 }}
               className="h-full"
             >
-              <Card className="flex flex-col h-full group hover:border-accent/50 transition-all duration-300">
+              <Card className="flex flex-col h-full group hover:border-accent/50 transition-all duration-300 bg-[#0f0f18]/70 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between">
                     <div className="bg-accent/10 w-12 h-12 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">

@@ -1,79 +1,217 @@
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import PixelBackground from "@/components/PixelBackground";
+
+const CLASSES = [
+  {
+    value: "guerreiro",
+    label: "Guerreiro",
+    icon: "⚔",
+    desc: "Força e resistência",
+  },
+  { value: "mago", label: "Mago", icon: "🜔", desc: "Poder arcano" },
+  {
+    value: "ladino",
+    label: "Ladino",
+    icon: "🗡",
+    desc: "Agilidade e furtividade",
+  },
+  { value: "clerigo", label: "Clérigo", icon: "✦", desc: "Cura e proteção" },
+];
 
 const createCharacter = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <Card className="py-0 w-full max-w-5xl grid md:grid-cols-2 overflow-hidden rounded-2xl shadow-2xl border border-zinc-800 bg-zinc-900/70 backdrop-blur">
-        <div className="p-10 flex flex-col justify-center">
-          <CardHeader className="px-0 pb-8">
-            <CardTitle className="text-3xl font-bold text-white">
-              Criar Personagem
-            </CardTitle>
-            <CardDescription className="text-zinc-400">
-              Crie seu personagem para começar a jogar
-            </CardDescription>
-          </CardHeader>
+  const supabase = createClient();
+  const router = useRouter();
 
-          <CardContent className="px-0">
-            {/* Formulário para criar personagem */}
-            <form className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-zinc-300">
-                  Nome do Personagem
-                </Label>
-                <Input
-                  id="name"
+  const [name, setName] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedClass) {
+      alert("Escolhe uma classe!");
+      return;
+    }
+    setLoading(true);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      const { error } = await supabase.from("characters").insert([
+        {
+          user_id: user.id,
+          name,
+          class: selectedClass,
+        },
+      ]);
+      if (error) console.log("Erro:", error.message);
+    }
+
+    setLoading(false);
+    router.push("/dashboard");
+  };
+
+  const chosen = CLASSES.find((c) => c.value === selectedClass);
+
+  return (
+    <>
+      <PixelBackground />
+
+      <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
+        <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
+          {/* Left — Form */}
+          <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">
+            <div className="mb-6">
+              <h1 className="rpg-title">CRIAR HERÓI</h1>
+              <p className="rpg-subtitle">&gt; escolhe o teu destino</p>
+            </div>
+
+            <div className="rpg-divider">
+              <div className="rpg-divider-line" />
+              <span className="rpg-divider-dot">◆</span>
+              <div className="rpg-divider-line" />
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label className="rpg-label">⚔ NOME DO PERSONAGEM</label>
+                <input
                   type="text"
+                  className="rpg-input"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Ex: Arathor, o Valente"
                   required
-                  className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="class" className="text-zinc-300">
-                  Classe
-                </Label>
-                <Select>
-                  <SelectTrigger className="w-full bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white">
-                    <SelectValue placeholder="Selecione a classe" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="guerreiro">Guerreiro</SelectItem>
-                    <SelectItem value="mago">Mago</SelectItem>
-                    <SelectItem value="ladino">Ladino</SelectItem>
-                    <SelectItem value="clerigo">Clérigo</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div>
+                <label className="rpg-label" style={{ marginBottom: 12 }}>
+                  ✦ ESCOLHE A TUA CLASSE
+                </label>
+                <div className="class-grid">
+                  {CLASSES.map((c) => (
+                    <button
+                      key={c.value}
+                      type="button"
+                      className={`class-card ${selectedClass === c.value ? "selected" : ""}`}
+                      onClick={() => setSelectedClass(c.value)}
+                    >
+                      <span className="class-icon">{c.icon}</span>
+                      <span className="class-name">{c.label}</span>
+                      <span className="class-desc">{c.desc}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-white text-black hover:bg-zinc-200 transition-all"
+              <div className="pt-1">
+                <button type="submit" className="rpg-btn" disabled={loading}>
+                  {loading ? "A CRIAR..." : "✦  COMEÇAR AVENTURA"}
+                </button>
+              </div>
+
+              <p
+                style={{
+                  fontFamily: "'VT323', monospace",
+                  fontSize: 15,
+                  color: "#6b6480",
+                  textAlign: "center",
+                  letterSpacing: 1,
+                }}
               >
-                Criar Personagem
-              </Button>
+                Já tens herói?{" "}
+                <Link
+                  href="/dashboard"
+                  style={{ color: "#f5c542", textDecoration: "none" }}
+                >
+                  Ir ao reino
+                </Link>
+              </p>
             </form>
-          </CardContent>
+          </div>
+
+          {/* Right — Preview */}
+          <div className="hidden md:flex flex-col justify-center p-10 bg-[#0f0d1a]">
+            <p
+              className="rpg-label"
+              style={{ textAlign: "center", marginBottom: 20 }}
+            >
+              👁 PRÉ-VISUALIZAÇÃO
+            </p>
+
+            <div className="preview-box">
+              <span className="preview-icon">
+                {chosen ? chosen.icon : "❓"}
+              </span>
+              <p className="preview-name">{name || "???"}</p>
+              <p className="preview-class">
+                {chosen ? chosen.label : "Sem classe"}
+              </p>
+
+              {/* Stat bars — change by class */}
+              {(() => {
+                const stats: Record<
+                  string,
+                  { str: number; int: number; agi: number; fth: number }
+                > = {
+                  guerreiro: { str: 90, int: 20, agi: 45, fth: 30 },
+                  mago: { str: 15, int: 95, agi: 35, fth: 55 },
+                  ladino: { str: 40, int: 50, agi: 95, fth: 20 },
+                  clerigo: { str: 35, int: 60, agi: 30, fth: 90 },
+                };
+                const s = selectedClass
+                  ? stats[selectedClass]
+                  : { str: 0, int: 0, agi: 0, fth: 0 };
+                return (
+                  <div style={{ textAlign: "left" }}>
+                    {[
+                      { key: "str", label: "FORÇA", cls: "str", val: s.str },
+                      {
+                        key: "int",
+                        label: "INTELIGÊNCIA",
+                        cls: "int",
+                        val: s.int,
+                      },
+                      {
+                        key: "agi",
+                        label: "AGILIDADE",
+                        cls: "agi",
+                        val: s.agi,
+                      },
+                      { key: "fth", label: "FÉ", cls: "fth", val: s.fth },
+                    ].map((stat) => (
+                      <div key={stat.key} className="stat-row">
+                        <div className="stat-label-row">
+                          <span>{stat.label}</span>
+                          <span>{stat.val}</span>
+                        </div>
+                        <div className="stat-track">
+                          <div
+                            className={`stat-fill ${stat.cls}`}
+                            style={{ width: `${stat.val}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+
+              {!selectedClass && (
+                <p className="preview-placeholder">seleciona uma classe...</p>
+              )}
+            </div>
+          </div>
         </div>
-      </Card>
-    </div>
+      </div>
+    </>
   );
 };
 

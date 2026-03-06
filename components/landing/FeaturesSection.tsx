@@ -78,7 +78,7 @@ const FeaturesSection = () => {
           {features.map((item, i) => (
             <Card
               key={i}
-              className="relative overflow-hidden rounded-xl bg-background"
+              className="relative overflow-hidden rounded-xl border border-[#2d2d4e]/60 bg-[#0f0f18]/70 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
             >
               {/* 🔥 Borda Animada */}
               <BorderBeam

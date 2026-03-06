@@ -2,19 +2,10 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import PixelBackground from "@/components/PixelBackground";
 
 const Register = () => {
   const supabase = createClient();
@@ -39,7 +30,6 @@ const Register = () => {
 
     setLoading(true);
 
-    // Criar conta no Supabase
     const { data: userData, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
@@ -51,19 +41,12 @@ const Register = () => {
       return;
     }
 
-    // Opcional: criar perfil do utilizador
     if (userData.user) {
-      const { error: profileError } = await supabase.from("profiles").insert([
-        {
-          id: userData.user.id,
-          name,
-          email,
-        },
-      ]);
-
-      if (profileError) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([{ id: userData.user.id, name, email }]);
+      if (profileError)
         console.log("Erro ao criar perfil:", profileError.message);
-      }
     }
 
     setLoading(false);
@@ -72,124 +55,122 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <Card className="py-0 w-full max-w-5xl grid md:grid-cols-2 overflow-hidden rounded-2xl shadow-2xl border border-zinc-800 bg-zinc-900/70 backdrop-blur">
-        {/* Left Side - Form */}
-        <div className="p-10 flex flex-col justify-center">
-          <CardHeader className="px-0 pb-8">
-            <CardTitle className="text-3xl font-bold text-white">
-              Criar Conta 📝
-            </CardTitle>
-            <CardDescription className="text-zinc-400">
-              Preencha os dados abaixo para criar sua conta
-            </CardDescription>
-          </CardHeader>
+    <>
+      <PixelBackground />
 
-          <CardContent className="px-0">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-zinc-300">
-                  Nome
-                </Label>
-                <Input
-                  id="name"
+      <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
+        <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
+          {/* Left — Form */}
+          <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">
+            <div className="mb-6">
+              <h1 className="rpg-title">CRIAR HERÓI</h1>
+              <p className="rpg-subtitle">&gt; regista-te no reino</p>
+            </div>
+
+            <div className="rpg-divider">
+              <div className="rpg-divider-line" />
+              <span className="rpg-divider-dot">◆</span>
+              <div className="rpg-divider-line" />
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="rpg-label">⚔ NOME</label>
+                <input
                   type="text"
+                  className="rpg-input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                  placeholder="O teu nome de herói"
                   required
-                  className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-zinc-300">
-                  Email
-                </Label>
-                <Input
-                  id="email"
+              <div>
+                <label className="rpg-label">📜 EMAIL</label>
+                <input
                   type="email"
+                  className="rpg-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="heroi@reino.com"
                   required
-                  className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
                 />
               </div>
 
-              <div className="space-y-2 relative">
-                <Label htmlFor="password" className="text-zinc-300">
-                  Senha
-                </Label>
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="bg-zinc-800 border-zinc-700 pr-10 focus:ring-2 focus:ring-white"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-[50%] text-zinc-400 hover:text-white transition"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              <div>
+                <label className="rpg-label">🗝 SENHA</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="rpg-input"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    style={{ paddingRight: 44 }}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="rpg-label">🔒 CONFIRMAR SENHA</label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    className="rpg-input"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    style={{ paddingRight: 44 }}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={15} />
+                    ) : (
+                      <Eye size={15} />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button type="submit" className="rpg-btn" disabled={loading}>
+                  {loading ? "A CRIAR..." : "✦  CRIAR HERÓI"}
                 </button>
               </div>
 
-              <div className="space-y-2 relative">
-                <Label htmlFor="confirmPassword" className="text-zinc-300">
-                  Confirmar Senha
-                </Label>
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="bg-zinc-800 border-zinc-700 pr-10 focus:ring-2 focus:ring-white"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-[50%] text-zinc-400 hover:text-white transition"
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
-
-              <Button
-                type="submit"
-                className="w-full bg-white text-black hover:bg-zinc-200 transition-all"
-                disabled={loading}
-              >
-                {loading ? "Criando..." : "Registrar"}
-              </Button>
-
-              <p className="text-sm text-zinc-500 text-center">
-                Já tem conta?{" "}
-                <span className="text-white hover:underline cursor-pointer">
-                  <Link href="/login">Entrar</Link>
-                </span>
+              <p className="rpg-register">
+                Já tens conta? <Link href="/login">Entrar</Link>
               </p>
             </form>
-          </CardContent>
-        </div>
+          </div>
 
-        {/* Right Side - Image */}
-        <div className="hidden md:block relative">
-          <img
-            src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772658391/mqpx4pcsz0xzkn2utesj.png"
-            alt="Register"
-            className="h-full w-full object-cover object-right"
-          />
-          <div className="absolute inset-0 " />
+          {/* Right — Image */}
+          <div className="hidden md:block relative">
+            <img
+              src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772658391/mqpx4pcsz0xzkn2utesj.png"
+              alt="Register"
+              className="h-full w-full object-cover object-right"
+              style={{ filter: "brightness(0.85) saturate(1.2)" }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />
+          </div>
         </div>
-      </Card>
-    </div>
+      </div>
+    </>
   );
 };
 

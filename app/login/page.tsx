@@ -2,19 +2,10 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import PixelBackground from "@/components/PixelBackground";
 
 const Auth = () => {
   const supabase = createClient();
@@ -22,111 +13,114 @@ const Auth = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       alert(error.message);
     } else {
       console.log("Login feito:", data);
-      router.push("/create-character"); // redireciona para dashboard
+      router.push("/create-character");
     }
-
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
-      <Card className="py-0 w-full max-w-5xl grid md:grid-cols-2 overflow-hidden rounded-2xl shadow-2xl border border-zinc-800 bg-zinc-900/70 backdrop-blur">
-        {/* Left Side - Form */}
-        <div className="p-10 flex flex-col justify-center">
-          <CardHeader className="px-0 pb-8">
-            <CardTitle className="text-3xl font-bold text-white">
-              Bem-vindo 👋
-            </CardTitle>
-            <CardDescription className="text-zinc-400">
-              Entre com suas credenciais para acessar sua conta
-            </CardDescription>
-          </CardHeader>
+    <>
 
-          <CardContent className="px-0">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-zinc-300">
-                  Email
-                </Label>
-                <Input
-                  id="email"
+      <PixelBackground />
+
+      <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
+        <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
+
+          {/* Left — Form */}
+          <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">
+
+            {/* Title */}
+            <div className="mb-8">
+              <h1 className="rpg-title">BEM-VINDO</h1>
+              <p className="rpg-subtitle">&gt; entra no reino, aventureiro</p>
+            </div>
+
+            <div className="rpg-divider">
+              <div className="rpg-divider-line" />
+              <span className="rpg-divider-dot">◆</span>
+              <div className="rpg-divider-line" />
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Email */}
+              <div>
+                <label className="rpg-label">📜 EMAIL</label>
+                <input
                   type="email"
+                  className="rpg-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="heroi@reino.com"
                   required
-                  className="bg-zinc-800 border-zinc-700 focus:ring-2 focus:ring-white"
                 />
               </div>
 
-              <div className="space-y-2 relative">
-                <Label htmlFor="password" className="text-zinc-300">
-                  Senha
-                </Label>
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="bg-zinc-800 border-zinc-700 pr-10 focus:ring-2 focus:ring-white"
-                />
+              {/* Password */}
+              <div>
+                <label className="rpg-label">🗝 SENHA</label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    className="rpg-input"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    style={{ paddingRight: 44 }}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className="eye-btn"
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-[50%] text-zinc-400 hover:text-white transition"
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              <div className="pt-2">
+                <button type="submit" className="rpg-btn" disabled={loading}>
+                  {loading ? "A ENTRAR..." : "⚔  ENTRAR NO REINO"}
                 </button>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-white text-black hover:bg-zinc-200 transition-all"
-                disabled={loading}
-              >
-                {loading ? "Entrando..." : "Entrar"}
-              </Button>
-
-              <p className="text-sm text-zinc-500 text-center">
-                Não tem conta?{" "}
-                <span className="text-white hover:underline cursor-pointer">
-                  <Link href="/register">Criar agora</Link>
-                </span>
+              <p className="rpg-register">
+                Sem conta?{" "}
+                <Link href="/register">Criar herói</Link>
               </p>
-            </form>
-          </CardContent>
-        </div>
 
-        {/* Right Side - Image */}
-        <div className="hidden md:block relative">
-          <img
-            src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772657207/n5mdiixbggyimoadgzdq.png"
-            alt="Login"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 " />
+            </form>
+          </div>
+
+          {/* Right — Image */}
+          <div className="hidden md:block relative">
+            <img
+              src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772657207/n5mdiixbggyimoadgzdq.png"
+              alt="Login"
+              className="h-full w-full object-cover"
+              style={{ filter: "brightness(0.85) saturate(1.2)" }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />
+          </div>
+
         </div>
-      </Card>
-    </div>
+      </div>
+    </>
   );
 };
 
-export default Auth;
+export default function Page() {
+  return <Auth />;
+}
