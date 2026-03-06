@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
 
+
 const Auth = () => {
   const supabase = createClient();
   const router = useRouter();
