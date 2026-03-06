@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState } from "react";
-const cn = (...classes) => classes.filter(Boolean).join(" ");
+const cn = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(" ");
 
 export interface ThreeDHoverGalleryProps {
   images?: string[];
@@ -192,7 +193,7 @@ const ThreeDHoverGallery: React.FC<ThreeDHoverGalleryProps> = ({
     <div
       className={cn(
         "flex items-center justify-center min-h-screen w-full overflow-hidden bg-background",
-        className
+        className,
       )}
       style={backgroundColor ? { backgroundColor, ...style } : style}
     >
