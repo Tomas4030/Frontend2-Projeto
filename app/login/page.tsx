@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
 
-
 const Auth = () => {
   const supabase = createClient();
   const router = useRouter();
@@ -20,27 +19,27 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
     if (error) {
       alert(error.message);
     } else {
       console.log("Login feito:", data);
-      router.push("/create-character");
+      router.push("/dashboard");
     }
     setLoading(false);
   };
 
   return (
     <>
-
       <PixelBackground />
 
       <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
         <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
-
           {/* Left — Form */}
           <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">
-
             {/* Title */}
             <div className="mb-8">
               <h1 className="rpg-title">BEM-VINDO</h1>
@@ -54,7 +53,6 @@ const Auth = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
-
               {/* Email */}
               <div>
                 <label className="rpg-label">📜 EMAIL</label>
@@ -98,10 +96,8 @@ const Auth = () => {
               </div>
 
               <p className="rpg-register">
-                Sem conta?{" "}
-                <Link href="/register">Criar herói</Link>
+                Sem conta? <Link href="/register">Criar herói</Link>
               </p>
-
             </form>
           </div>
 
@@ -115,7 +111,6 @@ const Auth = () => {
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />
           </div>
-
         </div>
       </div>
     </>

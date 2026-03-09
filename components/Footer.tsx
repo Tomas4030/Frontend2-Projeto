@@ -9,7 +9,7 @@ const formattedDate = new Intl.DateTimeFormat("pt-BR", {
 
 const Footer = () => {
   const pathname = usePathname();
-  const hideFooter = pathname === "/login" || pathname === "/register";
+  const hideFooter = pathname === "/login" || pathname === "/register" || pathname.startsWith("/dashboard");
 
   if (hideFooter) return null;
 

@@ -50,8 +50,7 @@ const Register = () => {
     }
 
     setLoading(false);
-    alert("Conta criada com sucesso! Faça login.");
-    router.push("/login");
+    router.push("/create-character");
   };
 
   return (
