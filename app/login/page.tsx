@@ -26,6 +26,10 @@ const Auth = () => {
     if (error) {
       alert(error.message);
     } else {
+      // Salva o token JWT no localStorage
+      if (data?.session?.access_token) {
+        localStorage.setItem("token", data.session.access_token);
+      }
       console.log("Login feito:", data);
       router.push("/dashboard");
     }
@@ -106,7 +110,7 @@ const Auth = () => {
             <img
               src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772657207/n5mdiixbggyimoadgzdq.png"
               alt="Login"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-right"
               style={{ filter: "brightness(0.85) saturate(1.2)" }}
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />

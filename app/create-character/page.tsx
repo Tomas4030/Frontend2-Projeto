@@ -5,22 +5,33 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
+import { useEffect } from "react";
 
 const CLASSES = [
   {
     value: "guerreiro",
     label: "Guerreiro",
-    icon: "⚔",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
     desc: "Força e resistência",
   },
-  { value: "mago", label: "Mago", icon: "🜔", desc: "Poder arcano" },
   {
-    value: "ladino",
-    label: "Ladino",
-    icon: "🗡",
-    desc: "Agilidade e furtividade",
+    value: "mago",
+    label: "Mago",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
+    desc: "Poder arcano",
   },
-  { value: "clerigo", label: "Clérigo", icon: "✦", desc: "Cura e proteção" },
+  {
+    value: "druida",
+    label: "Druida",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
+    desc: "Poder da natureza e metamorfose",
+  },
+  {
+    value: "arqueiro",
+    label: "Arqueiro",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
+    desc: "Precisão e ataques à distância",
+  },
 ];
 
 const createCharacter = () => {
@@ -30,6 +41,9 @@ const createCharacter = () => {
   const [name, setName] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  // Verifica se já existe personagem ao carregar a página
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,7 +117,13 @@ const createCharacter = () => {
                       className={`class-card ${selectedClass === c.value ? "selected" : ""}`}
                       onClick={() => setSelectedClass(c.value)}
                     >
-                      <span className="class-icon">{c.icon}</span>
+                      <span className="class-img">
+                        <img
+                          src={c.img}
+                          alt={c.label}
+                          style={{ width: 40, height: 40 }}
+                        />
+                      </span>
                       <span className="class-name">{c.label}</span>
                       <span className="class-desc">{c.desc}</span>
                     </button>
@@ -147,8 +167,16 @@ const createCharacter = () => {
             </p>
 
             <div className="preview-box">
-              <span className="preview-icon">
-                {chosen ? chosen.icon : "❓"}
+              <span className="preview-img">
+                {chosen ? (
+                  <img
+                    src={chosen.img}
+                    alt={chosen.label}
+                    style={{ width: 60, height: 60 }}
+                  />
+                ) : (
+                  <span style={{ fontSize: 40 }}>❓</span>
+                )}
               </span>
               <p className="preview-name">{name || "???"}</p>
               <p className="preview-class">
