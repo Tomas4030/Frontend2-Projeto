@@ -91,6 +91,7 @@ export function NewQuestSheet({
   const [title, setTitle] = useState("");
   const [difficulty, setDifficulty] = useState<Difficulty>("easy");
   const [date, setDate] = useState<Date>();
+  const [recurrence, setRecurrence] = useState<string>("diario");
 
   const config = difficultyConfig[difficulty];
 
@@ -106,16 +107,18 @@ export function NewQuestSheet({
       setLoading(false);
       return;
     }
+    setRecurrence("diario");
 
-    // No teu handleSubmit, antes do insert:
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + 24);
     const { error } = await supabase.from("tasks").insert([
       {
         user_id: user.id,
         title: title,
         xp_reward: config.xp,
         hp_reward: config.hp,
-        // Se ainda não criaste a coluna no Supabase, comenta a linha abaixo:
-        due_date: date ? date.toISOString() : null,
+        penalty_hp: config.hp,
+        expires_at: expiresAt.toISOString(),
         is_completed: false,
       },
     ]);
@@ -138,7 +141,9 @@ export function NewQuestSheet({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <button className="trigger-btn">✦ NOVA QUEST</button>
+        <button className="trigger-btn hover:text-[#f5c542] cursor-pointer">
+          ✦ NOVA QUEST
+        </button>
       </SheetTrigger>
 
       {/* Alteração na largura e paddings aqui */}
@@ -156,8 +161,8 @@ export function NewQuestSheet({
 
           <form id="quest-form" onSubmit={handleSubmit} className="grid gap-6">
             {/* Title */}
-            <div className="grid gap-2">
-              <label className="rpg-label">Título da Missão</label>
+            <div className="grid gap-2 ">
+              <label className="rpg-label text-xs">Título da Missão</label>
               <Input
                 value={title}
                 required
@@ -169,12 +174,12 @@ export function NewQuestSheet({
 
             {/* Difficulty */}
             <div className="grid gap-2">
-              <label className="rpg-label">Dificuldade</label>
+              <label className="rpg-label text-xs">Dificuldade</label>
               <Select
                 value={difficulty}
                 onValueChange={(v) => setDifficulty(v as Difficulty)}
               >
-                <SelectTrigger className="rpg-select-trigger h-11 w-full">
+                <SelectTrigger className="rpg-select-trigger h-11 w-full ">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rpg-select-content">
@@ -187,28 +192,57 @@ export function NewQuestSheet({
               </Select>
             </div>
 
-            {/* Date */}
+            {/* Data / Recorrência */}
             <div className="grid gap-2">
-              <label className="rpg-label">Data Limite</label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="date-btn h-11 w-full flex justify-between px-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <CalendarIcon size={14} />
-                      <span>
-                        {date ? format(date, "PPP") : "Sem prazo definido"}
-                      </span>
-                    </div>
-                    <ChevronDownIcon size={14} className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar mode="single" selected={date} onSelect={setDate} />
-                </PopoverContent>
-              </Popover>
+              <label className="rpg-label text-xs">Data Limite</label>
+              <Select
+                value={recurrence}
+                onValueChange={(value) => {
+                  setRecurrence(value);
+                  if (value !== "personalizado") setDate(undefined);
+                }}
+              >
+                <SelectTrigger className="rpg-select-trigger h-11 w-full">
+                  <SelectValue placeholder="Tipo de recorrência" />
+                </SelectTrigger>
+                <SelectContent className="rpg-select-content">
+                  <SelectItem value="diario">Diário</SelectItem>
+                  <SelectItem value="semanal">Semanal</SelectItem>
+                  <SelectItem value="anual">Anual</SelectItem>
+                  <SelectItem value="personalizado">Personalizado</SelectItem>
+                </SelectContent>
+              </Select>
+              {recurrence === "personalizado" && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="date-btn h-11 w-full flex items-center justify-between px-3"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CalendarIcon size={14} />
+                        <span>
+                          {date ? format(date, "PPP") : "Selecionar data"}
+                        </span>
+                      </div>
+                      <ChevronDownIcon size={14} className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={(day) => {
+                        setDate(day);
+                      }}
+                      initialFocus
+                      disabled={(day) =>
+                        day < new Date(new Date().setHours(0, 0, 0, 0))
+                      }
+                    />
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
 
             {/* Reward Card */}
