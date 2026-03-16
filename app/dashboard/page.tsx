@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import PixelBackground from "@/components/PixelBackground";
 import Link from "next/link";
 import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
+import { ConfettiButton } from "@/components/lightswind/confetti-button";
+import { Sparkles } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -207,9 +209,17 @@ export default function DashboardPage() {
                       </div>
                       <button
                         onClick={() => completeTask(task.id, task.xp_reward)}
-                        className="text-[10px] border border-[#2a2540] px-4 py-2 hover:bg-[#f5c542] hover:text-black transition-all uppercase font-bold"
+                        className="text-[10px] px-4 py-2 hover:text-black transition-all uppercase font-bold"
                       >
-                        Completar
+                        <ConfettiButton
+                          icon={<Sparkles className="h-4 w-4" />}
+                          confettiOptions={{
+                            particleCount: 100,
+                            spread: 70,
+                          }}
+                        >
+                          Completar
+                        </ConfettiButton>
                       </button>
                     </div>
                   ))
