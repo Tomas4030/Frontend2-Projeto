@@ -22,9 +22,9 @@ export default function DashboardPage() {
         .from("tasks")
         .select("*")
         .eq("user_id", userId)
-        .eq("is_completed", false)
+        // Mostra tarefas não completas OU hábitos (que são sempre ativos)
+        .or("is_completed.eq.false,type.eq.habito")
         .order("created_at", { ascending: false });
-      console.log("Tarefas buscadas:", data);
 
       if (data) setTasks(data);
     },
@@ -43,11 +43,16 @@ export default function DashboardPage() {
         return;
       }
 
-      const { data: char } = await supabase
+      const { data: char, error: charError } = await supabase
         .from("characters")
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
+
+      if (charError) {
+        console.error("Erro ao buscar personagem:", charError);
+        return;
+      }
 
       if (char) {
         if (char.hp <= 0) {
@@ -55,7 +60,13 @@ export default function DashboardPage() {
           return;
         }
 
-        setCharacter(char);
+        const { xp, level } = handleLevelUp(char.xp || 0, char.level || 1);
+
+        setCharacter({
+          ...char,
+          xp,
+          level,
+        });
       }
 
       await fetchTasks(user.id);
@@ -65,24 +76,82 @@ export default function DashboardPage() {
     fetchData();
   }, [router, supabase, fetchTasks]);
 
-  const completeTask = async (taskId: string, xpReward: number) => {
-    const { error: taskError } = await supabase
-      .from("tasks")
-      .update({ is_completed: true })
-      .eq("id", taskId);
+  const completeTask = async (task: any) => {
+    if (!character) return;
 
-    if (!taskError && character) {
-      const newXp = character.xp + xpReward;
+    // Criamos cópias dos valores atuais
+    let newXp = character.xp || 0;
+    let newLevel = character.level || 1;
+    let newHp = character.hp || 0;
 
-      await supabase
-        .from("characters")
-        .update({ xp: newXp })
-        .eq("id", character.id);
+    const isNegative = task.direction === "negativo";
 
-      setTasks((prev) => prev.filter((t) => t.id !== taskId));
-      await fetchTasks(character.user_id);
-      setCharacter((prev: any) => ({ ...prev, xp: newXp }));
+    if (isNegative) {
+      // Hábito Ruim: Perde vida, XP não mexe
+      newHp = Math.max(0, character.hp - (task.penalty_hp || 10));
+      console.log("Perdendo vida: ", newHp);
+    } else {
+      // Tarefa Boa: Ganha XP e pode recuperar vida
+      const gainedTotalXp = (character.xp || 0) + (task.xp_reward || 0);
+      const leveled = handleLevelUp(gainedTotalXp, character.level || 1);
+      newXp = leveled.xp;
+      newLevel = leveled.level;
+      newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
     }
+
+    // ATUALIZAÇÃO NO SUPABASE
+    const { data: updatedChar, error: charError } = await supabase
+      .from("characters")
+      .update({
+        xp: newXp,
+        level: newLevel,
+        hp: newHp,
+      })
+      .eq("id", character.id)
+      .select()
+      .single();
+
+    if (charError) {
+      console.error("Erro ao atualizar status:", charError);
+      return;
+    }
+
+    // ATUALIZAÇÃO DA TASK NA UI
+    if (task.type !== "habito") {
+      // Se não for hábito, marca como concluída e remove da lista
+      const { error: taskError } = await supabase
+        .from("tasks")
+        .update({ is_completed: true })
+        .eq("id", task.id);
+
+      if (!taskError) {
+        setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      }
+    }
+
+    // Atualiza o estado local com os dados que vieram do banco
+    setCharacter(updatedChar);
+
+    // Se morreu, tchau!
+    if (newHp <= 0) router.push("/revive");
+  };
+
+  const handleLevelUp = (xp: number, level: number) => {
+    let currentXP = xp;
+    let currentLevel = level;
+
+    let xpForNextLevel = 100 * currentLevel;
+
+    while (currentXP >= xpForNextLevel) {
+      currentXP -= xpForNextLevel;
+      currentLevel += 1;
+      xpForNextLevel = 100 * currentLevel;
+    }
+
+    return {
+      xp: currentXP,
+      level: currentLevel,
+    };
   };
 
   if (loading) {
@@ -136,7 +205,7 @@ export default function DashboardPage() {
                     <StatBar
                       label="XP"
                       current={character.xp}
-                      max={100}
+                      max={100 * (character.level || 1)}
                       color="bg-yellow-500"
                       isXP
                     />
@@ -174,60 +243,90 @@ export default function DashboardPage() {
                 />
               </div>
 
-              <div className="space-y-4 overflow-y-auto max-h-[600px] pr-2">
+              <div className="space-y-4 overflow-y-auto max-h-[600px] pr-2 font-mono">
                 {tasks.length > 0 ? (
-                  tasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="flex items-center justify-between p-4 bg-[#1a162e] border border-[#2a2540] hover:border-[#f5c542] transition-all group"
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="text-[#f5c542] font-bold text-xl">
-                          !
+                  tasks.map((task) => {
+                    const isHabit = task.type === "habito";
+                    const isDaily = task.type === "diaria";
+                    const isNegative = task.direction === "negativo";
+
+                    return (
+                      <div
+                        key={task.id}
+                        className="flex items-center justify-between p-4 bg-[#1a162e] border transition-all"
+                      >
+                        {/* INFO DA TASK */}
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`font-bold text-xl ${isNegative ? "text-red-500" : "text-[#f5c542]"}`}
+                          >
+                            {isHabit ? "♾️" : isDaily ? "📅" : "📜"}
+                          </div>
+                          <div>
+                            <h4
+                              className={`font-bold text-sm uppercase ${isNegative ? "text-red-400" : "text-[#eee]"}`}
+                            >
+                              {task.title}
+                            </h4>
+                            <p className="text-[9px] uppercase font-bold">
+                              {isNegative ? (
+                                <span className="text-red-500">
+                                  PENALIDADE: -{task.penalty_hp} HP
+                                </span>
+                              ) : (
+                                <span className="text-yellow-500">
+                                  RECOMPENSA: +{task.xp_reward} XP
+                                </span>
+                              )}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="text-[#eee] group-hover:text-[#f5c542] transition-colors">
-                            {task.title}
-                          </h4>
-                          <p className="text-[10px] text-red-400">
-                            Expira em:{" "}
-                            {task.expires_at
-                              ? new Date(task.expires_at).toLocaleString()
-                              : "Sem prazo"}
-                          </p>
-                          <p className="text-[10px] text-[#6b6480] uppercase">
-                            Recompensa:{" "}
-                            <span className="text-yellow-500">
-                              +{task.xp_reward} XP
-                            </span>{" "}
-                            |{" "}
-                            <span className="text-red-400">
-                              +{task.hp_reward} HP
-                            </span>
-                          </p>
+
+                        {/* BOTÕES DE AÇÃO */}
+                        <div className="flex items-center gap-2">
+                          {isHabit ? (
+                            /* Se for hábito negativo, mostra apenas o botão de MENOS */
+                            isNegative ? (
+                              <button
+                                onClick={() => completeTask(task)}
+                                className="w-10 h-10 flex items-center justify-center border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white font-black text-xl transition-all"
+                              >
+                                −
+                              </button>
+                            ) : (
+                              /* Se for hábito positivo, mostra o botão de MAIS */
+                              <button
+                                onClick={() => completeTask(task)}
+                                className="w-10 h-10 flex items-center justify-center border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-black font-black text-xl transition-all"
+                              >
+                                +
+                              </button>
+                            )
+                          ) : (
+                            /* DIÁRIAS OU AFAZERES */
+                            <ConfettiButton
+                              confettiOptions={
+                                isNegative
+                                  ? { particleCount: 0 }
+                                  : { particleCount: 100 }
+                              }
+                              onClick={() => completeTask(task)}
+                              className={`text-[10px] px-4 py-2 uppercase font-bold border transition-all ${
+                                isDaily
+                                  ? "border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-black"
+                                  : "border-[#f5c542] text-[#f5c542] hover:bg-[#f5c542] hover:text-black"
+                              }`}
+                            >
+                              {isDaily ? "✔ Diária" : "✦ Concluir"}
+                            </ConfettiButton>
+                          )}
                         </div>
                       </div>
-                      <button
-                        onClick={() => completeTask(task.id, task.xp_reward)}
-                        className="text-[10px] px-4 py-2 hover:text-black transition-all uppercase font-bold"
-                      >
-                        <ConfettiButton
-                          icon={<Sparkles className="h-4 w-4" />}
-                          confettiOptions={{
-                            particleCount: 100,
-                            spread: 70,
-                          }}
-                        >
-                          Completar
-                        </ConfettiButton>
-                      </button>
-                    </div>
-                  ))
+                    );
+                  })
                 ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center opacity-40">
-                    <p className="text-[#6b6480] text-center italic">
-                      Não há missões disponíveis no mural...
-                    </p>
+                  <div className="py-20 text-center opacity-30 italic text-sm">
+                    Sem missões no mural...
                   </div>
                 )}
               </div>

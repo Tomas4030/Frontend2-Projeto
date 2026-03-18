@@ -38,11 +38,14 @@ const confettiButtonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
-        outline: "border bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/90",
+        outline:
+          "border bg-background hover:bg-accent hover:text-accent-foreground",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        gradient: "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700",
+        gradient:
+          "bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700",
       },
       size: {
         default: "h-10 px-4 py-2 rounded-md",
@@ -67,11 +70,12 @@ const confettiButtonVariants = cva(
       size: "default",
       animation: "scale",
     },
-  }
+  },
 );
 
 export interface ConfettiButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof confettiButtonVariants> {
   asChild?: boolean;
   icon?: React.ReactNode;
@@ -102,7 +106,7 @@ const ConfettiButton = React.forwardRef<HTMLButtonElement, ConfettiButtonProps>(
       triggerOnHover = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [scriptLoaded, setScriptLoaded] = useState(false);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -129,7 +133,12 @@ const ConfettiButton = React.forwardRef<HTMLButtonElement, ConfettiButtonProps>(
 
     // Auto confetti on mount if needed
     useEffect(() => {
-      if (scriptLoaded && autoConfetti && window.confetti && buttonRef.current) {
+      if (
+        scriptLoaded &&
+        autoConfetti &&
+        window.confetti &&
+        buttonRef.current
+      ) {
         const rect = buttonRef.current.getBoundingClientRect();
         const x = (rect.left + rect.width / 2) / window.innerWidth;
         const y = (rect.top + rect.height / 2) / window.innerHeight;
@@ -161,7 +170,10 @@ const ConfettiButton = React.forwardRef<HTMLButtonElement, ConfettiButtonProps>(
           else if (ref) ref.current = node;
           buttonRef.current = node;
         }}
-        className={cn(confettiButtonVariants({ variant, size, animation }), className)}
+        className={cn(
+          confettiButtonVariants({ variant, size, animation }),
+          className,
+        )}
         onClick={(e) => {
           if (scriptLoaded) {
             triggerConfetti();
@@ -182,7 +194,7 @@ const ConfettiButton = React.forwardRef<HTMLButtonElement, ConfettiButtonProps>(
         )}
       </button>
     );
-  }
+  },
 );
 
 ConfettiButton.displayName = "ConfettiButton";
