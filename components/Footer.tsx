@@ -15,9 +15,7 @@ const Footer = () => {
 
   return (
     <footer className="w-full mt-auto relative overflow-hidden">
-      {/* Container do Texto: 
-          Usamos z-10 e relative para garantir que o texto fique ACIMA da imagem.
-      */}
+   
       <div className="container mx-auto px-4 relative z-10 pt-10">
         <div className="flex flex-wrap items-baseline justify-between gap-4  pb-4">
           <p className="text-sm text-white drop-shadow-md">

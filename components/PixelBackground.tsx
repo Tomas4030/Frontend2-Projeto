@@ -13,7 +13,7 @@ export default function PixelBackground() {
   const [stars, setStars] = useState<Star[]>([]);
 
   useEffect(() => {
-    // Reduced from 40 to 20 stars for better performance
+
     const generatedStars = Array.from({ length: 20 }, () => ({
       x: Math.random() * 100,
       y: Math.random() * 100,

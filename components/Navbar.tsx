@@ -19,7 +19,11 @@ export default function Navbar() {
   const [authReady, setAuthReady] = useState(false);
 
   const isLandingPage = pathname === "/";
-  const isLoginPage = pathname === "/login" || pathname === "/register" || pathname === "/dashboard/revive" || pathname.startsWith("/create-character" ) ;
+  const isLoginPage =
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/dashboard/revive" ||
+    pathname === "/create-character";
 
   const landingLinks: NavItem[] = useMemo(
     () => [
@@ -47,10 +51,12 @@ export default function Navbar() {
 
     init();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setAuthReady(true);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+        setAuthReady(true);
+      },
+    );
 
     return () => {
       mounted = false;
@@ -58,7 +64,6 @@ export default function Navbar() {
     };
   }, [supabase]);
 
-  // Scroll suave para anchors (e dá um “offset” por causa da navbar fixa)
   const handleAnchorNav = (href: string) => (e: React.MouseEvent) => {
     if (!href.startsWith("#")) return;
 
@@ -67,7 +72,7 @@ export default function Navbar() {
     const el = document.getElementById(id);
     if (!el) return;
 
-    const navOffset = 72; // ~ h-16 + margin
+    const navOffset = 72;
     const top = el.getBoundingClientRect().top + window.scrollY - navOffset;
     window.scrollTo({ top, behavior: "smooth" });
     setIsOpen(false);
@@ -85,7 +90,6 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-[#2d2d4e]/60 bg-[#0f0f18]/70 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
         <div className="flex items-center gap-2">
           <Sword className="h-6 w-6 text-primary" aria-hidden="true" />
           <Link
@@ -96,20 +100,14 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-6">
           {isLandingPage && (
             <NavLinks items={landingLinks} onAnchorClick={handleAnchorNav} />
           )}
 
-          <AuthActions
-            authReady={authReady}
-            user={user}
-            onSignOut={signOut}
-          />
+          <AuthActions authReady={authReady} user={user} onSignOut={signOut} />
         </div>
 
-        {/* Mobile toggle */}
         <button
           type="button"
           className="md:hidden inline-flex items-center justify-center rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -118,12 +116,13 @@ export default function Navbar() {
           aria-controls="mobile-menu"
           onClick={() => setIsOpen((v) => !v)}
         >
-          <span className="sr-only">{isOpen ? "Fechar menu" : "Abrir menu"}</span>
+          <span className="sr-only">
+            {isOpen ? "Fechar menu" : "Abrir menu"}
+          </span>
           {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {isOpen && (
         <div
           id="mobile-menu"

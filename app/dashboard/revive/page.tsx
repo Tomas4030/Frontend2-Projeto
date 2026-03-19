@@ -112,7 +112,6 @@ export default function RevivePage() {
           </div>
 
           <div className="grid gap-4 mt-12">
-            {/* OPÇÃO 1: REVIVER */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -136,7 +135,6 @@ export default function RevivePage() {
               <span className="text-xl">€0.99</span>
             </motion.button>
 
-            {/* OPÇÃO 2: RECOMEÇAR */}
             <div className="relative pt-4">
               <button
                 onClick={handleRestart}

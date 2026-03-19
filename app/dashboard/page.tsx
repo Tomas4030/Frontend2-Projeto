@@ -7,9 +7,7 @@ import Link from "next/link";
 import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
 import { ConfettiButton } from "@/components/lightswind/confetti-button";
 
-/* ─────────────────────────────────────────────
-   TIPOS & HELPERS (Mantidos)
-───────────────────────────────────────────── */
+
 type Task = {
   id: string;
   title: string;
@@ -20,7 +18,7 @@ type Task = {
   penalty_hp?: number;
   is_completed?: boolean;
   notes?: string;
-  difficulty?: "trivial" | "facil" | "medio" | "dificil";
+  difficulty?: "facil" | "medio" | "dificil";
   streak?: number;
 };
 
@@ -58,7 +56,6 @@ const CLASS_TITLE: Record<string, string> = {
 };
 
 const DIFFICULTY_COLORS: Record<string, string> = {
-  trivial: "#6b6480",
   facil: "#4ade80",
   medio: "#f5c542",
   dificil: "#ef4444",
@@ -76,9 +73,7 @@ function handleLevelUp(xp: number, level: number) {
   return { xp: currentXP, level: currentLevel };
 }
 
-/* ─────────────────────────────────────────────
-   COMPONENTE PRINCIPAL
-───────────────────────────────────────────── */
+
 export default function DashboardPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -200,12 +195,9 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* min-h-screen + flex + flex-col garante que o conteúdo possa ser centralizado */}
       <main className="min-h-screen relative z-10 font-mono flex flex-col">
-        {/* CONTAINER CENTRALIZADO: flex-1 e items-center colocam o grid no meio da tela verticalmente */}
         <div className="flex-1 flex items-center py-12">
           <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
-            {/* COLUNA ESQUERDA — HERÓI */}
             <aside className="xl:col-span-3 space-y-6">
               <div className="bg-[#13111e] border border-[#2a2540] p-6 shadow-xl">
                 {character ? (
@@ -289,7 +281,7 @@ export default function DashboardPage() {
               </div>
             </aside>
 
-            {/* COLUNA CENTRAL — MISSÕES */}
+        
             <section className="xl:col-span-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
@@ -302,7 +294,7 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* Filtros Maiores */}
+             
               <div className="flex gap-1 bg-[#0a0910] border border-[#2a2540] p-1.5 shadow-lg">
                 {(["todos", "habito", "diaria", "afazer"] as const).map((f) => (
                   <button
@@ -341,7 +333,7 @@ export default function DashboardPage() {
               </div>
             </section>
 
-            {/* COLUNA DIREITA */}
+           
             <aside className="xl:col-span-3">
               <div className="bg-[#13111e] border border-[#2a2540] p-6">
                 <h4 className="text-xs text-[#6b6480] uppercase tracking-widest mb-5 flex items-center gap-2">
@@ -390,9 +382,7 @@ export default function DashboardPage() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   COMPONENTE: TASK CARD (Texto aumentado)
-───────────────────────────────────────────── */
+
 function TaskCard({
   task,
   onComplete,
@@ -416,8 +406,8 @@ function TaskCard({
         className="shrink-0 w-12 text-center"
         style={{ color: isNegative ? "#ef4444" : cfg.color }}
       >
-        <div className="text-2xl mb-1">{cfg.icon}</div>
-        <div className="text-[8px] font-black uppercase tracking-tighter opacity-70">
+        <div className="text-4xl mb-1">{cfg.icon}</div>
+        <div className="text-[12px] font-black uppercase tracking-tighter opacity-70">
           {cfg.label}
         </div>
       </div>
@@ -432,7 +422,7 @@ function TaskCard({
         )}
         <div className="flex items-center gap-4 mt-2">
           <span
-            className={`text-[10px] font-bold uppercase ${isNegative ? "text-red-500" : "text-yellow-500"}`}
+            className={`text-[12px] font-bold uppercase ${isNegative ? "text-red-500" : "text-yellow-500"}`}
           >
             {isNegative
               ? `-${task.penalty_hp ?? 10} HP`
@@ -451,7 +441,7 @@ function TaskCard({
       <div className="shrink-0">
         <ConfettiButton
           onClick={() => onComplete(task)}
-          className={`h-12 px-5 text-xs font-black border-2 transition-all ${isNegative ? "border-red-800 text-red-500 hover:bg-red-800 hover:text-white" : "border-[#3a3558] text-[#f5c542] hover:bg-[#f5c542] hover:text-black"}`}
+          className={`h-12 px-5 text-xs font-black border-2 transition-all ${isNegative ? "text-red-500 hover:bg-red-800 hover:text-black" : "border-[#3a3558] text-[#f5c542] hover:bg-[#f5c542] hover:text-black"}`}
         >
           {isNegative ? "FALHOU" : "CONCLUIR"}
         </ConfettiButton>
@@ -460,9 +450,7 @@ function TaskCard({
   );
 }
 
-/* ─────────────────────────────────────────────
-   COMPONENTE: STAT BAR (Aumentada)
-───────────────────────────────────────────── */
+
 function StatBar({ label, icon, current, max, color, trackColor }: any) {
   const percent = Math.min(Math.round((current / max) * 100), 100);
   return (

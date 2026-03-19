@@ -6,7 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
-import { toast } from "sonner"; // Importação do Shadcn/Sonner
+import { toast } from "sonner"; 
 
 const Register = () => {
   const supabase = createClient();
@@ -67,7 +67,6 @@ const Register = () => {
   return (
     <>
       <PixelBackground />
-      {/* O resto do teu JSX continua igual... */}
       <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
         <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
           <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">

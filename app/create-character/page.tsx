@@ -84,7 +84,6 @@ const CreateCharacter = () => {
 
       <div className="min-h-screen flex items-center justify-center p-6 relative z-10 font-['VT323']">
         <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e] shadow-2xl">
-          {/* COLUNA ESQUERDA */}
           <div className="p-8 flex flex-col justify-center border-r border-[#2a2540]">
             <div className="mb-6">
               <h1 className="rpg-title text-3xl tracking-[4px]">CRIAR HERÓI</h1>
@@ -156,7 +155,6 @@ const CreateCharacter = () => {
             </form>
           </div>
 
-          {/* COLUNA DIREITA - PREVIEW */}
           <div className="hidden md:flex flex-col justify-center items-center p-8 bg-[#0f0d1a]">
             <div className="flex flex-col items-center w-full max-w-[240px]">
               <div className="relative h-48 w-48 flex items-center justify-center mb-4">
@@ -189,7 +187,6 @@ const CreateCharacter = () => {
                 </p>
               </div>
 
-              {/* STATS MAIS COMPACTOS */}
               <div className="w-full space-y-3">
                 {[
                   { key: "str", label: "FORÇA", color: "#ef4444" },

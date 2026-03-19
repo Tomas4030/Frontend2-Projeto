@@ -20,7 +20,6 @@ const Auth = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Validação básica de campos vazios (UI)
     if (!email || !password) {
       toast.error("Campos incompletos", {
         description: "Precisas de preencher todos os pergaminhos!",
@@ -30,16 +29,12 @@ const Auth = () => {
 
     setLoading(true);
 
-    // 2. Tentativa de Login no Supabase
-    // O Supabase verifica automaticamente se o email existe e se a senha coincide
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) {
-      // 3. Tratamento de erros específicos
-      // Se o erro for de credenciais, significa que a conta não existe ou a senha está errada
       if (error.status === 400 || error.message.includes("credentials")) {
         toast.error("Acesso Negado!", {
           description:
@@ -54,9 +49,7 @@ const Auth = () => {
       return;
     }
 
-    // 4. Sucesso no Login
     if (data?.session) {
-      // Guarda o token (opcional, o Supabase já gere cookies automaticamente)
       localStorage.setItem("token", data.session.access_token);
 
       toast.success("Bem-vindo de volta!", {

@@ -3,7 +3,6 @@ import HeroSection from "@/components/landing/HeroSextion";
 import PixelBackground from "@/components/PixelBackground";
 
 
-// Lazy load below-fold components to reduce initial bundle
 const FeaturesSection = dynamic(
   () => import("@/components/landing/FeaturesSection"),
   {

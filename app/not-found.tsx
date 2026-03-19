@@ -1,5 +1,3 @@
-// app/not-found.jsx (ou pages/404.jsx)
-
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -10,10 +8,8 @@ export default function NotFound() {
   return (
     <div className="fixed inset-0 min-h-screen bg-background flex items-center justify-center p-4 z-50">
       <div className="max-w-md w-full text-center">
-        {/* Error Code */}
         <div className="text-8xl font-bold text-slate-700 mb-4">404</div>
 
-        {/* Title */}
         <h1 className="text-2xl font-semibold text-white mb-3">
           Missão não encontrada
         </h1>
@@ -22,7 +18,6 @@ export default function NotFound() {
           Esta página não existe no teu mapa de objetivos.
         </p>
 
-        {/* Stats */}
         <div className="flex gap-4 justify-center mb-8">
           <div className="text-center">
             <div className="text-slate-500 text-sm">XP Perdido</div>
@@ -35,7 +30,6 @@ export default function NotFound() {
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="flex flex-col gap-3">
           <button
             onClick={() => router.push("/")}
