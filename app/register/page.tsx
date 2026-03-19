@@ -6,6 +6,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
+import { toast } from "sonner"; // Importação do Shadcn/Sonner
 
 const Register = () => {
   const supabase = createClient();
@@ -24,7 +25,9 @@ const Register = () => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      alert("As senhas não coincidem!");
+      toast.error("As senhas não coincidem!", {
+        description: "Verifica se digitaste a mesma senha nos dois campos.",
+      });
       return;
     }
 
@@ -36,7 +39,9 @@ const Register = () => {
     });
 
     if (signUpError) {
-      alert(signUpError.message);
+      toast.error("Erro ao criar herói", {
+        description: signUpError.message,
+      });
       setLoading(false);
       return;
     }
@@ -45,10 +50,16 @@ const Register = () => {
       const { error: profileError } = await supabase
         .from("profiles")
         .insert([{ id: userData.user.id, name, email }]);
-      if (profileError)
+      
+      if (profileError) {
         console.log("Erro ao criar perfil:", profileError.message);
+      }
     }
 
+    toast.success("Personagem registrado!", {
+      description: "Bem-vindo ao reino, aventureiro.",
+    });
+    
     setLoading(false);
     router.push("/create-character");
   };
@@ -56,10 +67,9 @@ const Register = () => {
   return (
     <>
       <PixelBackground />
-
+      {/* O resto do teu JSX continua igual... */}
       <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
         <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
-          {/* Left — Form */}
           <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">
             <div className="mb-6">
               <h1 className="rpg-title">CRIAR HERÓI</h1>
@@ -106,7 +116,6 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    style={{ paddingRight: 44 }}
                     required
                   />
                   <button
@@ -128,7 +137,6 @@ const Register = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    style={{ paddingRight: 44 }}
                     required
                   />
                   <button
@@ -136,11 +144,7 @@ const Register = () => {
                     className="eye-btn"
                     onClick={() => setShowConfirmPassword((v) => !v)}
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff size={15} />
-                    ) : (
-                      <Eye size={15} />
-                    )}
+                    {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
               </div>
@@ -157,13 +161,11 @@ const Register = () => {
             </form>
           </div>
 
-          {/* Right — Image */}
           <div className="hidden md:block relative">
             <img
               src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772658391/mqpx4pcsz0xzkn2utesj.png"
               alt="Register"
               className="h-full w-full object-cover object-right"
-              style={{ filter: "brightness(0.85) saturate(1.2)" }}
             />
             <div className="absolute inset-0 bg-linear-to-r from-[#13111e]/60 to-transparent" />
           </div>
