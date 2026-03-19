@@ -50,13 +50,18 @@ export default function DashboardPage() {
         .maybeSingle();
 
       if (charError) {
-        console.error("Erro ao buscar personagem:", charError);
+        console.error(
+          "Erro detalhado:",
+          charError.message,
+          charError.details,
+          charError.hint,
+        );
         return;
       }
 
       if (char) {
         if (char.hp <= 0) {
-          router.push("/revive");
+          router.push("/dashboard/revive");
           return;
         }
 
@@ -133,7 +138,7 @@ export default function DashboardPage() {
     setCharacter(updatedChar);
 
     // Se morreu, tchau!
-    if (newHp <= 0) router.push("/revive");
+    if (newHp <= 0) router.push("/dashboard/revive");
   };
 
   const handleLevelUp = (xp: number, level: number) => {
@@ -174,13 +179,24 @@ export default function DashboardPage() {
               {character ? (
                 <div className="text-center">
                   <div className="w-24 h-24 bg-[#1a162e] border-2 border-[#2a2540] mx-auto mb-4 flex items-center justify-center text-4xl shadow-inner">
-                    {character.class === "guerreiro"
-                      ? "⚔️"
-                      : character.class === "mago"
-                        ? "🜔"
-                        : character.class === "ladino"
-                          ? "🗡️"
-                          : "✦"}
+                    <img
+                      src={
+                        character.class === "guerreiro"
+                          ? "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png"
+                          : character.class === "mago"
+                            ? "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png"
+                            : character.class === "druida"
+                              ? "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png"
+                              : "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png"
+                      }
+                      alt={character.class}
+                      style={{
+                        width: "80px",
+                        height: "80px",
+                        objectFit: "contain",
+                        borderRadius: "8px",
+                      }}
+                    />
                   </div>
                   <h3 className="text-2xl text-[#f5c542] uppercase tracking-tighter">
                     {character.name}

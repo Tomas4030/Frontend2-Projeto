@@ -5,7 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
-import { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const CLASSES = [
   {
@@ -13,62 +13,67 @@ const CLASSES = [
     label: "Guerreiro",
     img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
     desc: "Força e resistência",
+    stats: { str: 90, int: 20, agi: 45, fth: 30 },
   },
   {
     value: "mago",
     label: "Mago",
     img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
     desc: "Poder arcano",
+    stats: { str: 15, int: 95, agi: 35, fth: 55 },
   },
   {
     value: "druida",
     label: "Druida",
     img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
-    desc: "Poder da natureza e metamorfose",
+    desc: "Poder da natureza",
+    stats: { str: 45, int: 70, agi: 40, fth: 85 },
   },
   {
     value: "arqueiro",
     label: "Arqueiro",
     img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
-    desc: "Precisão e ataques à distância",
+    desc: "Precisão e distância",
+    stats: { str: 40, int: 30, agi: 95, fth: 20 },
   },
 ];
 
-const createCharacter = () => {
+const DEFAULT_IMG =
+  "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png";
+
+const CreateCharacter = () => {
   const supabase = createClient();
   const router = useRouter();
 
   const [name, setName] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checking, setChecking] = useState(true);
-
-  // Verifica se já existe personagem ao carregar a página
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedClass) {
-      alert("Escolhe uma classe!");
-      return;
-    }
+    if (!selectedClass) return;
     setLoading(true);
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
     if (user) {
       const { error } = await supabase.from("characters").insert([
         {
           user_id: user.id,
-          name,
+          name: name.trim(),
           class: selectedClass,
         },
       ]);
-      if (error) console.log("Erro:", error.message);
-    }
 
-    setLoading(false);
-    router.push("/dashboard");
+      if (error) {
+        console.error("Erro:", error.message);
+        setLoading(false);
+        return;
+      }
+      router.push("/dashboard");
+    }
   };
 
   const chosen = CLASSES.find((c) => c.value === selectedClass);
@@ -77,170 +82,165 @@ const createCharacter = () => {
     <>
       <PixelBackground />
 
-      <div className="min-h-screen flex items-center justify-center p-6 relative z-10">
-        <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e]">
-          {/* Left — Form */}
-          <div className="p-10 flex flex-col justify-center border-r border-[#2a2540]">
+      <div className="min-h-screen flex items-center justify-center p-6 relative z-10 font-['VT323']">
+        <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e] shadow-2xl">
+          {/* COLUNA ESQUERDA */}
+          <div className="p-8 flex flex-col justify-center border-r border-[#2a2540]">
             <div className="mb-6">
-              <h1 className="rpg-title">CRIAR HERÓI</h1>
-              <p className="rpg-subtitle">&gt; escolhe o teu destino</p>
-            </div>
-
-            <div className="rpg-divider">
-              <div className="rpg-divider-line" />
-              <span className="rpg-divider-dot">◆</span>
-              <div className="rpg-divider-line" />
+              <h1 className="rpg-title text-3xl tracking-[4px]">CRIAR HERÓI</h1>
+              <p className="text-[#6b6480] text-base mt-1 tracking-widest">
+                &gt; escolhe o teu destino
+              </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="rpg-label">⚔ NOME DO PERSONAGEM</label>
+                <label className="text-[#f5c542] block mb-1 tracking-widest text-xs uppercase">
+                  ⚔ Nome
+                </label>
                 <input
                   type="text"
-                  className="rpg-input"
+                  className="rpg-input w-full bg-[#0f0d1a] border-2 border-[#2a2540] p-3 text-white rounded outline-none focus:border-[#f5c542] transition-all text-lg"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex: Arathor, o Valente"
+                  placeholder="Nome do herói..."
+                  maxLength={16}
                   required
                 />
               </div>
 
               <div>
-                <label className="rpg-label" style={{ marginBottom: 12 }}>
-                  ✦ ESCOLHE A TUA CLASSE
+                <label className="text-[#f5c542] block mb-3 tracking-widest text-xs uppercase">
+                  ✦ Classe
                 </label>
-                <div className="class-grid">
+                <div className="grid grid-cols-2 gap-3">
                   {CLASSES.map((c) => (
                     <button
                       key={c.value}
                       type="button"
-                      className={`class-card ${selectedClass === c.value ? "selected" : ""}`}
+                      className={`flex flex-col items-center p-3 border-2 transition-all ${
+                        selectedClass === c.value
+                          ? "bg-[#2a2540] border-[#f5c542]"
+                          : "bg-[#0f0d1a] border-[#2a2540] hover:border-[#6b6480]"
+                      }`}
                       onClick={() => setSelectedClass(c.value)}
                     >
-                      <span className="class-img">
-                        <img
-                          src={c.img}
-                          alt={c.label}
-                          style={{ width: 40, height: 40 }}
-                        />
+                      <img
+                        src={c.img}
+                        alt={c.label}
+                        className="w-10 h-10 mb-1 object-contain"
+                      />
+                      <span className="text-xs uppercase tracking-tighter">
+                        {c.label}
                       </span>
-                      <span className="class-name">{c.label}</span>
-                      <span className="class-desc">{c.desc}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div className="pt-1">
-                <button type="submit" className="rpg-btn" disabled={loading}>
-                  {loading ? "A CRIAR..." : "✦  COMEÇAR AVENTURA"}
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  className="rpg-btn w-full py-3 text-xl tracking-[2px] transition-all cursor-pointer"
+                  style={{
+                    backgroundColor:
+                      loading || !selectedClass ? "#2a2540" : "#f5c542",
+                    color: loading || !selectedClass ? "#6b6480" : "black",
+                    border: "none",
+                  }}
+                  disabled={loading || !selectedClass}
+                >
+                  {loading ? "A CRIAR..." : "COMEÇAR AVENTURA"}
                 </button>
               </div>
-
-              <p
-                style={{
-                  fontFamily: "'VT323', monospace",
-                  fontSize: 15,
-                  color: "#6b6480",
-                  textAlign: "center",
-                  letterSpacing: 1,
-                }}
-              >
-                Já tens herói?{" "}
-                <Link
-                  href="/dashboard"
-                  style={{ color: "#f5c542", textDecoration: "none" }}
-                >
-                  Ir ao reino
-                </Link>
-              </p>
             </form>
           </div>
 
-          {/* Right — Preview */}
-          <div className="hidden md:flex flex-col justify-center p-10 bg-[#0f0d1a]">
-            <p
-              className="rpg-label"
-              style={{ textAlign: "center", marginBottom: 20 }}
-            >
-              👁 PRÉ-VISUALIZAÇÃO
-            </p>
+          {/* COLUNA DIREITA - PREVIEW */}
+          <div className="hidden md:flex flex-col justify-center items-center p-8 bg-[#0f0d1a]">
+            <div className="flex flex-col items-center w-full max-w-[240px]">
+              <div className="relative h-48 w-48 flex items-center justify-center mb-4">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={selectedClass || "empty"}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: [0, -8, 0] }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{
+                      y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+                    }}
+                  >
+                    <img
+                      src={chosen ? chosen.img : DEFAULT_IMG}
+                      className={`w-50 h-50 object-contain ${!chosen ? "opacity-10 grayscale invert" : ""}`}
+                      alt="Preview"
+                    />
+                  </motion.div>
+                </AnimatePresence>
+                <div className="absolute bottom-2 w-24 h-4 bg-black/40 blur-lg rounded-full" />
+              </div>
 
-            <div className="preview-box">
-              <span className="preview-img">
-                {chosen ? (
-                  <img
-                    src={chosen.img}
-                    alt={chosen.label}
-                    style={{ width: 60, height: 60 }}
-                  />
-                ) : (
-                  <span style={{ fontSize: 40 }}>❓</span>
-                )}
-              </span>
-              <p className="preview-name">{name || "???"}</p>
-              <p className="preview-class">
-                {chosen ? chosen.label : "Sem classe"}
-              </p>
+              <div className="text-center mb-6">
+                <h2 className="text-2xl text-white tracking-widest uppercase mb-1">
+                  {name || "???"}
+                </h2>
+                <p className="text-[#f5c542] text-sm uppercase tracking-[3px]">
+                  {chosen ? chosen.label : "Sem Classe"}
+                </p>
+              </div>
 
-              {/* Stat bars — change by class */}
-              {(() => {
-                const stats: Record<
-                  string,
-                  { str: number; int: number; agi: number; fth: number }
-                > = {
-                  guerreiro: { str: 90, int: 20, agi: 45, fth: 30 },
-                  mago: { str: 15, int: 95, agi: 35, fth: 55 },
-                  ladino: { str: 40, int: 50, agi: 95, fth: 20 },
-                  clerigo: { str: 35, int: 60, agi: 30, fth: 90 },
-                };
-                const s = selectedClass
-                  ? stats[selectedClass]
-                  : { str: 0, int: 0, agi: 0, fth: 0 };
-                return (
-                  <div style={{ textAlign: "left" }}>
-                    {[
-                      { key: "str", label: "FORÇA", cls: "str", val: s.str },
-                      {
-                        key: "int",
-                        label: "INTELIGÊNCIA",
-                        cls: "int",
-                        val: s.int,
-                      },
-                      {
-                        key: "agi",
-                        label: "AGILIDADE",
-                        cls: "agi",
-                        val: s.agi,
-                      },
-                      { key: "fth", label: "FÉ", cls: "fth", val: s.fth },
-                    ].map((stat) => (
-                      <div key={stat.key} className="stat-row">
-                        <div className="stat-label-row">
-                          <span>{stat.label}</span>
-                          <span>{stat.val}</span>
-                        </div>
-                        <div className="stat-track">
-                          <div
-                            className={`stat-fill ${stat.cls}`}
-                            style={{ width: `${stat.val}%` }}
-                          />
-                        </div>
+              {/* STATS MAIS COMPACTOS */}
+              <div className="w-full space-y-3">
+                {[
+                  { key: "str", label: "FORÇA", color: "#ef4444" },
+                  { key: "int", label: "INTELIGÊNCIA", color: "#3b82f6" },
+                  { key: "agi", label: "AGILIDADE", color: "#eab308" },
+                  { key: "fth", label: "FÉ", color: "#22c55e" },
+                ].map((stat) => {
+                  const val = chosen
+                    ? chosen.stats[stat.key as keyof typeof chosen.stats]
+                    : 0;
+                  return (
+                    <div key={stat.key}>
+                      <div className="flex justify-between text-[10px] text-[#6b6480] mb-1 tracking-wider">
+                        <span>{stat.label}</span>
+                        <span>{val}</span>
                       </div>
-                    ))}
-                  </div>
-                );
-              })()}
-
-              {!selectedClass && (
-                <p className="preview-placeholder">seleciona uma classe...</p>
-              )}
+                      <div className="h-1.5 bg-[#1d1b2e] rounded-full overflow-hidden border border-[#2a2540]">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${val}%` }}
+                          className="h-full"
+                          style={{ backgroundColor: stat.color }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .rpg-card {
+          border: 4px solid #2a2540;
+        }
+        .rpg-title {
+          color: #f5c542;
+          text-shadow: 2px 2px 0px #000;
+        }
+        .rpg-btn {
+          border-bottom: 4px solid rgba(0, 0, 0, 0.3) !important;
+        }
+        .rpg-btn:active {
+          transform: translateY(2px);
+          border-bottom: 2px solid rgba(0, 0, 0, 0.3) !important;
+        }
+      `}</style>
     </>
   );
 };
 
-export default createCharacter;
+export default CreateCharacter;

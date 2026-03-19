@@ -19,7 +19,7 @@ export default function Navbar() {
   const [authReady, setAuthReady] = useState(false);
 
   const isLandingPage = pathname === "/";
-  const isLoginPage = pathname === "/login" || pathname === "/register";
+  const isLoginPage = pathname === "/login" || pathname === "/register" || pathname === "/dashboard/revive" || pathname.startsWith("/create-character");
 
   const landingLinks: NavItem[] = useMemo(
     () => [
