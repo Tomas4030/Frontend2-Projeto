@@ -6,7 +6,6 @@ import PixelBackground from "@/components/PixelBackground";
 import Link from "next/link";
 import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
 import { ConfettiButton } from "@/components/lightswind/confetti-button";
-import { Sparkles } from "lucide-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -15,14 +14,12 @@ export default function DashboardPage() {
   const [character, setCharacter] = useState<any | null>(null);
   const [tasks, setTasks] = useState<any[]>([]);
 
-  // Função para buscar as missões (agora reutilizável)
   const fetchTasks = useCallback(
     async (userId: string) => {
       const { data } = await supabase
         .from("tasks")
         .select("*")
         .eq("user_id", userId)
-        // Mostra tarefas não completas OU hábitos (que são sempre ativos)
         .or("is_completed.eq.false,type.eq.habito")
         .order("created_at", { ascending: false });
 
@@ -84,7 +81,6 @@ export default function DashboardPage() {
   const completeTask = async (task: any) => {
     if (!character) return;
 
-    // Criamos cópias dos valores atuais
     let newXp = character.xp || 0;
     let newLevel = character.level || 1;
     let newHp = character.hp || 0;
@@ -92,11 +88,9 @@ export default function DashboardPage() {
     const isNegative = task.direction === "negativo";
 
     if (isNegative) {
-      // Hábito Ruim: Perde vida, XP não mexe
       newHp = Math.max(0, character.hp - (task.penalty_hp || 10));
       console.log("Perdendo vida: ", newHp);
     } else {
-      // Tarefa Boa: Ganha XP e pode recuperar vida
       const gainedTotalXp = (character.xp || 0) + (task.xp_reward || 0);
       const leveled = handleLevelUp(gainedTotalXp, character.level || 1);
       newXp = leveled.xp;
@@ -104,7 +98,6 @@ export default function DashboardPage() {
       newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
     }
 
-    // ATUALIZAÇÃO NO SUPABASE
     const { data: updatedChar, error: charError } = await supabase
       .from("characters")
       .update({
@@ -121,9 +114,7 @@ export default function DashboardPage() {
       return;
     }
 
-    // ATUALIZAÇÃO DA TASK NA UI
     if (task.type !== "habito") {
-      // Se não for hábito, marca como concluída e remove da lista
       const { error: taskError } = await supabase
         .from("tasks")
         .update({ is_completed: true })
@@ -134,10 +125,8 @@ export default function DashboardPage() {
       }
     }
 
-    // Atualiza o estado local com os dados que vieram do banco
     setCharacter(updatedChar);
 
-    // Se morreu, tchau!
     if (newHp <= 0) router.push("/dashboard/revive");
   };
 
@@ -301,7 +290,6 @@ export default function DashboardPage() {
                         {/* BOTÕES DE AÇÃO */}
                         <div className="flex items-center gap-2">
                           {isHabit ? (
-                            /* Se for hábito negativo, mostra apenas o botão de MENOS */
                             isNegative ? (
                               <button
                                 onClick={() => completeTask(task)}
@@ -310,7 +298,6 @@ export default function DashboardPage() {
                                 −
                               </button>
                             ) : (
-                              /* Se for hábito positivo, mostra o botão de MAIS */
                               <button
                                 onClick={() => completeTask(task)}
                                 className="w-10 h-10 flex items-center justify-center border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-black font-black text-xl transition-all"

@@ -28,7 +28,6 @@ export default function RevivePage() {
     if (!userId) return;
     setLoading(true);
     try {
-      // 1. Atualiza HP para 100 (ou o valor que preferires para reviver)
       const { error } = await supabase
         .from("characters")
         .update({ hp: 100 })
@@ -56,7 +55,6 @@ export default function RevivePage() {
     setLoading(true);
 
     try {
-      // 1. Apagar tarefas (filhos)
       const { error: tasksError } = await supabase
         .from("tasks")
         .delete()
@@ -64,7 +62,6 @@ export default function RevivePage() {
 
       if (tasksError) throw tasksError;
 
-      // 2. Apagar personagem (pai)
       const { error: charError } = await supabase
         .from("characters")
         .delete()
@@ -74,10 +71,8 @@ export default function RevivePage() {
 
       console.log("Mundo resetado com sucesso.");
 
-      // 3. Forçar refresh para limpar cache do Next.js e evitar bugs de duplicação
       router.refresh();
 
-      // 4. Redirecionar para criação
       router.push("/create-character");
     } catch (error) {
       console.error("Erro no reset total:", error);
@@ -91,7 +86,6 @@ export default function RevivePage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#050505] text-white p-6 relative overflow-hidden font-mono">
-      {/* Background Effect */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#3b0707_0%,_transparent_70%)] opacity-40" />
 
       <motion.div
@@ -100,7 +94,6 @@ export default function RevivePage() {
         className="max-w-md w-full z-10"
       >
         <div className="text-center space-y-6">
-          {/* Ícone Animado */}
           <motion.div
             animate={{ scale: [1, 1.05, 1], rotate: [0, -3, 3, 0] }}
             transition={{ duration: 4, repeat: Infinity }}
