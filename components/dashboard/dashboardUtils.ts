@@ -11,10 +11,10 @@ export type Task = {
   difficulty?: "facil" | "medio" | "dificil";
   streak?: number;
 
-  strength_reward?: number;
-  intelligence_reward?: number;
-  dexterity_reward?: number;
-  faith_reward?: number;
+  forca_reward?: number;
+  inteligencia_reward?: number;
+  agilidade_reward?: number;
+  fe_reward?: number;
 };
 
 export type Character = {
@@ -29,10 +29,10 @@ export type Character = {
   mp: number;
   max_mp: number;
 
-  strength: number; // Força
-  intelligence: number; // Inteligência
-  dexterity: number; // Agilidade
-  faith: number; // Fé
+  forca: number; // Força
+  inteligencia: number; // Inteligência
+  agilidade: number; // Agilidade
+  fe: number; // Fé
 
   gold?: number;
   streak_days?: number;

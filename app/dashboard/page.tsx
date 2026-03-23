@@ -65,7 +65,15 @@ export default function DashboardPage() {
       if (char) {
         if (char.hp <= 0) return router.push("/dashboard/revive");
         const { xp, level } = handleLevelUp(char.xp || 0, char.level || 1);
-        setCharacter({ ...char, xp, level });
+        setCharacter({
+          ...char,
+          xp,
+          level,
+          forca: char.forca,
+          inteligencia: char.inteligencia,
+          agilidade: char.agilidade,
+          fe: char.fe,
+        });
       }
 
       await fetchTasks(user.id);
@@ -77,67 +85,61 @@ export default function DashboardPage() {
   const completeTask = async (task: Task) => {
     if (!character) return;
 
+    let newHp = character.hp;
     let newXp = character.xp;
     let newLevel = character.level;
-    let newHp = character.hp;
 
+    // HP e XP
     if (task.direction === "negativo") {
       const dmg = task.penalty_hp || 10;
       newHp = Math.max(0, character.hp - dmg);
       showToast(`-${dmg} HP`, "dmg");
     } else {
-      const gained = task.xp_reward || 0;
-      const leveled = handleLevelUp(character.xp + gained, character.level);
-      if (leveled.level > character.level) showToast("NÍVEL ACIMA! 🎉", "lvl");
-      else showToast(`+${gained} XP`, "xp");
+      const gainedXp = task.xp_reward || 0;
+      const leveled = handleLevelUp(character.xp + gainedXp, character.level);
       newXp = leveled.xp;
       newLevel = leveled.level;
+
+      if (leveled.level > character.level) showToast("NÍVEL ACIMA! 🎉", "lvl");
+      else if (gainedXp > 0) showToast(`+${gainedXp} XP`, "xp");
+
       newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
     }
 
-    const { data: updatedChar } = await supabase
-      .from("characters")
-      .update({ xp: newXp, level: newLevel, hp: newHp })
-      .eq("id", character.id)
-      .select()
-      .single();
+    const updatedAttrs = {
+      forca: character.forca + (task.forca_reward || 0),
+      inteligencia: character.inteligencia + (task.inteligencia_reward || 0),
+      agilidade: character.agilidade + (task.agilidade_reward || 0),
+      fe: character.fe + (task.fe_reward || 0),
+      xp: newXp,
+      level: newLevel,
+      hp: newHp,
+    };
 
+    // Atualiza DB
+    const { error } = await supabase
+      .from("characters")
+      .update(updatedAttrs)
+      .eq("id", character.id);
+
+    if (error) {
+      console.error("Erro ao atualizar personagem:", error.message);
+      return;
+    }
+
+    // Atualiza state local **imediatamente** sem depender do DB
+    setCharacter((prev) => (prev ? { ...prev, ...updatedAttrs } : prev));
+
+    // Marca a task como completa
     if (task.type !== "habito") {
-      const { error: taskError } = await supabase
+      await supabase
         .from("tasks")
         .update({ is_completed: true })
         .eq("id", task.id);
-      if (!taskError) setTasks((prev) => prev.filter((t) => t.id !== task.id));
+
+      setTasks((prev) => prev.filter((t) => t.id !== task.id));
     }
 
-    if (
-      task.strength_reward ||
-      task.intelligence_reward ||
-      task.dexterity_reward ||
-      task.faith_reward
-    ) {
-      const newCharacter = { ...character };
-      newCharacter.strength += task.strength_reward || 0;
-      newCharacter.intelligence += task.intelligence_reward || 0;
-      newCharacter.dexterity += task.dexterity_reward || 0;
-      newCharacter.faith += task.faith_reward || 0;
-
-      // Atualiza no Supabase
-      await supabase
-        .from("characters")
-        .update({
-          strength: newCharacter.strength,
-          intelligence: newCharacter.intelligence,
-          dexterity: newCharacter.dexterity,
-          faith: newCharacter.faith,
-        })
-        .eq("id", character.id);
-
-      // Atualiza estado local
-      setCharacter(newCharacter);
-    }
-
-    if (updatedChar) setCharacter(updatedChar as Character);
     if (newHp <= 0) router.push("/dashboard/revive");
   };
 

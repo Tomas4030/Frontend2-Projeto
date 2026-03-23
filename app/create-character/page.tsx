@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import PixelBackground from "@/components/PixelBackground";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -57,52 +56,37 @@ const CreateCharacter = () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    if (!user) return;
 
-    if (user) {
-      const { error } = await supabase.from("characters").insert([
-        {
-          user_id: user.id,
-          name: name.trim(),
-          class: selectedClass,
-        },
-      ]);
-
-      if (error) {
-        console.error("Erro:", error.message);
-        setLoading(false);
-        return;
-      }
-      router.push("/dashboard");
-    }
     const chosen = CLASSES.find((c) => c.value === selectedClass);
+    if (!chosen) return;
 
-    if (user && chosen) {
-      const { error } = await supabase.from("characters").insert([
-        {
-          user_id: user.id,
-          name: name.trim(),
-          class: selectedClass,
-          strength: chosen.stats.str,
-          intelligence: chosen.stats.int,
-          dexterity: chosen.stats.agi,
-          faith: chosen.stats.fth,
-          hp: 100, // valor inicial de HP
-          max_hp: 100, // valor máximo de HP
-          mp: 50, // valor inicial de MP
-          max_mp: 50, // valor máximo de MP
-          level: 1,
-          xp: 0,
-        },
-      ]);
+    // Insert usando exatamente os nomes das colunas na database
+    const { error } = await supabase.from("characters").insert([
+      {
+        user_id: user.id,
+        name: name.trim(),
+        class: selectedClass,
+        forca: chosen.stats.str,
+        inteligencia: chosen.stats.int,
+        agilidade: chosen.stats.agi,
+        fe: chosen.stats.fth,
+        hp: 100,
+        max_hp: 100,
+        mp: 50,
+        max_mp: 50,
+        level: 1,
+        xp: 0,
+      },
+    ]);
 
-      if (error) {
-        console.error("Erro:", error.message);
-        setLoading(false);
-        return;
-      }
-
-      router.push("/dashboard");
+    if (error) {
+      console.error("Erro:", error.message);
+      setLoading(false);
+      return;
     }
+
+    router.push("/dashboard");
   };
 
   const chosen = CLASSES.find((c) => c.value === selectedClass);
@@ -199,7 +183,9 @@ const CreateCharacter = () => {
                   >
                     <img
                       src={chosen ? chosen.img : DEFAULT_IMG}
-                      className={`w-50 h-50 object-contain ${!chosen ? "opacity-10 grayscale invert" : ""}`}
+                      className={`w-50 h-50 object-contain ${
+                        !chosen ? "opacity-10 grayscale invert" : ""
+                      }`}
                       alt="Preview"
                     />
                   </motion.div>

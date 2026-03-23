@@ -62,7 +62,9 @@ export function NewQuestSheet({
     e.preventDefault();
     setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return setLoading(false);
 
     const { error } = await supabase.from("tasks").insert([
@@ -140,14 +142,16 @@ export function NewQuestSheet({
             <div className="grid gap-2">
               <label className="rpg-label text-[10px]">ATRIBUTO FOCO</label>
               <div className="grid grid-cols-2 gap-2">
-                {(["forca", "inteligencia", "agilidade", "fe"] as SkillType[]).map((s) => (
+                {(
+                  ["forca", "inteligencia", "agilidade", "fe"] as SkillType[]
+                ).map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => setSkillType(s)}
                     className={`p-2 text-[9px] border font-bold uppercase flex items-center justify-center gap-2 transition-all ${
-                      skillType === s 
-                        ? "bg-white/10 border-[#f5c542] text-[#f5c542]" 
+                      skillType === s
+                        ? "bg-white/10 border-[#f5c542] text-[#f5c542]"
                         : "border-[#2a2540] text-[#6b6480] hover:border-[#f5c542]/50"
                     }`}
                   >
@@ -160,7 +164,10 @@ export function NewQuestSheet({
             {taskType === "habito" && (
               <div className="grid gap-2">
                 <label className="rpg-label text-[10px]">META</label>
-                <Select value={direction} onValueChange={(v: Direction) => setDirection(v)}>
+                <Select
+                  value={direction}
+                  onValueChange={(v: Direction) => setDirection(v)}
+                >
                   <SelectTrigger className="rpg-select-trigger h-10 border-[#2a2540] bg-black/40 rounded-none">
                     <SelectValue />
                   </SelectTrigger>
@@ -174,7 +181,10 @@ export function NewQuestSheet({
 
             <div className="grid gap-2">
               <label className="rpg-label text-[10px]">DIFICULDADE</label>
-              <Select value={difficulty} onValueChange={(v: Difficulty) => setDifficulty(v)}>
+              <Select
+                value={difficulty}
+                onValueChange={(v: Difficulty) => setDifficulty(v)}
+              >
                 <SelectTrigger className="rpg-select-trigger h-10 border-[#2a2540] bg-black/40 rounded-none">
                   <SelectValue />
                 </SelectTrigger>
@@ -189,20 +199,28 @@ export function NewQuestSheet({
             </div>
 
             {/* Reduzi o padding do preview de p-5 para p-3 */}
-            <div className={`rounded-none border p-3 bg-black/20 ${direction === "negativo" ? "border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-[#f5c542]/50 shadow-[0_0_15px_rgba(245,197,66,0.1)]"}`}>
+            <div
+              className={`rounded-none border p-3 bg-black/20 ${direction === "negativo" ? "border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-[#f5c542]/50 shadow-[0_0_15px_rgba(245,197,66,0.1)]"}`}
+            >
               <div className="flex items-center justify-between font-bold">
                 {direction === "negativo" ? (
                   <div className="flex items-center gap-2 text-red-500">
                     <ShieldAlert size={16} />
-                    <span className="text-[10px] tracking-tighter">-{config.hp} HP</span>
+                    <span className="text-[10px] tracking-tighter">
+                      -{config.hp} HP
+                    </span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-yellow-500">
                     <Zap size={16} fill="#f5c542" />
-                    <span className="text-[10px] tracking-tighter">+{config.xp} XP ({skillType})</span>
+                    <span className="text-[10px] tracking-tighter">
+                      +{config.xp} XP ({skillType})
+                    </span>
                   </div>
                 )}
-                <span className="text-blue-400 text-[10px] uppercase">{difficulty}</span>
+                <span className="text-blue-400 text-[10px] uppercase">
+                  {difficulty}
+                </span>
               </div>
             </div>
           </form>

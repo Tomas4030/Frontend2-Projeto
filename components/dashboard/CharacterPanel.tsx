@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import StatBar from "./StatBar";
 import { Character, CLASS_AVATARS, CLASS_TITLE } from "./dashboardUtils";
@@ -6,6 +6,31 @@ import { Character, CLASS_AVATARS, CLASS_TITLE } from "./dashboardUtils";
 type Props = { character: Character | null };
 
 export default function CharacterPanel({ character }: Props) {
+  const [highlightedAttr, setHighlightedAttr] = useState<string | null>(null);
+  const [prevCharacter, setPrevCharacter] = useState<Character | null>(null);
+
+  useEffect(() => {
+    if (!character || !prevCharacter) {
+      setPrevCharacter(character);
+      return;
+    }
+
+    // Detecta qual atributo aumentou
+    if (character.forca > prevCharacter.forca) {
+      setHighlightedAttr("forca");
+    } else if (character.inteligencia > prevCharacter.inteligencia) {
+      setHighlightedAttr("inteligencia");
+    } else if (character.agilidade > prevCharacter.agilidade) {
+      setHighlightedAttr("agilidade");
+    } else if (character.fe > prevCharacter.fe) {
+      setHighlightedAttr("fe");
+    }
+
+    // Remove destaque após 1.5 segundos
+    setTimeout(() => setHighlightedAttr(null), 1500);
+    setPrevCharacter(character);
+  }, [character, prevCharacter]);
+
   if (!character) {
     return (
       <div className="text-center py-12">
@@ -64,21 +89,29 @@ export default function CharacterPanel({ character }: Props) {
         />
       </div>
 
-      <div className="grid grid-cols-3 gap-3 border-t border-[#2a2540] pt-5">
+      <div className="grid grid-cols-2 gap-2 border-t border-[#2a2540] pt-5">
         {[
-          { label: "FORÇA", val: character.strength },
-          { label: "INTELIGÊNCIA", val: character.intelligence },
-          { label: "AGILIDADE", val: character.dexterity },
-          { label: "FÉ", val: character.faith },
+          { label: "FORÇA", val: character.forca, key: "forca" },
+          { label: "INTELIGÊNCIA", val: character.inteligencia, key: "inteligencia" },
+          { label: "AGILIDADE", val: character.agilidade, key: "agilidade" },
+          { label: "FÉ", val: character.fe, key: "fe" },
         ].map((attr) => (
           <div
             key={attr.label}
-            className="text-center bg-[#1a162e]/50 border border-[#2a2540] py-3"
+            className={`text-center border py-3 transition-all duration-300 ${
+              highlightedAttr === attr.key
+                ? "bg-[#f5c542]/20 border-[#f5c542] shadow-[0_0_10px_rgba(245,197,66,0.4)]"
+                : "bg-[#1a162e]/50 border-[#2a2540]"
+            }`}
           >
             <div className="text-[10px] text-[#6b6480] uppercase mb-1">
               {attr.label}
             </div>
-            <div className="text-[#f5c542] text-base font-bold">{attr.val}</div>
+            <div className={`text-base font-bold transition-colors ${
+              highlightedAttr === attr.key ? "text-[#f5c542]" : "text-[#f5c542]"
+            }`}>
+              {attr.val}
+            </div>
           </div>
         ))}
       </div>
