@@ -10,6 +10,11 @@ export type Task = {
   notes?: string;
   difficulty?: "facil" | "medio" | "dificil";
   streak?: number;
+
+  strength_reward?: number;
+  intelligence_reward?: number;
+  dexterity_reward?: number;
+  faith_reward?: number;
 };
 
 export type Character = {
@@ -23,16 +28,25 @@ export type Character = {
   max_hp: number;
   mp: number;
   max_mp: number;
+
+  strength: number; // Força
+  intelligence: number; // Inteligência
+  dexterity: number; // Agilidade
+  faith: number; // Fé
+
   gold?: number;
   streak_days?: number;
   tasks_completed?: number;
 };
 
 export const CLASS_AVATARS: Record<string, string> = {
-  guerreiro: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
+  guerreiro:
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
   mago: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
-  druida: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
-  ladrao: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
+  druida:
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
+  ladrao:
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
 };
 
 export const CLASS_TITLE: Record<string, string> = {

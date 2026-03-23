@@ -74,6 +74,35 @@ const CreateCharacter = () => {
       }
       router.push("/dashboard");
     }
+    const chosen = CLASSES.find((c) => c.value === selectedClass);
+
+    if (user && chosen) {
+      const { error } = await supabase.from("characters").insert([
+        {
+          user_id: user.id,
+          name: name.trim(),
+          class: selectedClass,
+          strength: chosen.stats.str,
+          intelligence: chosen.stats.int,
+          dexterity: chosen.stats.agi,
+          faith: chosen.stats.fth,
+          hp: 100, // valor inicial de HP
+          max_hp: 100, // valor máximo de HP
+          mp: 50, // valor inicial de MP
+          max_mp: 50, // valor máximo de MP
+          level: 1,
+          xp: 0,
+        },
+      ]);
+
+      if (error) {
+        console.error("Erro:", error.message);
+        setLoading(false);
+        return;
+      }
+
+      router.push("/dashboard");
+    }
   };
 
   const chosen = CLASSES.find((c) => c.value === selectedClass);
