@@ -1,5 +1,4 @@
 import React from "react";
-import { ConfettiButton } from "@/components/lightswind/confetti-button";
 import { Task, DIFFICULTY_COLORS } from "./dashboardUtils";
 
 type Props = { task: Task; onComplete: (t: Task) => void };
@@ -34,12 +33,12 @@ export default function TaskCard({ task, onComplete }: Props) {
         </div>
       </div>
       <div className="shrink-0">
-        <ConfettiButton
+        <button
           onClick={() => onComplete(task)}
           className={`h-12 px-5 text-xs font-black border-2 transition-all ${isNegative ? "text-red-500 hover:bg-red-800 hover:text-black" : "border-[#3a3558] text-[#f5c542] hover:bg-[#f5c542] hover:text-black"}`}
         >
           {isNegative ? "FALHOU" : "CONCLUIR"}
-        </ConfettiButton>
+        </button>
       </div>
     </div>
   );

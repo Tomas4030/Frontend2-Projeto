@@ -29,9 +29,9 @@ type Direction = "positivo" | "negativo";
 type SkillType = "forca" | "inteligencia" | "agilidade" | "fe";
 
 const difficultyConfig = {
-  easy: { xp: 10, hp: 5, label: "RANK E", sublabel: "Fácil" },
-  medium: { xp: 25, hp: 10, label: "RANK C", sublabel: "Médio" },
-  hard: { xp: 50, hp: 20, label: "RANK S", sublabel: "Difícil" },
+  easy: { xp: 10, hp: 5, attr: 1, label: "RANK E", sublabel: "Fácil" },
+  medium: { xp: 25, hp: 10, attr: 2, label: "RANK C", sublabel: "Médio" },
+  hard: { xp: 50, hp: 20, attr: 3, label: "RANK S", sublabel: "Difícil" },
 };
 
 const skillIcons: Record<SkillType, React.ReactNode> = {
@@ -67,21 +67,35 @@ export function NewQuestSheet({
     } = await supabase.auth.getUser();
     if (!user) return setLoading(false);
 
-    const { error } = await supabase.from("tasks").insert([
-      {
-        user_id: user.id,
-        title,
-        type: taskType,
-        skill_type: skillType,
-        direction: taskType === "habito" ? direction : "positivo",
-        xp_reward: direction === "negativo" ? 0 : config.xp,
-        hp_reward: direction === "negativo" ? 0 : config.hp,
-        penalty_hp: config.hp,
-        is_completed: false,
-      },
-    ]);
+    // Calcula os rewards dos atributos baseado na skill e dificuldade
+    const attrRewardValue = direction === "negativo" ? 0 : config.attr;
+    const attrRewards = {
+      forca_reward: skillType === "forca" ? attrRewardValue : 0,
+      inteligencia_reward: skillType === "inteligencia" ? attrRewardValue : 0,
+      agilidade_reward: skillType === "agilidade" ? attrRewardValue : 0,
+      fe_reward: skillType === "fe" ? attrRewardValue : 0,
+    };
 
-    if (!error) {
+    const taskData = {
+      user_id: user.id,
+      title,
+      type: taskType,
+      skill_type: skillType,
+      direction: taskType === "habito" ? direction : "positivo",
+      xp_reward: direction === "negativo" ? 0 : config.xp,
+      hp_reward: direction === "negativo" ? 0 : config.hp,
+      penalty_hp: config.hp,
+      is_completed: false,
+      ...attrRewards,
+    };
+
+    console.log("📋 Task a enviar:", taskData);
+
+    const { error } = await supabase.from("tasks").insert([taskData]);
+
+    if (error) {
+      console.error("❌ Erro ao criar task:", error);
+    } else {
       setTitle("");
       setOpen(false);
       onQuestCreated?.();
@@ -202,7 +216,7 @@ export function NewQuestSheet({
             <div
               className={`rounded-none border p-3 bg-black/20 ${direction === "negativo" ? "border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.1)]" : "border-[#f5c542]/50 shadow-[0_0_15px_rgba(245,197,66,0.1)]"}`}
             >
-              <div className="flex items-center justify-between font-bold">
+              <div className="space-y-2">
                 {direction === "negativo" ? (
                   <div className="flex items-center gap-2 text-red-500">
                     <ShieldAlert size={16} />
@@ -211,16 +225,24 @@ export function NewQuestSheet({
                     </span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-yellow-500">
-                    <Zap size={16} fill="#f5c542" />
-                    <span className="text-[10px] tracking-tighter">
-                      +{config.xp} XP ({skillType})
-                    </span>
+                  <div className="flex items-center gap-3 text-yellow-500">
+                    <div className="flex items-center gap-2">
+                      <Zap size={16} fill="#f5c542" />
+                      <span className="text-[10px] tracking-tighter">
+                        +{config.xp} XP
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {skillIcons[skillType]}
+                      <span className="text-[10px] tracking-tighter">
+                        +{config.attr} {skillType.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
                 )}
-                <span className="text-blue-400 text-[10px] uppercase">
-                  {difficulty}
-                </span>
+                <div className="text-blue-400 text-[10px] uppercase">
+                  • {difficulty}
+                </div>
               </div>
             </div>
           </form>
