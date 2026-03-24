@@ -48,6 +48,20 @@ export default function DashboardPage() {
     [supabase],
   );
 
+  const deleteTask = async (taskId: string) => {
+    if (!character) return;
+
+    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+
+    if (error) {
+      console.error("Erro ao apagar task:", error.message);
+      return;
+    }
+
+    // Atualiza state local para remover a task da lista imediatamente
+    setTasks((prev) => prev.filter((t) => t.id !== taskId));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const {
@@ -197,6 +211,7 @@ export default function DashboardPage() {
                       <TaskCard
                         key={task.id}
                         task={task}
+                        onDelete={deleteTask}
                         onComplete={completeTask}
                       />
                     ))
