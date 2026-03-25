@@ -42,14 +42,26 @@ export type Character = {
   tasks_completed?: number;
 };
 
+function getAvatarUrl(url: string, size = 80) {
+  return url.replace(
+    "/upload/",
+    `/upload/f_auto,q_auto,w_${size},h_${size},c_fill/`,
+  );
+}
+
 export const CLASS_AVATARS: Record<string, string> = {
-  guerreiro:
+  guerreiro: getAvatarUrl(
     "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
-  mago: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
-  druida:
+  ),
+  mago: getAvatarUrl(
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
+  ),
+  druida: getAvatarUrl(
     "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
-  ladrao:
+  ),
+  ladrao: getAvatarUrl(
     "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
+  ),
 };
 
 export const CLASS_TITLE: Record<string, string> = {

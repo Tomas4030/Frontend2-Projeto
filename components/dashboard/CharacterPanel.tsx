@@ -49,6 +49,8 @@ export default function CharacterPanel({ character }: Props) {
             src={CLASS_AVATARS[character.class]}
             alt={character.class}
             className="w-20 h-20 object-contain"
+            fetchPriority="high"
+            loading="eager"
           />
           <span className="absolute -bottom-3 -right-3 bg-[#f5c542] text-black text-xs font-black px-2 py-1 uppercase tracking-tighter shadow-md">
             LVL {character.level}
@@ -92,7 +94,11 @@ export default function CharacterPanel({ character }: Props) {
       <div className="grid grid-cols-2 gap-2 border-t border-[#2a2540] pt-5">
         {[
           { label: "FORÇA", val: character.forca, key: "forca" },
-          { label: "INTELIGÊNCIA", val: character.inteligencia, key: "inteligencia" },
+          {
+            label: "INTELIGÊNCIA",
+            val: character.inteligencia,
+            key: "inteligencia",
+          },
           { label: "AGILIDADE", val: character.agilidade, key: "agilidade" },
           { label: "FÉ", val: character.fe, key: "fe" },
         ].map((attr) => (
@@ -107,9 +113,13 @@ export default function CharacterPanel({ character }: Props) {
             <div className="text-[10px] text-[#6b6480] uppercase mb-1">
               {attr.label}
             </div>
-            <div className={`text-base font-bold transition-colors ${
-              highlightedAttr === attr.key ? "text-[#f5c542]" : "text-[#f5c542]"
-            }`}>
+            <div
+              className={`text-base font-bold transition-colors ${
+                highlightedAttr === attr.key
+                  ? "text-[#f5c542]"
+                  : "text-[#f5c542]"
+              }`}
+            >
               {attr.val}
             </div>
           </div>
