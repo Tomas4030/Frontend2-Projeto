@@ -1,10 +1,10 @@
-import React from "react";
 import { Task, DIFFICULTY_COLORS } from "./dashboardUtils";
+import { Trash2 } from "lucide-react";
 
 type Props = {
   task: Task;
   onComplete: (t: Task) => void;
-  onDelete: (taskId: string) => void; // nova prop para deletar
+  onDelete: (taskId: string) => void;
 };
 
 export default function TaskCard({ task, onComplete, onDelete }: Props) {
@@ -16,6 +16,20 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
 
   const isNegative = task.direction === "negativo";
 
+  const attrMap = {
+    forca: task.forca_reward,
+    inteligencia: task.inteligencia_reward,
+    agilidade: task.agilidade_reward,
+    fe: task.fe_reward,
+  };
+
+  const attrValue = attrMap[task.skill_type as keyof typeof attrMap] ?? 0;
+
+  const formatAttr = (value: number) => {
+    if (!value) return "";
+    return `${value > 0 ? `+${value}` : value} ${task.skill_type.toUpperCase()}`;
+  };
+
   return (
     <div
       className={`group flex items-center gap-5 p-5 bg-[#13111e] border-2 transition-all ${
@@ -24,7 +38,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
           : "border-[#2a2540] hover:border-[#423a63]"
       }`}
     >
-      {/* Ícone e tipo */}
+  
       <div
         className="shrink-0 w-12 text-center"
         style={{ color: isNegative ? "#ef4444" : cfg.color }}
@@ -35,7 +49,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Conteúdo da task */}
+     
       <div className="flex-1 min-w-0">
         <h4
           className={`text-base font-bold uppercase tracking-tight truncate ${
@@ -44,19 +58,31 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         >
           {task.title}
         </h4>
+
         {task.notes && (
           <p className="text-xs text-[#6b6480] mt-1 italic">{task.notes}</p>
         )}
+
+    
         <div className="flex items-center gap-4 mt-2">
           <span
-            className={`text-[12px] font-bold uppercase ${
+            className={`flex gap-2 text-[12px] font-bold uppercase ${
               isNegative ? "text-red-500" : "text-yellow-500"
             }`}
           >
-            {isNegative
-              ? `-${task.penalty_hp ?? 10} HP`
-              : `+${task.xp_reward ?? 0} XP`}
+            {isNegative ? (
+              <>
+                <span>-{task.penalty_hp ?? 10} HP</span>
+                {attrValue !== 0 && <span>{formatAttr(attrValue)}</span>}
+              </>
+            ) : (
+              <>
+                <span>+{task.xp_reward ?? 0} XP</span>
+                {attrValue !== 0 && <span>{formatAttr(attrValue)}</span>}
+              </>
+            )}
           </span>
+
           {task.difficulty && (
             <span
               className="text-[10px] font-bold uppercase"
@@ -68,14 +94,14 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         </div>
       </div>
 
-      {/* Botões de ação */}
       <div className="flex gap-2 shrink-0">
         <button
           onClick={() => onDelete(task.id)}
           className="h-8 px-3 text-xs font-bold text-white bg-red-500 border border-red-500 rounded hover:bg-red-600 transition-colors"
         >
-          DELETE
+          <Trash2 className="h-5" />
         </button>
+
         <button
           onClick={() => onComplete(task)}
           className={`flex-1 h-8 px-2 text-xs font-bold border rounded transition-colors ${
@@ -86,7 +112,6 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         >
           {isNegative ? "FALHOU" : "CONCLUIR"}
         </button>
-
       </div>
     </div>
   );

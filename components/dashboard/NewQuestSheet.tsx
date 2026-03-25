@@ -67,8 +67,9 @@ export function NewQuestSheet({
     } = await supabase.auth.getUser();
     if (!user) return setLoading(false);
 
-    // Calcula os rewards dos atributos baseado na skill e dificuldade
-    const attrRewardValue = direction === "negativo" ? 0 : config.attr;
+    const attrRewardValue =
+      direction === "negativo" ? -config.attr : config.attr;
+
     const attrRewards = {
       forca_reward: skillType === "forca" ? attrRewardValue : 0,
       inteligencia_reward: skillType === "inteligencia" ? attrRewardValue : 0,
@@ -221,7 +222,7 @@ export function NewQuestSheet({
                   <div className="flex items-center gap-2 text-red-500">
                     <ShieldAlert size={16} />
                     <span className="text-[10px] tracking-tighter">
-                      -{config.hp} HP
+                      -{config.hp} HP -{config.attr} {skillType.toUpperCase()}
                     </span>
                   </div>
                 ) : (

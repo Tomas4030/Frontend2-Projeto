@@ -2,19 +2,19 @@ export type Task = {
   id: string;
   title: string;
   type: "habito" | "diaria" | "afazer";
-  direction?: "positivo" | "negativo";
-  xp_reward?: number;
-  hp_reward?: number;
-  penalty_hp?: number;
-  is_completed?: boolean;
-  notes?: string;
-  difficulty?: "facil" | "medio" | "dificil";
-  streak?: number;
+  direction: "positivo" | "negativo";
+  difficulty?: "easy" | "medium" | "hard";
+
+  skill_type: SkillType; 
 
   forca_reward?: number;
   inteligencia_reward?: number;
   agilidade_reward?: number;
   fe_reward?: number;
+
+  xp_reward?: number;
+  penalty_hp?: number;
+  notes?: string;
 };
 
 export type Character = {
@@ -29,8 +29,8 @@ export type Character = {
   mp: number;
   max_mp: number;
 
-  forca: number; // Força
-  inteligencia: number; // Inteligência
+  forca: number; 
+  inteligencia: number; 
   agilidade: number; // Agilidade
   fe: number; // Fé
 
@@ -75,3 +75,5 @@ export function handleLevelUp(xp: number, level: number) {
 
   return { xp: currentXP, level: currentLevel };
 }
+
+export type SkillType = "forca" | "inteligencia" | "agilidade" | "fe";
