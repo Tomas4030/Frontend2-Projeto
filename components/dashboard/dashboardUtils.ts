@@ -15,6 +15,7 @@ export type Task = {
   fe_reward?: number;
 
   xp_reward?: number;
+  hp_reward?: number;
   penalty_hp?: number;
   notes?: string;
 };
