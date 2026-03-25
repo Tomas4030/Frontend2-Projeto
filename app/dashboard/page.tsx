@@ -218,7 +218,13 @@ export default function DashboardPage() {
                 setActiveFilter={setActiveFilter}
               />
 
-              <div className="flex-1 overflow-y-auto space-y-3 min-h-[400px]">
+              <div
+                className={`flex-1 space-y-3 min-h-[400px] ${
+                  paginatedTasks.length > 0
+                    ? "overflow-y-auto"
+                    : "overflow-hidden"
+                }`}
+              >
                 {paginatedTasks.length > 0 ? (
                   paginatedTasks.map((task) => (
                     <TaskCard
@@ -236,7 +242,6 @@ export default function DashboardPage() {
                   </div>
                 )}
 
-                {/* Blocos invisíveis para preencher espaço quando há poucas tasks */}
                 {paginatedTasks.length < itemsPerPage &&
                   Array(itemsPerPage - paginatedTasks.length)
                     .fill(0)
