@@ -111,7 +111,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
 
         <button
           onClick={() => onComplete(task)}
-          className={`flex-1 h-8 px-2 text-xs font-bold border rounded transition-colors ${
+          className={`h-8 px-3 min-w-22.5 text-xs font-bold border rounded transition-colors flex items-center justify-center ${
             isNegative
               ? "text-red-500 border-red-500 hover:bg-red-500 hover:text-white"
               : "text-yellow-500 border-yellow-500 hover:bg-yellow-500 hover:text-black"

@@ -35,6 +35,22 @@ export default function DashboardPage() {
     setTimeout(() => setToast(null), 2800);
   };
 
+  // Paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // ajustar conforme desejar
+
+  // Aplica filtro antes da paginação
+  const filteredTasks = tasks.filter(
+    (t) => activeFilter === "todos" || t.type === activeFilter,
+  );
+
+  const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
+
+  const paginatedTasks = filteredTasks.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+
   const fetchTasks = useCallback(
     async (userId: string) => {
       const { data } = await supabase
@@ -58,7 +74,6 @@ export default function DashboardPage() {
       return;
     }
 
-    // Atualiza state local para remover a task da lista imediatamente
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   };
 
@@ -96,6 +111,11 @@ export default function DashboardPage() {
     fetchData();
   }, [router, supabase, fetchTasks]);
 
+  // Resetar página ao mudar filtro para evitar páginas inválidas
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeFilter]);
+
   const completeTask = async (task: Task) => {
     if (!character) return;
 
@@ -103,7 +123,6 @@ export default function DashboardPage() {
     let newXp = character.xp;
     let newLevel = character.level;
 
-    // HP e XP
     if (task.direction === "negativo") {
       const dmg = task.penalty_hp || 10;
       newHp = Math.max(0, character.hp - dmg);
@@ -130,7 +149,6 @@ export default function DashboardPage() {
       hp: newHp,
     };
 
-    // Atualiza DB
     const { error } = await supabase
       .from("characters")
       .update(updatedAttrs)
@@ -141,10 +159,8 @@ export default function DashboardPage() {
       return;
     }
 
-    // Atualiza state local **imediatamente** sem depender do DB
     setCharacter((prev) => (prev ? { ...prev, ...updatedAttrs } : prev));
 
-    // Marca a task como completa
     if (task.type !== "habito") {
       await supabase
         .from("tasks")
@@ -177,20 +193,24 @@ export default function DashboardPage() {
       <main className="min-h-screen relative z-10 font-mono flex flex-col">
         <div className="flex-1 flex items-center py-12">
           <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
-            <aside className="xl:col-span-3">
+            {/* Painel do personagem - altura fixa */}
+            <aside className="xl:col-span-3 flex flex-col h-[700px]">
               <CharacterPanel character={character} />
             </aside>
 
-            <section className="xl:col-span-6 space-y-6">
+            {/* Mural de Missões */}
+            <section className="xl:col-span-6 flex flex-col space-y-6 h-[700px]">
               <div className="flex items-center justify-between">
                 <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
                   <span className="animate-pulse">⚔</span> Mural de Missões
                 </h2>
-                <NewQuestSheet
-                  onQuestCreated={() =>
-                    character && fetchTasks(character.user_id)
-                  }
-                />
+                <div className="flex-shrink-0">
+                  <NewQuestSheet
+                    onQuestCreated={() =>
+                      character && fetchTasks(character.user_id)
+                    }
+                  />
+                </div>
               </div>
 
               <TaskFilter
@@ -198,34 +218,69 @@ export default function DashboardPage() {
                 setActiveFilter={setActiveFilter}
               />
 
-              <div className="space-y-3">
-                {tasks.filter(
-                  (t) => activeFilter === "todos" || t.type === activeFilter,
-                ).length > 0 ? (
-                  tasks
-                    .filter(
-                      (t) =>
-                        activeFilter === "todos" || t.type === activeFilter,
-                    )
-                    .map((task) => (
-                      <TaskCard
-                        key={task.id}
-                        task={task}
-                        onDelete={deleteTask}
-                        onComplete={completeTask}
-                      />
-                    ))
+              <div className="flex-1 overflow-y-auto space-y-3 min-h-[400px]">
+                {paginatedTasks.length > 0 ? (
+                  paginatedTasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onDelete={deleteTask}
+                      onComplete={completeTask}
+                    />
+                  ))
                 ) : (
-                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center">
+                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-[200px] flex items-center justify-center">
                     <p className="text-[#6b6480] text-sm uppercase tracking-[0.3em]">
                       Mural Vazio
                     </p>
                   </div>
                 )}
+
+                {/* Blocos invisíveis para preencher espaço quando há poucas tasks */}
+                {paginatedTasks.length < itemsPerPage &&
+                  Array(itemsPerPage - paginatedTasks.length)
+                    .fill(0)
+                    .map((_, idx) => <div key={idx} className="h-24" />)}
               </div>
+
+              {/* Controles de Paginação */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-6">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 rounded font-bold ${
+                      currentPage === 1
+                        ? "bg-gray-700 cursor-not-allowed"
+                        : "bg-yellow-500 hover:bg-yellow-600"
+                    }`}
+                  >
+                    Anterior
+                  </button>
+
+                  <span className="text-yellow-400 font-bold">
+                    Página {currentPage} de {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 rounded font-bold ${
+                      currentPage === totalPages
+                        ? "bg-gray-700 cursor-not-allowed"
+                        : "bg-yellow-500 hover:bg-yellow-600"
+                    }`}
+                  >
+                    Próxima
+                  </button>
+                </div>
+              )}
             </section>
 
-            <aside className="xl:col-span-3">
+            {/* Loja - altura fixa */}
+            <aside className="xl:col-span-3 flex flex-col h-[700px]">
               <ItemShop />
             </aside>
           </div>
