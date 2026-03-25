@@ -66,7 +66,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         </h4>
 
         {task.notes && (
-          <p className="text-xs text-[#6b6480] mt-1 italic">{task.notes}</p>
+          <p className="text-xs text-[#cbd5e1] mt-1 italic">{task.notes}</p>
         )}
 
         {/* Recompensas / penalidades */}
@@ -104,9 +104,10 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
       <div className="flex gap-2 shrink-0">
         <button
           onClick={() => onDelete(task.id)}
+          aria-label={`Apagar tarefa ${task.title}`}
           className="h-8 px-3 text-xs font-bold text-white bg-red-500 border border-red-500 rounded hover:bg-red-600 transition-colors"
         >
-          <Trash2 className="h-5" />
+          <Trash2 className="h-5" aria-hidden="true" />
         </button>
 
         <button

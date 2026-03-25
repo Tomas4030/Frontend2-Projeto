@@ -59,7 +59,7 @@ export default function CharacterPanel({ character }: Props) {
         <h3 className="text-[#f5c542] text-xl uppercase tracking-tight font-bold">
           {character.name}
         </h3>
-        <p className="text-[#6b6480] text-xs tracking-[0.2em] uppercase mt-1">
+        <p className="text-[#cbd5e1] text-xs tracking-[0.2em] uppercase mt-1">
           {CLASS_TITLE[character.class]}
         </p>
       </div>
@@ -110,7 +110,7 @@ export default function CharacterPanel({ character }: Props) {
                 : "bg-[#1a162e]/50 border-[#2a2540]"
             }`}
           >
-            <div className="text-[10px] text-[#6b6480] uppercase mb-1">
+            <div className="text-[10px] text-[#cbd5e1] uppercase mb-1">
               {attr.label}
             </div>
             <div

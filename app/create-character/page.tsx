@@ -100,7 +100,7 @@ const CreateCharacter = () => {
           <div className="p-8 flex flex-col justify-center border-r border-[#2a2540]">
             <div className="mb-6">
               <h1 className="rpg-title text-3xl tracking-[4px]">CRIAR HERÓI</h1>
-              <p className="text-[#6b6480] text-base mt-1 tracking-widest">
+              <p className="text-[#cbd5e1] text-base mt-1 tracking-widest">
                 &gt; escolhe o teu destino
               </p>
             </div>
@@ -214,7 +214,7 @@ const CreateCharacter = () => {
                     : 0;
                   return (
                     <div key={stat.key}>
-                      <div className="flex justify-between text-[10px] text-[#6b6480] mb-1 tracking-wider">
+                      <div className="flex justify-between text-[10px] text-[#cbd5e1] mb-1 tracking-wider">
                         <span>{stat.label}</span>
                         <span>{val}</span>
                       </div>

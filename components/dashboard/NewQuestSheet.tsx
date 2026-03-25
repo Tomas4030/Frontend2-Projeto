@@ -120,7 +120,7 @@ export function NewQuestSheet({
             <SheetTitle className="text-[#f5c542] text-2xl font-bold italic tracking-tighter uppercase">
               📜 REGISTAR DESTINO
             </SheetTitle>
-            <SheetDescription className="text-[#6b6480] text-[10px] uppercase">
+            <SheetDescription className="text-[#cbd5e1] text-[10px] uppercase">
               Define o atributo e o tipo de missão.
             </SheetDescription>
           </SheetHeader>
@@ -135,7 +135,9 @@ export function NewQuestSheet({
                     key={t}
                     type="button"
                     onClick={() => setTaskType(t as TaskType)}
-                    className={`p-2 text-[10px] border font-bold uppercase transition-all ${taskType === t ? "bg-[#f5c542] text-black border-[#f5c542]" : "border-[#2a2540] text-[#6b6480] hover:border-[#f5c542]"}`}
+                    aria-pressed={taskType === t}
+                    aria-label={`Selecionar tipo ${t}`}
+                    className={`p-2 text-[10px] border font-bold uppercase transition-all ${taskType === t ? "bg-[#f5c542] text-black border-[#f5c542]" : "border-[#2a2540] text-[#cbd5e1] hover:border-[#f5c542]"}`}
                   >
                     {t}
                   </button>
@@ -167,7 +169,7 @@ export function NewQuestSheet({
                     className={`p-2 text-[9px] border font-bold uppercase flex items-center justify-center gap-2 transition-all ${
                       skillType === s
                         ? "bg-white/10 border-[#f5c542] text-[#f5c542]"
-                        : "border-[#2a2540] text-[#6b6480] hover:border-[#f5c542]/50"
+                        : "border-[#2a2540] text-[#cbd5e1] hover:border-[#f5c542]/50"
                     }`}
                   >
                     {skillIcons[s]} {s}

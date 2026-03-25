@@ -236,7 +236,7 @@ export default function DashboardPage() {
                   ))
                 ) : (
                   <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-[200px] flex items-center justify-center">
-                    <p className="text-[#6b6480] text-sm uppercase tracking-[0.3em]">
+                    <p className="text-[#cbd5e1] text-sm uppercase tracking-[0.3em]">
                       Mural Vazio
                     </p>
                   </div>
