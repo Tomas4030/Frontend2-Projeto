@@ -1,3 +1,6 @@
+"use client";
+
+import React from "react";
 import { Task, DIFFICULTY_COLORS } from "./dashboardUtils";
 import { Trash2 } from "lucide-react";
 
@@ -8,6 +11,7 @@ type Props = {
 };
 
 export default function TaskCard({ task, onComplete, onDelete }: Props) {
+  // Configuração visual por tipo de task
   const cfg = {
     habito: { icon: "♾", label: "HÁBITO", color: "#a78bfa" },
     diaria: { icon: "◷", label: "DIÁRIA", color: "#38bdf8" },
@@ -16,6 +20,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
 
   const isNegative = task.direction === "negativo";
 
+  // 🔥 Valor do atributo da task (força, inteligência, agilidade, fé)
   const attrMap = {
     forca: task.forca_reward,
     inteligencia: task.inteligencia_reward,
@@ -25,6 +30,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
 
   const attrValue = attrMap[task.skill_type as keyof typeof attrMap] ?? 0;
 
+  // Formata o atributo (+ / -) para exibição
   const formatAttr = (value: number) => {
     if (!value) return "";
     return `${value > 0 ? `+${value}` : value} ${task.skill_type.toUpperCase()}`;
@@ -38,7 +44,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
           : "border-[#2a2540] hover:border-[#423a63]"
       }`}
     >
-  
+      {/* Ícone e tipo */}
       <div
         className="shrink-0 w-12 text-center"
         style={{ color: isNegative ? "#ef4444" : cfg.color }}
@@ -49,7 +55,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         </div>
       </div>
 
-     
+      {/* Conteúdo da task */}
       <div className="flex-1 min-w-0">
         <h4
           className={`text-base font-bold uppercase tracking-tight truncate ${
@@ -63,7 +69,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
           <p className="text-xs text-[#6b6480] mt-1 italic">{task.notes}</p>
         )}
 
-    
+        {/* Recompensas / penalidades */}
         <div className="flex items-center gap-4 mt-2">
           <span
             className={`flex gap-2 text-[12px] font-bold uppercase ${
@@ -94,6 +100,7 @@ export default function TaskCard({ task, onComplete, onDelete }: Props) {
         </div>
       </div>
 
+      {/* Botões de ação */}
       <div className="flex gap-2 shrink-0">
         <button
           onClick={() => onDelete(task.id)}

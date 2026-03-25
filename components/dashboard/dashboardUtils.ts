@@ -1,3 +1,5 @@
+export type SkillType = "forca" | "inteligencia" | "agilidade" | "fe";
+
 export type Task = {
   id: string;
   title: string;
@@ -5,7 +7,7 @@ export type Task = {
   direction: "positivo" | "negativo";
   difficulty?: "easy" | "medium" | "hard";
 
-  skill_type: SkillType; 
+  skill_type: SkillType;
 
   forca_reward?: number;
   inteligencia_reward?: number;
@@ -29,10 +31,10 @@ export type Character = {
   mp: number;
   max_mp: number;
 
-  forca: number; 
-  inteligencia: number; 
-  agilidade: number; // Agilidade
-  fe: number; // Fé
+  forca: number;
+  inteligencia: number;
+  agilidade: number;
+  fe: number;
 
   gold?: number;
   streak_days?: number;
@@ -75,5 +77,3 @@ export function handleLevelUp(xp: number, level: number) {
 
   return { xp: currentXP, level: currentLevel };
 }
-
-export type SkillType = "forca" | "inteligencia" | "agilidade" | "fe";
