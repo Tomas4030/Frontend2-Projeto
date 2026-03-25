@@ -23,7 +23,8 @@ export default function Navbar() {
     pathname === "/login" ||
     pathname === "/register" ||
     pathname === "/dashboard/revive" ||
-    pathname === "/create-character";
+    pathname === "/create-character" ||
+    pathname === "/dashboard";
 
   const landingLinks: NavItem[] = useMemo(
     () => [
