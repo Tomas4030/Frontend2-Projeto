@@ -6,11 +6,11 @@ import PixelBackground from "@/components/PixelBackground";
 const FeaturesSection = dynamic(
   () => import("@/components/landing/FeaturesSection"),
   {
-    loading: () => <div className="py-24" />,
-  },
+    loading: () => <div className="py-24" />
+  }
 );
 const GamifiedSection = dynamic(() => import("@/components/landing/Progress"), {
-  loading: () => <div className="py-20" />,
+  loading: () => <div className="py-20" />
 });
 
 export default function Home() {
@@ -20,6 +20,6 @@ export default function Home() {
       <HeroSection />
       <FeaturesSection />
       <GamifiedSection />
-    </div>
-  );
+    </div>);
+
 }

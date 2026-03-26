@@ -2,53 +2,53 @@
 import React, { useEffect, useRef } from "react";
 
 export interface CanvasConfettiCursorProps {
-  /**
-   * Array of confetti colors to use.
-   */
+
+
+
   colors?: string[];
-  /**
-   * Minimum confetti particle radius.
-   */
+
+
+
   minSize?: number;
-  /**
-   * Maximum confetti particle radius.
-   */
+
+
+
   maxSize?: number;
-  /**
-   * Number of particles to emit per burst.
-   */
+
+
+
   particleCount?: number;
-  /**
-   * How frequently to spawn bursts (ms).
-   */
+
+
+
   frequency?: number;
-  /**
-   * If true, fills parent (else covers screen).
-   */
+
+
+
   fillParent?: boolean;
-  /**
-   * Opacity of the canvas overlay.
-   */
+
+
+
   overlayOpacity?: number;
-  /**
-   * Confetti particle shrink speed (higher = faster shrink).
-   */
+
+
+
   decay?: number;
-  /**
-   * Optional: callback on each explosion.
-   */
+
+
+
   onExplosion?: (x: number, y: number) => void;
-  /**
-   * Enable/disable confetti effect.
-   */
+
+
+
   enabled?: boolean;
-  /**
-   * Optional: custom styles for canvas
-   */
+
+
+
   style?: React.CSSProperties;
-  /**
-   * Optional: extra className for canvas
-   */
+
+
+
   className?: string;
 }
 
@@ -64,19 +64,19 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
   onExplosion,
   enabled = true,
   style,
-  className,
+  className
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const mousePos = useRef({
     x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
+    y: window.innerHeight / 2
   });
   const particles = useRef<any[]>([]);
   const animId = useRef<number | undefined>(undefined);
   const intervalRef = useRef<number | undefined>(undefined);
   const parentRef = useRef<HTMLDivElement | null>(null);
 
-  // Handle canvas resize
+
   const resizeCanvas = () => {
     if (!canvasRef.current) return;
     if (fillParent && parentRef.current) {
@@ -100,7 +100,7 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
     };
   }, [fillParent]);
 
-  // Confetti logic (particle class, animation, emission)
+
   useEffect(() => {
     if (!enabled) return;
     let disposed = false;
@@ -123,13 +123,13 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
       speedX: number;
       speedY: number;
       constructor(
-        x: number,
-        y: number,
-        size: number,
-        color: string,
-        speedX: number,
-        speedY: number,
-      ) {
+      x: number,
+      y: number,
+      size: number,
+      color: string,
+      speedX: number,
+      speedY: number)
+      {
         this.x = x;
         this.y = y;
         this.size = size;
@@ -170,12 +170,12 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
       animId.current && cancelAnimationFrame(animId.current);
       particles.current = [];
     };
-    // eslint-disable-next-line
+
   }, [decay, overlayOpacity, fillParent, enabled]);
 
   useEffect(() => {
     if (!enabled) return;
-    // OnMove (mouse/touch)
+
     function moveHandler(event: Event) {
       let x = 0,
         y = 0;
@@ -195,7 +195,7 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
       }
       mousePos.current = { x, y };
     }
-    // Listen on canvas for local, window for full
+
     const target = fillParent && parentRef.current ? parentRef.current : window;
     target.addEventListener("mousemove", moveHandler);
     target.addEventListener("touchmove", moveHandler);
@@ -205,7 +205,7 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
     };
   }, [fillParent, enabled]);
 
-  // Confetti burst logic (interval spawn)
+
   useEffect(() => {
     if (!enabled) return;
     function createExplosion(x: number, y: number) {
@@ -216,7 +216,7 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
         const speedX = (Math.random() * 2 - 1) * 2;
         const speedY = (Math.random() * 2 - 1) * 2;
         particles.current.push(
-          new (class {
+          new class {
             x = x;
             y = y;
             size = size;
@@ -237,7 +237,7 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
               ctx.fill();
               ctx.globalAlpha = 1;
             }
-          })(),
+          }()
         );
       }
       if (typeof onExplosion === "function") onExplosion(x, y);
@@ -250,28 +250,28 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [
-    colors,
-    minSize,
-    maxSize,
-    particleCount,
-    frequency,
-    decay,
-    onExplosion,
-    enabled,
-    fillParent,
-    overlayOpacity,
-  ]);
+  colors,
+  minSize,
+  maxSize,
+  particleCount,
+  frequency,
+  decay,
+  onExplosion,
+  enabled,
+  fillParent,
+  overlayOpacity]
+  );
 
   if (!enabled) return null;
   return (
     <div
       ref={parentRef}
       style={
-        fillParent
-          ? { position: "relative", width: "100%", height: "100%" }
-          : { position: "fixed", inset: 0, pointerEvents: "none", zIndex: 50 }
-      }
-    >
+      fillParent ?
+      { position: "relative", width: "100%", height: "100%" } :
+      { position: "fixed", inset: 0, pointerEvents: "none", zIndex: 50 }
+      }>
+      
       <canvas
         ref={canvasRef}
         style={{
@@ -283,10 +283,10 @@ export const CanvasConfettiCursor: React.FC<CanvasConfettiCursorProps> = ({
           pointerEvents: fillParent ? "auto" : "none",
           background: "transparent",
           zIndex: 50,
-          ...style,
+          ...style
         }}
-        className={className}
-      />
-    </div>
-  );
+        className={className} />
+      
+    </div>);
+
 };

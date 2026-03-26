@@ -7,13 +7,13 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 const queryClient = new QueryClient();
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({ children }: {children: ReactNode;}) {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Sonner />
         {children}
       </TooltipProvider>
-    </QueryClientProvider>
-  );
+    </QueryClientProvider>);
+
 }

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 const formattedDate = new Intl.DateTimeFormat("pt-BR", {
-  year: "numeric",
+  year: "numeric"
 }).format(new Date());
 
 const Footer = () => {
@@ -31,11 +31,11 @@ const Footer = () => {
           alt="Efeito visual de estrelas"
           fill
           className="object-fit "
-          priority
-        />
+          priority />
+        
       </div>
-    </footer>
-  );
+    </footer>);
+
 };
 
 export { Footer };

@@ -1,9 +1,9 @@
 "use client";
 import * as React from "react";
-import { cn } from "../../lib/utils"; // Assuming utils.ts is in lib/
-import { motion, AnimatePresence, Variants, Easing } from "framer-motion"; // Import Variants and Easing
+import { cn } from "../../lib/utils";
+import { motion, AnimatePresence, Variants, Easing } from "framer-motion";
 
-// --- Context Types ---
+
 interface TooltipContextType {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,26 +23,26 @@ interface TooltipConfig {
 
 const TooltipContext = React.createContext<TooltipContextType | undefined>(undefined);
 
-// --- Tooltip Props ---
+
 interface TooltipProps {
   children: React.ReactNode;
   content: React.ReactNode;
   defaultOpen?: boolean;
-  open?: boolean; // Controlled open state
+  open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  delayDuration?: number; // Delay before showing tooltip
-  hideDelay?: number; // Delay before hiding tooltip
+  delayDuration?: number;
+  hideDelay?: number;
   side?: "top" | "right" | "bottom" | "left";
   align?: "center" | "start" | "end";
-  sideOffset?: number; // Distance from trigger
+  sideOffset?: number;
   variant?: "default" | "info" | "success" | "warning" | "error";
   hideArrow?: boolean;
   maxWidth?: string | number;
-  asChild?: boolean; // If true, children is rendered directly without a wrapper div
-  disabled?: boolean; // If true, tooltip interactions are disabled
+  asChild?: boolean;
+  disabled?: boolean;
 }
 
-// --- Tooltip Component ---
+
 const Tooltip: React.FC<TooltipProps> = ({
   children,
   content,
@@ -58,45 +58,45 @@ const Tooltip: React.FC<TooltipProps> = ({
   hideArrow = false,
   maxWidth = "20rem",
   asChild = false,
-  disabled = false,
+  disabled = false
 }) => {
-  // Manage uncontrolled open state
+
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
 
-  // Determine if the component is controlled or uncontrolled
+
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : uncontrolledOpen;
 
-  // Ref for the trigger element, passed via context to TooltipContentDisplay
+
   const triggerRef = React.useRef<HTMLElement | null>(null);
 
-  // Function to update the open state, handling both controlled and uncontrolled modes
+
   const setOpen = React.useCallback((value: boolean | ((prev: boolean) => boolean)) => {
     if (!isControlled) {
       setUncontrolledOpen(value);
     }
     if (onOpenChange) {
-      // Calculate the new value if a function is passed
+
       const newValue = typeof value === "function" ? value(open) : value;
       onOpenChange(newValue);
     }
   }, [isControlled, onOpenChange, open]);
 
-  // Refs for managing show/hide timeouts
+
   const showTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Memoize configuration object to prevent unnecessary re-renders
+
   const config = React.useMemo(() => ({
     side,
     align,
     sideOffset,
     variant,
     hideArrow,
-    maxWidth,
+    maxWidth
   }), [side, align, sideOffset, variant, hideArrow, maxWidth]);
 
-  // Clean up any pending timeouts on component unmount
+
   React.useEffect(() => {
     return () => {
       if (showTimeoutRef.current) clearTimeout(showTimeoutRef.current);
@@ -104,37 +104,37 @@ const Tooltip: React.FC<TooltipProps> = ({
     };
   }, []);
 
-  // Memoize the context value to prevent unnecessary re-renders of consumers
+
   const contextValue = React.useMemo(() => ({
     open,
     setOpen,
     content,
     config,
-    triggerRef, // Include triggerRef in context value
+    triggerRef
   }), [open, setOpen, content, config, triggerRef]);
 
   return (
     <TooltipContext.Provider value={contextValue}>
-      {/* This is the relative container for both trigger and tooltip content */}
+      {}
       <div className="relative inline-block">
-        {disabled ? children : (
-          <TooltipTrigger
-            delayDuration={delayDuration}
-            hideDelay={hideDelay}
-            asChild={asChild}
-            triggerRef={triggerRef} // Pass triggerRef to the trigger component
-          >
+        {disabled ? children :
+        <TooltipTrigger
+          delayDuration={delayDuration}
+          hideDelay={hideDelay}
+          asChild={asChild}
+          triggerRef={triggerRef}>
+          
             {children}
           </TooltipTrigger>
-        )}
-        {/* TooltipContentDisplay is now a sibling and will position absolutely within this parent */}
+        }
+        {}
         <TooltipContentDisplay />
       </div>
-    </TooltipContext.Provider>
-  );
+    </TooltipContext.Provider>);
+
 };
 
-// --- TooltipTrigger Props ---
+
 interface TooltipTriggerProps {
   children: React.ReactNode;
   delayDuration: number;
@@ -143,7 +143,7 @@ interface TooltipTriggerProps {
   triggerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-// --- TooltipTrigger Component ---
+
 const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>(
   ({ children, delayDuration, hideDelay, asChild = false, triggerRef }, ref) => {
     const context = React.useContext(TooltipContext);
@@ -155,7 +155,7 @@ const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>(
     const showTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const hideTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Handle mouse enter event
+
     const handleMouseEnter = () => {
       if (hideTimeoutRef.current) {
         clearTimeout(hideTimeoutRef.current);
@@ -167,7 +167,7 @@ const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>(
       }, delayDuration);
     };
 
-    // Handle mouse leave event
+
     const handleMouseLeave = () => {
       if (showTimeoutRef.current) {
         clearTimeout(showTimeoutRef.current);
@@ -179,57 +179,57 @@ const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>(
       }, hideDelay);
     };
 
-    // Combined ref to set both the forwarded ref and the internal triggerRef
+
     const combinedRef = React.useCallback((node: HTMLElement | null) => {
       if (typeof ref === 'function') {
         ref(node);
       } else if (ref) {
         (ref as React.MutableRefObject<HTMLElement | null>).current = node;
       }
-      triggerRef.current = node; // Crucial: assign the actual DOM node to the context's triggerRef
+      triggerRef.current = node;
     }, [ref, triggerRef]);
 
-    // Props to be applied to the trigger element
+
     const triggerProps = {
-      ref: combinedRef, // Use the combined ref
+      ref: combinedRef,
       onMouseEnter: handleMouseEnter,
       onMouseLeave: handleMouseLeave,
       onFocus: handleMouseEnter,
-      onBlur: handleMouseLeave,
+      onBlur: handleMouseLeave
     };
 
-    // If asChild is true, clone props onto the child element
+
     if (asChild && React.isValidElement(children)) {
       return React.cloneElement(children, triggerProps);
     }
 
-    // Default rendering if asChild is false
+
     return (
       <div
-        className="inline-block relative" // Keeps the trigger as a block for correct positioning
-        {...triggerProps}
-      >
+        className="inline-block relative"
+        {...triggerProps}>
+        
         {children}
-      </div>
-    );
+      </div>);
+
   }
 );
 TooltipTrigger.displayName = "TooltipTrigger";
 
-// --- TooltipContentDisplay Component ---
-// This component renders the actual tooltip content and handles its positioning.
+
+
 const TooltipContentDisplay = () => {
   const context = React.useContext(TooltipContext);
   if (!context) {
     throw new Error("TooltipContentDisplay must be used within a Tooltip");
   }
 
-  const { open, content, config, triggerRef } = context; // Get triggerRef from context
+  const { open, content, config, triggerRef } = context;
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
   const contentRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Define animation variants based on side
-  const getAnimationVariants = React.useCallback((): Variants => { // Explicitly type as Variants
+
+  const getAnimationVariants = React.useCallback((): Variants => {
     const { side } = config;
     const distance = 5;
 
@@ -237,30 +237,30 @@ const TooltipContentDisplay = () => {
       hidden: {
         opacity: 0,
         x: side === 'left' ? distance : side === 'right' ? -distance : 0,
-        y: side === 'top' ? distance : side === 'bottom' ? -distance : 0,
+        y: side === 'top' ? distance : side === 'bottom' ? -distance : 0
       },
       visible: {
         opacity: 1,
         x: 0,
         y: 0,
-        transition: { duration: 0.15, ease: "easeOut" as Easing } // Cast "easeOut" to Easing
+        transition: { duration: 0.15, ease: "easeOut" as Easing }
       },
       exit: {
         opacity: 0,
-        transition: { duration: 0.1, ease: "easeIn" as Easing } // Cast "easeIn" to Easing
+        transition: { duration: 0.1, ease: "easeIn" as Easing }
       }
     };
   }, [config]);
 
 
-  // Callback to update the tooltip's position
+
   const updatePosition = React.useCallback(() => {
     if (!contentRef.current || !triggerRef.current) return;
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
     const contentRect = contentRef.current.getBoundingClientRect();
-    // Get the rect of the closest relatively positioned parent (the outer Tooltip div)
-    // We assume the parentElement of contentRef.current is the `relative inline-block` container.
+
+
     const parentRect = contentRef.current.parentElement!.getBoundingClientRect();
 
 
@@ -268,7 +268,7 @@ const TooltipContentDisplay = () => {
     let y = 0;
     const { side, align, sideOffset } = config;
 
-    // Calculate initial position based on side, relative to the trigger
+
     switch (side) {
       case "top":
         y = triggerRect.top - contentRect.height - sideOffset;
@@ -284,7 +284,7 @@ const TooltipContentDisplay = () => {
         break;
     }
 
-    // Adjust for alignment (horizontal for top/bottom, vertical for left/right)
+
     if (side === "top" || side === "bottom") {
       switch (align) {
         case "start":
@@ -293,8 +293,8 @@ const TooltipContentDisplay = () => {
         case "end":
           x = triggerRect.right - contentRect.width;
           break;
-        default: // center
-          x = triggerRect.left + (triggerRect.width / 2) - (contentRect.width / 2);
+        default:
+          x = triggerRect.left + triggerRect.width / 2 - contentRect.width / 2;
           break;
       }
     } else if (side === "left" || side === "right") {
@@ -305,28 +305,28 @@ const TooltipContentDisplay = () => {
         case "end":
           y = triggerRect.bottom - contentRect.height;
           break;
-        default: // center
-          y = triggerRect.top + (triggerRect.height / 2) - (contentRect.height / 2);
+        default:
+          y = triggerRect.top + triggerRect.height / 2 - contentRect.height / 2;
           break;
       }
     }
 
-    // Convert viewport coordinates to coordinates relative to the parentRect
-    // The tooltip will be absolutely positioned within the parent container
+
+
     setPosition({
       x: x - parentRect.left,
-      y: y - parentRect.top,
+      y: y - parentRect.top
     });
   }, [config, triggerRef]);
 
-  // Effect to update position when tooltip becomes open or window resizes
+
   React.useEffect(() => {
     if (open) {
-      // Use requestAnimationFrame or setTimeout for next tick to ensure contentRect is accurate
-      // after AnimatePresence renders the div
-      const id = requestAnimationFrame(updatePosition); // Better than setTimeout for layout
 
-      // Re-calculate position on window resize to keep it attached
+
+      const id = requestAnimationFrame(updatePosition);
+
+
       window.addEventListener('resize', updatePosition);
       return () => {
         cancelAnimationFrame(id);
@@ -335,55 +335,55 @@ const TooltipContentDisplay = () => {
     }
   }, [open, updatePosition]);
 
-  // Arrow positioning based on side and alignment
+
   const getArrowStyle = React.useCallback(() => {
     const { side, align } = config;
-    const arrowSize = 8; // Size of the square div for the arrow
+    const arrowSize = 8;
     let style: React.CSSProperties = {
       position: 'absolute',
       width: arrowSize,
       height: arrowSize,
-      transform: 'rotate(45deg)', // Rotate to form a diamond shape
-      zIndex: -1, // Ensure arrow is behind the content
+      transform: 'rotate(45deg)',
+      zIndex: -1
     };
 
-    // Calculate position of the arrow relative to the tooltip content box
+
     switch (side) {
-      case "top": // Arrow points down from the bottom of tooltip
+      case "top":
         style.bottom = -arrowSize / 2;
-        if (align === 'center') style.left = '50%';
-        else if (align === 'start') style.left = '10%'; // 10% from start of tooltip content
-        else style.right = '10%'; // 10% from end of tooltip content (using right instead of left for end)
+        if (align === 'center') style.left = '50%';else
+        if (align === 'start') style.left = '10%';else
+        style.right = '10%';
         break;
-      case "bottom": // Arrow points up from the top of tooltip
+      case "bottom":
         style.top = -arrowSize / 2;
-        if (align === 'center') style.left = '50%';
-        else if (align === 'start') style.left = '10%';
-        else style.right = '10%';
+        if (align === 'center') style.left = '50%';else
+        if (align === 'start') style.left = '10%';else
+        style.right = '10%';
         break;
-      case "left": // Arrow points right from the right of tooltip
+      case "left":
         style.right = -arrowSize / 2;
-        if (align === 'center') style.top = '50%';
-        else if (align === 'start') style.top = '10%';
-        else style.bottom = '10%';
+        if (align === 'center') style.top = '50%';else
+        if (align === 'start') style.top = '10%';else
+        style.bottom = '10%';
         break;
-      case "right": // Arrow points left from the left of tooltip
+      case "right":
         style.left = -arrowSize / 2;
-        if (align === 'center') style.top = '50%';
-        else if (align === 'start') style.top = '10%';
-        else style.bottom = '10%';
+        if (align === 'center') style.top = '50%';else
+        if (align === 'start') style.top = '10%';else
+        style.bottom = '10%';
         break;
     }
-    // For start/end alignment, ensure the transform origin is correct
+
     if (align !== 'center') {
       if (side === 'top' || side === 'bottom') {
-        style.transformOrigin = (align === 'start' ? 'left center' : 'right center');
-        if (align === 'start') style.transform = 'translateX(50%) rotate(45deg)'; // Adjust to push arrow more towards edge
-        else style.transform = 'translateX(-50%) rotate(45deg)'; // Adjust to push arrow more towards edge
-      } else { // left or right
-        style.transformOrigin = (align === 'start' ? 'top center' : 'bottom center');
-        if (align === 'start') style.transform = 'translateY(50%) rotate(45deg)';
-        else style.transform = 'translateY(-50%) rotate(45deg)';
+        style.transformOrigin = align === 'start' ? 'left center' : 'right center';
+        if (align === 'start') style.transform = 'translateX(50%) rotate(45deg)';else
+        style.transform = 'translateX(-50%) rotate(45deg)';
+      } else {
+        style.transformOrigin = align === 'start' ? 'top center' : 'bottom center';
+        if (align === 'start') style.transform = 'translateY(50%) rotate(45deg)';else
+        style.transform = 'translateY(-50%) rotate(45deg)';
       }
     }
 
@@ -391,7 +391,7 @@ const TooltipContentDisplay = () => {
   }, [config]);
 
 
-  // Get variant-based background and text colors for tooltip body and arrow
+
   const getVariantClasses = React.useCallback(() => {
     const { variant } = config;
 
@@ -401,27 +401,27 @@ const TooltipContentDisplay = () => {
       case 'success':
         return 'bg-green-500 text-white';
       case 'warning':
-        return 'bg-yellow-500 text-black'; // Often warnings have black text
+        return 'bg-yellow-500 text-black';
       case 'error':
         return 'bg-red-500 text-white';
       default:
-        return 'bg-popover text-popover-foreground border border-gray-200 dark:border-gray-700'; // Default with border
+        return 'bg-popover text-popover-foreground border border-gray-200 dark:border-gray-700';
     }
   }, [config]);
 
-  // Don't render if not open
+
   if (!open) return null;
 
   return (
     <AnimatePresence>
-      {/* The motion.div is now absolutely positioned within its parent */}
+      {}
       <motion.div
         ref={contentRef}
         style={{
-          position: 'absolute', // Position absolute relative to the nearest positioned ancestor
+          position: 'absolute',
           top: position.y,
           left: position.x,
-          maxWidth: config.maxWidth,
+          maxWidth: config.maxWidth
         }}
         initial="hidden"
         animate="visible"
@@ -430,31 +430,31 @@ const TooltipContentDisplay = () => {
         className={cn(
           "z-50 rounded px-3 py-1.5 text-xs shadow-md",
           getVariantClasses()
-        )}
-      >
-        {!config.hideArrow && (
-          <div
-            className={cn(
-              "w-2 h-2 absolute",
-              getVariantClasses(), // Apply variant classes for arrow background color
-              "before:content-[''] before:absolute before:inset-0 before:bg-inherit before:rounded-sm" // Pseudo-element for actual arrow body
-            )}
-            style={getArrowStyle()}
-          />
-        )}
+        )}>
+        
+        {!config.hideArrow &&
+        <div
+          className={cn(
+            "w-2 h-2 absolute",
+            getVariantClasses(),
+            "before:content-[''] before:absolute before:inset-0 before:bg-inherit before:rounded-sm"
+          )}
+          style={getArrowStyle()} />
+
+        }
         {content}
       </motion.div>
-    </AnimatePresence>
-  );
+    </AnimatePresence>);
+
 };
 
-// Re-export as named export
+
 export { Tooltip, TooltipTrigger };
 
-// For legacy compatibility (if needed, otherwise remove)
+
 export const Tooltips = Tooltip;
 
-// Deprecated TooltipContent, kept for backward compatibility with a warning
+
 export const TooltipContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   (props, _ref) => {
     console.warn("TooltipContent is deprecated. Use the Tooltip component with content prop instead.");
@@ -463,7 +463,7 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, React.HTMLAttribu
 );
 TooltipContent.displayName = "TooltipContent";
 
-// Backward compatibility for TooltipProvider (if needed, otherwise remove)
-export const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
+export const TooltipProvider: React.FC<{children: React.ReactNode;}> = ({ children }) => {
   return <>{children}</>;
 };

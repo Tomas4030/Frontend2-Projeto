@@ -23,9 +23,9 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
           "transition-all duration-300 ease-in-out hover:scale-105",
           className
         )}
-        {...props}
-      />
-    );
+        {...props} />);
+
+
   }
 );
 
@@ -64,9 +64,9 @@ const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(
         )}
         onError={handleError}
         onLoad={handleLoad}
-        {...props}
-      />
-    );
+        {...props} />);
+
+
   }
 );
 AvatarImage.displayName = "AvatarImage";
@@ -74,17 +74,17 @@ AvatarImage.displayName = "AvatarImage";
 interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const AvatarFallback = React.forwardRef<HTMLDivElement, AvatarFallbackProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "flex h-full w-full items-center justify-center rounded-full bg-muted",
-        "animate-in fade-in-0 zoom-in-0 duration-300",
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, ...props }, ref) =>
+  <div
+    ref={ref}
+    className={cn(
+      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      "animate-in fade-in-0 zoom-in-0 duration-300",
+      className
+    )}
+    {...props} />
+
+
 );
 AvatarFallback.displayName = "AvatarFallback";
 

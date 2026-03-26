@@ -8,7 +8,7 @@ import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
-type NavItem = { href: string; label: string };
+type NavItem = {href: string;label: string;};
 
 export default function Navbar() {
   const router = useRouter();
@@ -21,21 +21,21 @@ export default function Navbar() {
 
   const isLandingPage = pathname === "/";
   const isLoginPage =
-    pathname === "/login" ||
-    pathname === "/register" ||
-    pathname === "/dashboard/revive" ||
-    pathname === "/create-character" ||
-    pathname === "/dashboard";
+  pathname === "/login" ||
+  pathname === "/register" ||
+  pathname === "/dashboard/revive" ||
+  pathname === "/create-character" ||
+  pathname === "/dashboard";
 
   const landingLinks: NavItem[] = useMemo(
     () => [
-      { href: "#features", label: "Funcionalidades" },
-      { href: "#gamificacao", label: "Gamificação" },
-    ],
-    [],
+    { href: "#features", label: "Funcionalidades" },
+    { href: "#gamificacao", label: "Gamificação" }],
+
+    []
   );
 
-  // Sessão + listener
+
   useEffect(() => {
     let mounted = true;
 
@@ -52,7 +52,7 @@ export default function Navbar() {
       (_event, session) => {
         setUser(session?.user ?? null);
         setAuthReady(true);
-      },
+      }
     );
 
     return () => {
@@ -91,16 +91,16 @@ export default function Navbar() {
           <Sword className="h-6 w-6 text-primary" aria-hidden="true" />
           <Link
             href="/"
-            className="font-pixel text-lg text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm"
-          >
+            className="font-pixel text-lg text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-sm">
+            
             Veydral
           </Link>
         </div>
 
         <div className="hidden md:flex items-center gap-6">
-          {isLandingPage && (
-            <NavLinks items={landingLinks} onAnchorClick={handleAnchorNav} />
-          )}
+          {isLandingPage &&
+          <NavLinks items={landingLinks} onAnchorClick={handleAnchorNav} />
+          }
 
           <AuthActions authReady={authReady} user={user} onSignOut={signOut} />
         </div>
@@ -111,8 +111,8 @@ export default function Navbar() {
           aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
-          onClick={() => setIsOpen((v) => !v)}
-        >
+          onClick={() => setIsOpen((v) => !v)}>
+          
           <span className="sr-only">
             {isOpen ? "Fechar menu" : "Abrir menu"}
           </span>
@@ -120,67 +120,67 @@ export default function Navbar() {
         </button>
       </div>
 
-      {isOpen && (
-        <div
-          id="mobile-menu"
-          className="md:hidden border-b border-border bg-card px-4 py-4 space-y-3"
-        >
-          {isLandingPage && (
-            <NavLinks
-              items={landingLinks}
-              mobile
-              onAnchorClick={handleAnchorNav}
-              onNavigate={() => setIsOpen(false)}
-            />
-          )}
+      {isOpen &&
+      <div
+        id="mobile-menu"
+        className="md:hidden border-b border-border bg-card px-4 py-4 space-y-3">
+        
+          {isLandingPage &&
+        <NavLinks
+          items={landingLinks}
+          mobile
+          onAnchorClick={handleAnchorNav}
+          onNavigate={() => setIsOpen(false)} />
+
+        }
 
           <div className="pt-2">
             <AuthActions
-              authReady={authReady}
-              user={user}
-              onSignOut={signOut}
-              mobile
-              onNavigate={() => setIsOpen(false)}
-            />
+            authReady={authReady}
+            user={user}
+            onSignOut={signOut}
+            mobile
+            onNavigate={() => setIsOpen(false)} />
+          
           </div>
         </div>
-      )}
-    </nav>
-  );
+      }
+    </nav>);
+
 }
 
 function NavLinks({
   items,
   mobile,
   onAnchorClick,
-  onNavigate,
-}: {
-  items: { href: string; label: string }[];
-  mobile?: boolean;
-  onAnchorClick: (href: string) => (e: React.MouseEvent) => void;
-  onNavigate?: () => void;
-}) {
+  onNavigate
+
+
+
+
+
+}: {items: {href: string;label: string;}[];mobile?: boolean;onAnchorClick: (href: string) => (e: React.MouseEvent) => void;onNavigate?: () => void;}) {
   const base =
-    "text-xs text-muted-foreground hover:text-foreground transition-colors";
+  "text-xs text-muted-foreground hover:text-foreground transition-colors";
   const mobileCls = "block text-sm text-muted-foreground hover:text-foreground";
 
   return (
     <div className={mobile ? "space-y-2" : "flex items-center gap-6"}>
-      {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={mobile ? mobileCls : base}
-          onClick={(e) => {
-            if (item.href.startsWith("#")) return onAnchorClick(item.href)(e);
-            onNavigate?.();
-          }}
-        >
+      {items.map((item) =>
+      <Link
+        key={item.href}
+        href={item.href}
+        className={mobile ? mobileCls : base}
+        onClick={(e) => {
+          if (item.href.startsWith("#")) return onAnchorClick(item.href)(e);
+          onNavigate?.();
+        }}>
+        
           {item.label}
         </Link>
-      ))}
-    </div>
-  );
+      )}
+    </div>);
+
 }
 
 function AuthActions({
@@ -188,22 +188,22 @@ function AuthActions({
   user,
   onSignOut,
   mobile,
-  onNavigate,
-}: {
-  authReady: boolean;
-  user: User | null;
-  onSignOut: () => Promise<void>;
-  mobile?: boolean;
-  onNavigate?: () => void;
-}) {
+  onNavigate
+
+
+
+
+
+
+}: {authReady: boolean;user: User | null;onSignOut: () => Promise<void>;mobile?: boolean;onNavigate?: () => void;}) {
   if (!authReady) {
     return (
       <div className={mobile ? "flex flex-col gap-2" : ""}>
         <Button size="sm" disabled className={mobile ? "w-full" : ""}>
           A carregar...
         </Button>
-      </div>
-    );
+      </div>);
+
   }
 
   if (user) {
@@ -212,11 +212,11 @@ function AuthActions({
         variant="ghost"
         size="sm"
         className={mobile ? "w-full" : ""}
-        onClick={onSignOut}
-      >
+        onClick={onSignOut}>
+        
         Sair
-      </Button>
-    );
+      </Button>);
+
   }
 
   return (
@@ -231,6 +231,6 @@ function AuthActions({
           Registrar
         </Button>
       </Link>
-    </div>
-  );
+    </div>);
+
 }

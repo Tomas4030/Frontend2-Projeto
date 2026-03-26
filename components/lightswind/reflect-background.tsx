@@ -67,12 +67,12 @@ const blurClassMap: Record<BlurSize, string> = {
   lg: "backdrop-blur-lg",
   xl: "backdrop-blur-xl",
   "2xl": "backdrop-blur-2xl",
-  "3xl": "backdrop-blur-3xl",
+  "3xl": "backdrop-blur-3xl"
 };
 
 function ReflectBackground({
   backdropBlurAmount = "sm",
-  className = "",
+  className = ""
 }: ReflectBackgroundProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -87,9 +87,9 @@ function ReflectBackground({
     }
 
     const compileShader = (
-      type: number,
-      source: string,
-    ): WebGLShader | null => {
+    type: number,
+    source: string)
+    : WebGLShader | null => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source);
@@ -105,7 +105,7 @@ function ReflectBackground({
     const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = compileShader(
       gl.FRAGMENT_SHADER,
-      fragmentShaderSource,
+      fragmentShaderSource
     );
     if (!vertexShader || !fragmentShader) return;
 
@@ -127,7 +127,7 @@ function ReflectBackground({
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW,
+      gl.STATIC_DRAW
     );
 
     const positionLocation = gl.getAttribLocation(program, "a_position");
@@ -165,11 +165,11 @@ function ReflectBackground({
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full max-w-screen h-full overflow-hidden"
-        style={{ display: "block" }}
-      />
+        style={{ display: "block" }} />
+      
       <div className={`absolute inset-0 ${finalBlurClass}`} />
-    </div>
-  );
+    </div>);
+
 }
 
 export default ReflectBackground;

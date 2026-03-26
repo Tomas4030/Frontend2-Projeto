@@ -35,19 +35,19 @@ interface ToggleGroupProps {
 }
 
 const ToggleGroup = React.forwardRef<HTMLDivElement, ToggleGroupProps & Omit<React.HTMLAttributes<HTMLDivElement>, keyof ToggleGroupProps>>(
-  ({ 
-    className, 
-    type, 
-    value, 
-    defaultValue, 
-    onValueChange, 
-    variant = "default", 
-    size = "default", 
+  ({
+    className,
+    type,
+    value,
+    defaultValue,
+    onValueChange,
+    variant = "default",
+    size = "default",
     disabled = false,
-    children, 
-    ...props 
+    children,
+    ...props
   }, ref) => {
-    // Ensure value is always of the right type (string for single, string[] for multiple)
+
     const ensureCorrectValueType = (val: string | string[] | undefined): string | string[] => {
       if (val === undefined) return type === "single" ? "" : [];
       if (type === "single") {
@@ -56,38 +56,38 @@ const ToggleGroup = React.forwardRef<HTMLDivElement, ToggleGroupProps & Omit<Rea
         return Array.isArray(val) ? val : val ? [val] : [];
       }
     };
-    
+
     const [stateValue, setStateValue] = React.useState<string | string[]>(
       ensureCorrectValueType(defaultValue)
     );
-    
-    // Determine if the component is controlled or uncontrolled
+
+
     const isControlled = value !== undefined;
     const currentValue = isControlled ? ensureCorrectValueType(value) : stateValue;
-    
+
     const handleValueChange = React.useCallback((itemValue: string) => {
       if (disabled) return;
-      
+
       const newValue = (() => {
         if (type === "single") {
           return itemValue;
         }
-        
-        // For multiple selection
-        // Ensure currentValue is always treated as an array for "multiple" type
+
+
+
         const values = Array.isArray(currentValue) ? currentValue : [currentValue].filter(Boolean);
-        return values.includes(itemValue)
-          ? values.filter((v) => v !== itemValue)
-          : [...values, itemValue];
+        return values.includes(itemValue) ?
+        values.filter((v) => v !== itemValue) :
+        [...values, itemValue];
       })();
-      
+
       if (!isControlled) {
         setStateValue(newValue);
       }
-      
+
       onValueChange?.(newValue);
     }, [type, currentValue, disabled, isControlled, onValueChange]);
-    
+
     return (
       <ToggleGroupContext.Provider
         value={{
@@ -96,19 +96,19 @@ const ToggleGroup = React.forwardRef<HTMLDivElement, ToggleGroupProps & Omit<Rea
           onChange: handleValueChange,
           size,
           variant,
-          disabled,
-        }}
-      >
+          disabled
+        }}>
+        
         <div
           ref={ref}
           className={cn("flex items-center justify-center gap-1", className)}
           role={type === "single" ? "radiogroup" : "group"}
-          {...props}
-        >
+          {...props}>
+          
           {children}
         </div>
-      </ToggleGroupContext.Provider>
-    );
+      </ToggleGroupContext.Provider>);
+
   }
 );
 ToggleGroup.displayName = "ToggleGroup";
@@ -124,26 +124,26 @@ interface ToggleGroupItemProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 const ToggleGroupItem = React.forwardRef<HTMLButtonElement, ToggleGroupItemProps>(
   ({ className, children, value, variant, size, disabled: itemDisabled, defaultPressed, ...props }, ref) => {
     const { type, value: groupValue, onChange, size: groupSize, variant: groupVariant, disabled: groupDisabled } = useToggleGroupContext();
-    
-    const isActive = type === "single" 
-      ? groupValue === value 
-      : Array.isArray(groupValue) 
-        ? groupValue.includes(value) 
-        : groupValue === value;
-    
+
+    const isActive = type === "single" ?
+    groupValue === value :
+    Array.isArray(groupValue) ?
+    groupValue.includes(value) :
+    groupValue === value;
+
     const isDisabled = groupDisabled || itemDisabled;
-    
+
     React.useEffect(() => {
-      // Handle defaultPressed if provided and the toggle is not already active
+
       if (defaultPressed && !isActive && !isDisabled) {
         onChange(value);
       }
     }, []);
-    
+
     const handleClick = () => {
       onChange(value);
     };
-    
+
     return (
       <button
         ref={ref}
@@ -160,11 +160,11 @@ const ToggleGroupItem = React.forwardRef<HTMLButtonElement, ToggleGroupItemProps
           className
         )}
         onClick={handleClick}
-        {...props}
-      >
+        {...props}>
+        
         {children}
-      </button>
-    );
+      </button>);
+
   }
 );
 ToggleGroupItem.displayName = "ToggleGroupItem";

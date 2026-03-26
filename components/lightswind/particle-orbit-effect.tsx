@@ -11,7 +11,7 @@ export interface ParticleOrbitEffectProps {
   radiusScale?: number;
   intensity?: number;
   fadeOpacity?: number;
-  colorRange?: [number, number]; // HSL hue range
+  colorRange?: [number, number];
   disabled?: boolean;
   followMouse?: boolean;
   autoColors?: boolean;
@@ -20,15 +20,15 @@ export interface ParticleOrbitEffectProps {
 
 interface Particle {
   size: number;
-  position: { x: number; y: number };
-  offset: { x: number; y: number };
-  shift: { x: number; y: number };
+  position: {x: number;y: number;};
+  offset: {x: number;y: number;};
+  shift: {x: number;y: number;};
   speed: number;
   targetSize: number;
   fillColor: string;
   orbit: number;
   hue: number;
-  trail: Array<{ x: number; y: number; alpha: number }>;
+  trail: Array<{x: number;y: number;alpha: number;}>;
 }
 
 const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
@@ -44,7 +44,7 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
   disabled = false,
   followMouse = true,
   autoColors = true,
-  particleSize = 2,
+  particleSize = 2
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number | undefined>(undefined);
@@ -53,27 +53,27 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
     x: 0,
     y: 0,
     isDown: false,
-    radiusScale: 1,
+    radiusScale: 1
   });
   const colorTimerRef = useRef(0);
 
-  // Helper to generate HSL color
+
   const generateColor = useCallback(
     (hue?: number) => {
       const h =
-        hue ?? colorRange[0] + Math.random() * (colorRange[1] - colorRange[0]);
+      hue ?? colorRange[0] + Math.random() * (colorRange[1] - colorRange[0]);
       return `hsl(${h}, 70%, 60%)`;
     },
-    [colorRange],
+    [colorRange]
   );
 
-  // Create particles
+
   const createParticles = useCallback(
     (initialX: number, initialY: number) => {
       const particles: Particle[] = [];
       for (let i = 0; i < particleCount; i++) {
         const hue =
-          colorRange[0] + Math.random() * (colorRange[1] - colorRange[0]);
+        colorRange[0] + Math.random() * (colorRange[1] - colorRange[0]);
         particles.push({
           size: particleSize,
           position: { x: initialX, y: initialY },
@@ -84,22 +84,22 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
           fillColor: generateColor(hue),
           orbit: radius * 0.5 + radius * 0.5 * Math.random(),
           hue,
-          trail: [],
+          trail: []
         });
       }
       return particles;
     },
     [
-      particleCount,
-      particleSpeed,
-      particleSize,
-      radius,
-      generateColor,
-      colorRange,
-    ],
+    particleCount,
+    particleSpeed,
+    particleSize,
+    radius,
+    generateColor,
+    colorRange]
+
   );
 
-  // Update canvas dimensions
+
   const updateCanvasDimensions = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -110,14 +110,14 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
     canvas.width = width;
     canvas.height = height;
 
-    // Initialize mouse position to center
+
     mouseRef.current.x = width / 2;
     mouseRef.current.y = height / 2;
 
-    // Create initial particles
+
     particlesRef.current = createParticles(
       mouseRef.current.x,
-      mouseRef.current.y,
+      mouseRef.current.y
     );
   }, [createParticles]);
 
@@ -130,7 +130,7 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
     const context = canvas.getContext("2d");
     if (!context) return;
 
-    // Event handlers
+
     const handleMouseMove = (event: MouseEvent) => {
       if (!followMouse) return;
       mouseRef.current.x = event.clientX;
@@ -164,82 +164,82 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
       mouseRef.current.isDown = false;
     };
 
-    // Animation loop
+
     const draw = () => {
       if (!context || !canvas) return;
 
-      // Update color timer for auto colors
+
       if (autoColors) {
-        colorTimerRef.current += 0.016; // ~60fps
+        colorTimerRef.current += 0.016;
         if (colorTimerRef.current >= 2) {
-          // Change colors every 2 seconds
+
           colorTimerRef.current = 0;
           particlesRef.current.forEach((particle) => {
             particle.hue =
-              colorRange[0] + Math.random() * (colorRange[1] - colorRange[0]);
+            colorRange[0] + Math.random() * (colorRange[1] - colorRange[0]);
             particle.fillColor = generateColor(particle.hue);
           });
         }
       }
 
-      // Animate radius scale
+
       const targetScale = mouseRef.current.isDown ? radiusScale : 1;
       mouseRef.current.radiusScale +=
-        (targetScale - mouseRef.current.radiusScale) * 0.02;
+      (targetScale - mouseRef.current.radiusScale) * 0.02;
 
-      // Clear canvas completely for transparent background
+
       context.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw particles
+
       for (let i = 0; i < particlesRef.current.length; i++) {
         const particle = particlesRef.current[i];
 
-        // Update particle position
+
         particle.offset.x += particle.speed * intensity;
         particle.offset.y += particle.speed * intensity;
 
         particle.shift.x +=
-          (mouseRef.current.x - particle.shift.x) * particle.speed * intensity;
+        (mouseRef.current.x - particle.shift.x) * particle.speed * intensity;
         particle.shift.y +=
-          (mouseRef.current.y - particle.shift.y) * particle.speed * intensity;
+        (mouseRef.current.y - particle.shift.y) * particle.speed * intensity;
 
         const orbitRadius =
-          particle.orbit * mouseRef.current.radiusScale * intensity;
+        particle.orbit * mouseRef.current.radiusScale * intensity;
         particle.position.x =
-          particle.shift.x + Math.cos(i + particle.offset.x) * orbitRadius;
+        particle.shift.x + Math.cos(i + particle.offset.x) * orbitRadius;
         particle.position.y =
-          particle.shift.y + Math.sin(i + particle.offset.y) * orbitRadius;
+        particle.shift.y + Math.sin(i + particle.offset.y) * orbitRadius;
 
-        // Keep particles within canvas bounds
+
         particle.position.x = Math.max(
           0,
-          Math.min(particle.position.x, canvas.width),
+          Math.min(particle.position.x, canvas.width)
         );
         particle.position.y = Math.max(
           0,
-          Math.min(particle.position.y, canvas.height),
+          Math.min(particle.position.y, canvas.height)
         );
 
-        // Update trail
+
         particle.trail.push({
           x: particle.position.x,
           y: particle.position.y,
-          alpha: 1,
+          alpha: 1
         });
 
-        // Limit trail length and fade existing points
+
         const maxTrailLength = Math.max(5, Math.floor(40 * intensity));
         if (particle.trail.length > maxTrailLength) {
           particle.trail.shift();
         }
 
-        // Fade trail points
+
         particle.trail.forEach((point, index) => {
           point.alpha =
-            ((index + 1) / particle.trail.length) * fadeOpacity * 20;
+          (index + 1) / particle.trail.length * fadeOpacity * 20;
         });
 
-        // Draw trail
+
         if (particle.trail.length > 1) {
           for (let j = 1; j < particle.trail.length; j++) {
             const prev = particle.trail[j - 1];
@@ -255,13 +255,13 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
           }
         }
 
-        // Animate particle size
+
         particle.size += (particle.targetSize - particle.size) * 0.05;
         if (Math.abs(particle.size - particle.targetSize) < 0.1) {
           particle.targetSize = particleSize + Math.random() * particleSize * 2;
         }
 
-        // Draw main particle
+
         context.beginPath();
         context.fillStyle = particle.fillColor;
         context.globalAlpha = 0.9;
@@ -270,7 +270,7 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
           particle.position.y,
           particle.size * 0.5,
           0,
-          Math.PI * 2,
+          Math.PI * 2
         );
         context.fill();
       }
@@ -279,10 +279,10 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
       animationRef.current = requestAnimationFrame(draw);
     };
 
-    // Initialize
+
     updateCanvasDimensions();
 
-    // Add event listeners
+
     window.addEventListener("resize", updateCanvasDimensions);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mousedown", handleMouseDown);
@@ -291,10 +291,10 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
     window.addEventListener("touchend", handleTouchEnd);
 
-    // Start animation
+
     animationRef.current = requestAnimationFrame(draw);
 
-    // Cleanup
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -308,21 +308,21 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
       window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [
-    disabled,
-    followMouse,
-    particleCount,
-    radius,
-    particleSpeed,
-    radiusScale,
-    intensity,
-    fadeOpacity,
-    colorRange,
-    autoColors,
-    particleSize,
-    updateCanvasDimensions,
-    createParticles,
-    generateColor,
-  ]);
+  disabled,
+  followMouse,
+  particleCount,
+  radius,
+  particleSpeed,
+  radiusScale,
+  intensity,
+  fadeOpacity,
+  colorRange,
+  autoColors,
+  particleSize,
+  updateCanvasDimensions,
+  createParticles,
+  generateColor]
+  );
 
   if (disabled) {
     return null;
@@ -332,17 +332,17 @@ const ParticleOrbitEffect: React.FC<ParticleOrbitEffectProps> = ({
     <div
       className={cn(
         "fixed top-0 left-0 z-50 pointer-events-none w-full h-full",
-        className,
-      )}
-    >
+        className
+      )}>
+      
       <canvas
         ref={canvasRef}
         className="w-screen h-screen block"
         style={style}
-        aria-hidden="true"
-      />
-    </div>
-  );
+        aria-hidden="true" />
+      
+    </div>);
+
 };
 
 export default ParticleOrbitEffect;

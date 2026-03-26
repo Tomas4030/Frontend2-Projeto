@@ -10,7 +10,7 @@ interface AccordionContextType {
 
 const AccordionContext = React.createContext<AccordionContextType | undefined>(undefined);
 
-// Add AccordionItemContext to pass value from AccordionItem to its children
+
 interface AccordionItemContextType {
   value: string;
 }
@@ -27,34 +27,34 @@ interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Accordion = React.forwardRef<HTMLDivElement, AccordionProps>(
   ({ className, type = "multiple", value, defaultValue = [], onValueChange, children, ...props }, ref) => {
-    // Always ensure values is an array, even if a single string is passed
+
     const [values, setValues] = React.useState<string[]>(
-      Array.isArray(value) ? value : 
-      value ? [value] : 
-      Array.isArray(defaultValue) ? defaultValue : 
+      Array.isArray(value) ? value :
+      value ? [value] :
+      Array.isArray(defaultValue) ? defaultValue :
       defaultValue ? [defaultValue] : []
     );
-    
+
     React.useEffect(() => {
       if (value !== undefined) {
         setValues(Array.isArray(value) ? value : value ? [value] : []);
       }
     }, [value]);
-    
+
     const handleValueChange = React.useCallback((newValues: string[]) => {
       if (value === undefined) {
         setValues(newValues);
       }
       onValueChange?.(newValues);
     }, [onValueChange, value]);
-    
+
     return (
       <AccordionContext.Provider value={{ value: values, onValueChange: handleValueChange }}>
         <div ref={ref} className={cn(className)} {...props}>
           {children}
         </div>
-      </AccordionContext.Provider>
-    );
+      </AccordionContext.Provider>);
+
   }
 );
 Accordion.displayName = "Accordion";
@@ -73,12 +73,12 @@ const AccordionItem = React.forwardRef<HTMLDivElement, AccordionItemProps>(
           className={cn("border-b   text-black dark:text-white", className)}
           data-state={disabled ? "disabled" : undefined}
           data-value={value}
-          {...props}
-        >
+          {...props}>
+          
           {children}
         </div>
-      </AccordionItemContext.Provider>
-    );
+      </AccordionItemContext.Provider>);
+
   }
 );
 AccordionItem.displayName = "AccordionItem";
@@ -89,23 +89,23 @@ const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTriggerPro
   ({ className, children, ...props }, ref) => {
     const context = React.useContext(AccordionContext);
     if (!context) throw new Error("AccordionTrigger must be used within an Accordion");
-    
+
     const itemContext = React.useContext(AccordionItemContext);
     if (!itemContext) throw new Error("AccordionTrigger must be used within an AccordionItem");
-    
+
     const { value: values, onValueChange } = context;
     const { value: itemValue } = itemContext;
-    
+
     const isOpen = values.includes(itemValue);
-    
+
     const handleToggle = () => {
-      const newValues = isOpen
-        ? values.filter(v => v !== itemValue)
-        : [...values, itemValue];
-      
+      const newValues = isOpen ?
+      values.filter((v) => v !== itemValue) :
+      [...values, itemValue];
+
       onValueChange(newValues);
     };
-    
+
     return (
       <button
         ref={ref}
@@ -117,12 +117,12 @@ const AccordionTrigger = React.forwardRef<HTMLButtonElement, AccordionTriggerPro
         )}
         onClick={handleToggle}
         data-state={isOpen ? "open" : "closed"}
-        {...props}
-      >
+        {...props}>
+        
         {children}
         <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
-      </button>
-    );
+      </button>);
+
   }
 );
 AccordionTrigger.displayName = "AccordionTrigger";
@@ -133,15 +133,15 @@ const AccordionContent = React.forwardRef<HTMLDivElement, AccordionContentProps>
   ({ className, children, ...props }, ref) => {
     const context = React.useContext(AccordionContext);
     if (!context) throw new Error("AccordionContent must be used within an Accordion");
-    
+
     const itemContext = React.useContext(AccordionItemContext);
     if (!itemContext) throw new Error("AccordionContent must be used within an AccordionItem");
-    
+
     const { value: values } = context;
     const { value: itemValue } = itemContext;
-    
+
     const isOpen = values.includes(itemValue);
-    
+
     return (
       <div
         ref={ref}
@@ -151,13 +151,13 @@ const AccordionContent = React.forwardRef<HTMLDivElement, AccordionContentProps>
           className
         )}
         data-state={isOpen ? "open" : "closed"}
-        {...props}
-      >
+        {...props}>
+        
         <div className={cn("pb-4 pt-0")}>
           {children}
         </div>
-      </div>
-    );
+      </div>);
+
   }
 );
 AccordionContent.displayName = "AccordionContent";

@@ -15,8 +15,8 @@ import {
   Character,
   Difficulty,
   getManaCost,
-  getRandomGoldReward,
-} from "@/components/dashboard/dashboardUtils";
+  getRandomGoldReward } from
+"@/components/dashboard/dashboardUtils";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -26,8 +26,8 @@ export default function DashboardPage() {
   const [character, setCharacter] = useState<Character | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeFilter, setActiveFilter] = useState<
-    "todos" | "habito" | "diaria" | "afazer"
-  >("todos");
+    "todos" | "habito" | "diaria" | "afazer">(
+    "todos");
   const [toast, setToast] = useState<{
     msg: string;
     type: "xp" | "hp" | "lvl" | "dmg";
@@ -38,47 +38,47 @@ export default function DashboardPage() {
     setTimeout(() => setToast(null), 2800);
   };
 
-  // Paginação
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // ajustar conforme desejar
 
-  // Aplica filtro antes da paginação
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+
   const filteredTasks = tasks.filter(
-    (t) => activeFilter === "todos" || t.type === activeFilter,
+    (t) => activeFilter === "todos" || t.type === activeFilter
   );
 
   const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
 
   const paginatedTasks = filteredTasks.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   const fetchTasks = useCallback(
     async (userId: string) => {
-      const { data } = await supabase
-        .from("tasks")
-        .select("*")
-        .eq("user_id", userId)
-        .or("is_completed.eq.false,type.eq.habito")
-        .order("created_at", { ascending: false });
+      const { data } = await supabase.
+      from("tasks").
+      select("*").
+      eq("user_id", userId).
+      or("is_completed.eq.false,type.eq.habito").
+      order("created_at", { ascending: false });
       if (data) setTasks(data as Task[]);
     },
-    [supabase],
+    [supabase]
   );
 
   const fetchCharacter = useCallback(async () => {
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser();
 
     if (!user) return;
 
-    const { data, error } = await supabase
-      .from("characters")
-      .select("*")
-      .eq("user_id", user.id)
-      .single();
+    const { data, error } = await supabase.
+    from("characters").
+    select("*").
+    eq("user_id", user.id).
+    single();
 
     if (error) {
       console.error("Erro ao atualizar personagem:", error.message);
@@ -91,7 +91,7 @@ export default function DashboardPage() {
       setCharacter({
         ...data,
         xp,
-        level,
+        level
       } as Character);
     }
   }, [supabase]);
@@ -113,15 +113,15 @@ export default function DashboardPage() {
     const fetchData = async () => {
       const {
         data: { user },
-        error: authError,
+        error: authError
       } = await supabase.auth.getUser();
       if (authError || !user) return router.push("/login");
 
-      const { data: char } = await supabase
-        .from("characters")
-        .select("*")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const { data: char } = await supabase.
+      from("characters").
+      select("*").
+      eq("user_id", user.id).
+      maybeSingle();
 
       if (char) {
         if (char.hp <= 0) return router.push("/dashboard/revive");
@@ -133,7 +133,7 @@ export default function DashboardPage() {
           forca: char.forca,
           inteligencia: char.inteligencia,
           agilidade: char.agilidade,
-          fe: char.fe,
+          fe: char.fe
         });
       }
 
@@ -155,14 +155,14 @@ export default function DashboardPage() {
     }
 
     const xpBoostActive =
-      character.xp_boost_multiplier === 2 &&
-      !!character.xp_boost_expires_at &&
-      new Date(character.xp_boost_expires_at).getTime() > Date.now();
+    character.xp_boost_multiplier === 2 &&
+    !!character.xp_boost_expires_at &&
+    new Date(character.xp_boost_expires_at).getTime() > Date.now();
 
     const xpBoostExpired =
-      character.xp_boost_multiplier === 2 &&
-      !!character.xp_boost_expires_at &&
-      new Date(character.xp_boost_expires_at).getTime() <= Date.now();
+    character.xp_boost_multiplier === 2 &&
+    !!character.xp_boost_expires_at &&
+    new Date(character.xp_boost_expires_at).getTime() <= Date.now();
 
     let newHp = character.hp;
     let newXp = character.xp;
@@ -223,26 +223,26 @@ export default function DashboardPage() {
       mp: newMp,
       gold: newGold,
       xp_boost_multiplier: newXpBoostMultiplier,
-      xp_boost_expires_at: newXpBoostExpiresAt,
+      xp_boost_expires_at: newXpBoostExpiresAt
     };
 
-    const { error } = await supabase
-      .from("characters")
-      .update(updatedAttrs)
-      .eq("id", character.id);
+    const { error } = await supabase.
+    from("characters").
+    update(updatedAttrs).
+    eq("id", character.id);
 
     if (error) {
       console.error("Erro ao atualizar personagem:", error.message);
       return;
     }
 
-    setCharacter((prev) => (prev ? { ...prev, ...updatedAttrs } : prev));
+    setCharacter((prev) => prev ? { ...prev, ...updatedAttrs } : prev);
 
     if (task.type !== "habito") {
-      const { error: taskError } = await supabase
-        .from("tasks")
-        .update({ is_completed: true })
-        .eq("id", task.id);
+      const { error: taskError } = await supabase.
+      from("tasks").
+      update({ is_completed: true }).
+      eq("id", task.id);
 
       if (!taskError) {
         setTasks((prev) => prev.filter((t) => t.id !== task.id));
@@ -263,122 +263,124 @@ export default function DashboardPage() {
             A CARREGAR REINO...
           </p>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
     <>
-      <PixelBackground />
-      {toast && <ToastMessage toast={toast} />}
-      <main className="min-h-screen relative z-10 font-mono flex flex-col">
-        <div className="flex-1 flex items-center py-12">
-          <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
-            {/* Painel do personagem - altura fixa */}
-            <aside className="xl:col-span-3 flex flex-col h-175">
-              <CharacterPanel character={character} />
-            </aside>
+      <div className="min-h-screen bg-[#0b0714] text-white">
+        <PixelBackground />
+        {toast && <ToastMessage toast={toast} />}
+        <main className="min-h-screen relative z-10 font-mono flex flex-col">
+          <div className="flex-1 flex items-center py-12">
+            <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
+              {}
+              <aside className="xl:col-span-3 flex flex-col h-175">
+                <CharacterPanel character={character} />
+              </aside>
 
-            {/* Mural de Missões */}
-            <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
-              <div className="flex items-center justify-between">
-                <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
-                  <span className="animate-pulse">⚔</span> Mural de Missões
-                </h2>
-                <div className="shrink-0">
-                  <NewQuestSheet
-                    onQuestCreated={() =>
+              {}
+              <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
+                    <span className="animate-pulse">⚔</span> Mural de Missões
+                  </h2>
+                  <div className="shrink-0">
+                    <NewQuestSheet
+                      onQuestCreated={() =>
                       character && fetchTasks(character.user_id)
-                    }
-                  />
-                </div>
-              </div>
-
-              <TaskFilter
-                activeFilter={activeFilter}
-                setActiveFilter={(f) => {
-                  setActiveFilter(f);
-                  setCurrentPage(1);
-                }}
-              />
-
-              <div
-                className={`flex-1 space-y-3 min-h-100 ${
-                  paginatedTasks.length > 0
-                    ? "overflow-y-auto"
-                    : "overflow-hidden"
-                }`}
-              >
-                {paginatedTasks.length > 0 ? (
-                  paginatedTasks.map((task) => (
-                    <TaskCard
-                      key={task.id}
-                      task={task}
-                      onDelete={deleteTask}
-                      onComplete={completeTask}
-                    />
-                  ))
-                ) : (
-                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-50 flex items-center justify-center">
-                    <p className="text-[#cbd5e1] text-sm uppercase tracking-[0.3em]">
-                      Mural Vazio
-                    </p>
+                      } />
+                    
                   </div>
-                )}
+                </div>
 
-                {paginatedTasks.length < itemsPerPage &&
-                  Array(itemsPerPage - paginatedTasks.length)
-                    .fill(0)
-                    .map((_, idx) => <div key={idx} className="h-24" />)}
-              </div>
+                <TaskFilter
+                  activeFilter={activeFilter}
+                  setActiveFilter={(f) => {
+                    setActiveFilter(f);
+                    setCurrentPage(1);
+                  }} />
+                
 
-              {/* Controles de Paginação */}
-              {totalPages > 1 && (
+                <div
+                  className={`flex-1 space-y-3 min-h-100 ${
+                  paginatedTasks.length > 0 ?
+                  "overflow-y-auto" :
+                  "overflow-hidden"}`
+                  }>
+                  
+                  {paginatedTasks.length > 0 ?
+                  paginatedTasks.map((task) =>
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onDelete={deleteTask}
+                    onComplete={completeTask} />
+
+                  ) :
+
+                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-50 flex items-center justify-center">
+                      <p className="text-[#cbd5e1] text-sm uppercase tracking-[0.3em]">
+                        Mural Vazio
+                      </p>
+                    </div>
+                  }
+
+                  {paginatedTasks.length < itemsPerPage &&
+                  Array(itemsPerPage - paginatedTasks.length).
+                  fill(0).
+                  map((_, idx) => <div key={idx} className="h-24" />)}
+                </div>
+
+                {}
+                {totalPages > 1 &&
                 <div className="flex justify-center items-center gap-4 mt-6">
-                  <button
+                    <button
                     onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                     className={`px-3 py-1 rounded font-bold ${
-                      currentPage === 1
-                        ? "bg-gray-700 cursor-not-allowed"
-                        : "bg-yellow-500 hover:bg-yellow-600"
-                    }`}
-                  >
-                    Anterior
-                  </button>
+                    currentPage === 1 ?
+                    "bg-gray-700 cursor-not-allowed" :
+                    "bg-yellow-500 hover:bg-yellow-600"}`
+                    }>
+                    
+                      Anterior
+                    </button>
 
-                  <span className="text-yellow-400 font-bold">
-                    Página {currentPage} de {totalPages}
-                  </span>
+                    <span className="text-yellow-400 font-bold">
+                      Página {currentPage} de {totalPages}
+                    </span>
 
-                  <button
+                    <button
                     onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
                     }
                     disabled={currentPage === totalPages}
                     className={`px-3 py-1 rounded font-bold ${
-                      currentPage === totalPages
-                        ? "bg-gray-700 cursor-not-allowed"
-                        : "bg-yellow-500 hover:bg-yellow-600"
-                    }`}
-                  >
-                    Próxima
-                  </button>
-                </div>
-              )}
-            </section>
+                    currentPage === totalPages ?
+                    "bg-gray-700 cursor-not-allowed" :
+                    "bg-yellow-500 hover:bg-yellow-600"}`
+                    }>
+                    
+                      Próxima
+                    </button>
+                  </div>
+                }
+              </section>
 
-            {/* Loja - altura fixa */}
-            <aside className="xl:col-span-3 flex flex-col h-175">
-              <ItemShop
-                gold={character?.gold ?? 0}
-                characterId={character?.id ?? ""}
-                onPurchaseSuccess={fetchCharacter}
-              />
-            </aside>
+              {}
+              <aside className="xl:col-span-3 flex flex-col h-175">
+                <ItemShop
+                  gold={character?.gold ?? 0}
+                  characterId={character?.id ?? ""}
+                  onPurchaseSuccess={fetchCharacter} />
+                
+              </aside>
+            </div>
           </div>
-        </div>
-      </main>
-    </>
-  );
+        </main>
+      </div>
+    </>);
+
 }

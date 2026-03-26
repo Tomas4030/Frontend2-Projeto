@@ -13,11 +13,11 @@ export interface GradientCardProps {
   followMouse?: boolean;
   hoverOnly?: boolean;
   intensity?: number;
-  backgroundColor?: string; // Keep this prop for other potential uses or if you want to pass a raw CSS color string
+  backgroundColor?: string;
 }
 
 export const InteractiveGradient = ({
-  color ,
+  color,
   glowColor = "#107667ed",
   width = "",
   height = "",
@@ -27,34 +27,34 @@ export const InteractiveGradient = ({
   followMouse = true,
   hoverOnly = false,
   intensity = 100,
-  backgroundColor, // You can still use this for other parts if needed
+  backgroundColor
 }: GradientCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
-  const [resolvedGlowFallbackColor, setResolvedGlowFallbackColor] = useState("#ffffff"); // Renamed for clarity
+  const [resolvedGlowFallbackColor, setResolvedGlowFallbackColor] = useState("#ffffff");
 
-  // Detect dark mode for fallback (if backgroundColor prop isn't a direct CSS color)
+
   useEffect(() => {
-    // This logic is primarily for the *glow fallback* when the background is handled by Tailwind
-    // or when no direct backgroundColor is provided for the radial gradient's base.
+
+
     if (!backgroundColor || !backgroundColor.startsWith("#") && !backgroundColor.startsWith("rgb")) {
-        const html = document.documentElement;
-        const updateColor = () => {
-          const isDark = html.classList.contains("dark");
-          // This sets the color for the "base" of the radial gradient, which needs a CSS color.
-          setResolvedGlowFallbackColor(isDark ? "#000" : "#ffffff"); // Black for dark, white for light as default
-        };
+      const html = document.documentElement;
+      const updateColor = () => {
+        const isDark = html.classList.contains("dark");
 
-        updateColor();
+        setResolvedGlowFallbackColor(isDark ? "#000" : "#ffffff");
+      };
 
-        const observer = new MutationObserver(updateColor);
-        observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+      updateColor();
 
-        return () => observer.disconnect();
+      const observer = new MutationObserver(updateColor);
+      observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+
+      return () => observer.disconnect();
     } else {
-        // If backgroundColor is a direct CSS color, use it for the radial gradient's base.
-        setResolvedGlowFallbackColor(backgroundColor);
+
+      setResolvedGlowFallbackColor(backgroundColor);
     }
   }, [backgroundColor]);
 
@@ -64,7 +64,7 @@ export const InteractiveGradient = ({
     if (!followMouse) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!cardRef.current || (hoverOnly && !isHovering)) return;
+      if (!cardRef.current || hoverOnly && !isHovering) return;
       const rect = cardRef.current.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
@@ -76,23 +76,23 @@ export const InteractiveGradient = ({
   }, [followMouse, hoverOnly, isHovering]);
 
   const getBackgroundStyle = (): React.CSSProperties => {
-    // Use resolvedGlowFallbackColor for the radial gradient's base,
-    // which should always be a valid CSS color.
-    if (!followMouse || (hoverOnly && !isHovering)) {
+
+
+    if (!followMouse || hoverOnly && !isHovering) {
       return {
-        background: `radial-gradient(circle at center, ${glowColor} 0%, ${resolvedGlowFallbackColor} ${45 * normalizedIntensity}%, ${resolvedGlowFallbackColor} 100%)`,
+        background: `radial-gradient(circle at center, ${glowColor} 0%, ${resolvedGlowFallbackColor} ${45 * normalizedIntensity}%, ${resolvedGlowFallbackColor} 100%)`
       };
     }
 
     return {
-      background: `radial-gradient(circle at ${position.x}px ${position.y}px, ${glowColor} 0%, ${resolvedGlowFallbackColor} ${45 * normalizedIntensity}%, ${resolvedGlowFallbackColor} 100%)`,
+      background: `radial-gradient(circle at ${position.x}px ${position.y}px, ${glowColor} 0%, ${resolvedGlowFallbackColor} ${45 * normalizedIntensity}%, ${resolvedGlowFallbackColor} 100%)`
     };
   };
 
   const getBorderStyle = (): React.CSSProperties => {
-    // resolvedGlowFallbackColor is also used here
+
     return {
-      "--gradient-border": `linear-gradient(45deg, ${resolvedGlowFallbackColor}, ${resolvedGlowFallbackColor}, ${color})`,
+      "--gradient-border": `linear-gradient(45deg, ${resolvedGlowFallbackColor}, ${resolvedGlowFallbackColor}, ${color})`
     } as React.CSSProperties;
   };
 
@@ -107,16 +107,16 @@ export const InteractiveGradient = ({
         className
       )}
       style={{
-        ...getBackgroundStyle(), // This handles the radial glow overlay
+        ...getBackgroundStyle(),
         ...getBorderStyle(),
         width,
         height,
-        borderRadius,
+        borderRadius
       }}
       onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
-      {/* Gradient border */}
+      onMouseLeave={() => setIsHovering(false)}>
+      
+      {}
       <style>
         {`
           .interactive-gradient-card::before {
@@ -137,8 +137,8 @@ export const InteractiveGradient = ({
         `}
       </style>
       {children}
-    </div>
-  );
+    </div>);
+
 };
 
 export default InteractiveGradient;

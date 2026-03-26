@@ -1,4 +1,3 @@
-// @ts-nocheck
 "use client";
 import { cn } from "../../lib/utils";
 import { createRef, ReactNode, useRef } from "react";
@@ -22,9 +21,9 @@ export default function ImageTrailEffect({
   triggerDistance = 20,
   useFadeEffect = false,
 }: MouseTrailProps) {
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLElement | null>(null);
   const imageRefs = useRef(
-    imageSources.map(() => createRef<HTMLImageElement>())
+    imageSources.map(() => createRef<HTMLImageElement>()),
   );
   const zIndexCounterRef = useRef(1);
 
@@ -33,6 +32,7 @@ export default function ImageTrailEffect({
 
   const activateImage = (img: HTMLImageElement, x: number, y: number) => {
     const containerBounds = wrapperRef.current?.getBoundingClientRect();
+    if (!containerBounds) return;
     const relativeX = x - containerBounds.left;
     const relativeY = y - containerBounds.top;
 
@@ -63,9 +63,9 @@ export default function ImageTrailEffect({
     img.dataset.status = "inactive";
   };
 
-  const handleMouseMove = (e: MouseEvent | Touch) => {
+  const handlePointerMove = (clientX: number, clientY: number) => {
     if (
-      calculateDistance(e.clientX, e.clientY) >
+      calculateDistance(clientX, clientY) >
       window.innerWidth / triggerDistance
     ) {
       const leadImage =
@@ -75,7 +75,7 @@ export default function ImageTrailEffect({
           (imageIndex - maxTrailImages) % imageRefs.current.length
         ]?.current;
 
-      if (leadImage) activateImage(leadImage, e.clientX, e.clientY);
+      if (leadImage) activateImage(leadImage, clientX, clientY);
       if (tailImage) deactivateImage(tailImage);
 
       imageIndex++;
@@ -84,13 +84,17 @@ export default function ImageTrailEffect({
 
   return (
     <section
-      onMouseMove={handleMouseMove}
-      onTouchMove={(e) => handleMouseMove(e.touches[0])}
+      onMouseMove={(e) => handlePointerMove(e.clientX, e.clientY)}
+      onTouchMove={(e) => {
+        const touch = e.touches[0];
+        if (!touch) return;
+        handlePointerMove(touch.clientX, touch.clientY);
+      }}
       ref={wrapperRef}
       className={cn(
         `grid place-content-center h-[600px] w-full bg-background  text-foreground
         relative overflow-hidden rounded-lg`,
-        containerClassName
+        containerClassName,
       )}
     >
       {imageSources.map((src, i) => (
@@ -103,7 +107,7 @@ export default function ImageTrailEffect({
           data-status="inactive"
           className={cn(
             "object-cover scale-0 opacity:0 data-[status='active']:scale-100 data-[status='active']:opacity-100 transition-transform data-[status='active']:duration-500 duration-300 data-[status='active']:ease-out-expo absolute -translate-y-[50%] -translate-x-[50%]",
-            imageClassName
+            imageClassName,
           )}
         />
       ))}

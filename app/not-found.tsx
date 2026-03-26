@@ -33,19 +33,19 @@ export default function NotFound() {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => router.push("/")}
-            className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition"
-          >
+            className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition">
+            
             Voltar ao Dashboard
           </button>
 
           <button
             onClick={() => router.back()}
-            className="w-full px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition"
-          >
+            className="w-full px-6 py-3 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition">
+            
             Voltar
           </button>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }

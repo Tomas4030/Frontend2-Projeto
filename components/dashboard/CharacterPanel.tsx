@@ -4,7 +4,7 @@ import Image from "next/image";
 import StatBar from "./StatBar";
 import { Character, CLASS_AVATARS, CLASS_TITLE } from "./dashboardUtils";
 
-type Props = { character: Character | null };
+type Props = {character: Character | null;};
 
 export default function CharacterPanel({ character }: Props) {
   if (!character) {
@@ -13,8 +13,8 @@ export default function CharacterPanel({ character }: Props) {
         <Link href="/create-character" className="rpg-btn text-sm p-4">
           CRIAR PERSONAGEM
         </Link>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -27,8 +27,8 @@ export default function CharacterPanel({ character }: Props) {
             width={80}
             height={80}
             className="w-20 h-20 object-contain"
-            priority
-          />
+            priority />
+          
           <span className="absolute -bottom-3 -right-3 bg-[#f5c542] text-black text-xs font-black px-2 py-1 uppercase tracking-tighter shadow-md">
             LVL {character.level}
           </span>
@@ -51,41 +51,41 @@ export default function CharacterPanel({ character }: Props) {
           current={character.hp}
           max={character.max_hp}
           color="#ef4444"
-          trackColor="#3d1010"
-        />
+          trackColor="#3d1010" />
+        
         <StatBar
           label="MP"
           icon="✦"
           current={character.mp}
           max={character.max_mp}
           color="#3b82f6"
-          trackColor="#0d1f3d"
-        />
+          trackColor="#0d1f3d" />
+        
         <StatBar
           label="XP"
           icon="★"
           current={character.xp}
           max={100 * character.level}
           color="#f5c542"
-          trackColor="#2d2205"
-        />
+          trackColor="#2d2205" />
+        
       </div>
 
       <div className="grid grid-cols-2 gap-2 border-t border-[#2a2540] pt-5">
         {[
-          { label: "FORÇA", val: character.forca, key: "forca" },
-          {
-            label: "INTELIGÊNCIA",
-            val: character.inteligencia,
-            key: "inteligencia",
-          },
-          { label: "AGILIDADE", val: character.agilidade, key: "agilidade" },
-          { label: "FÉ", val: character.fe, key: "fe" },
-        ].map((attr) => (
-          <div
-            key={attr.label}
-            className="text-center border py-3 transition-all duration-300 bg-[#1a162e]/50 border-[#2a2540]"
-          >
+        { label: "FORÇA", val: character.forca, key: "forca" },
+        {
+          label: "INTELIGÊNCIA",
+          val: character.inteligencia,
+          key: "inteligencia"
+        },
+        { label: "AGILIDADE", val: character.agilidade, key: "agilidade" },
+        { label: "FÉ", val: character.fe, key: "fe" }].
+        map((attr) =>
+        <div
+          key={attr.label}
+          className="text-center border py-3 transition-all duration-300 bg-[#1a162e]/50 border-[#2a2540]">
+          
             <div className="text-[10px] text-[#cbd5e1] uppercase mb-1">
               {attr.label}
             </div>
@@ -93,8 +93,8 @@ export default function CharacterPanel({ character }: Props) {
               {attr.val}
             </div>
           </div>
-        ))}
+        )}
       </div>
-    </div>
-  );
+    </div>);
+
 }

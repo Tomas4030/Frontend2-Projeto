@@ -7,15 +7,15 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  useVelocity,
-} from "framer-motion";
+  useVelocity } from
+"framer-motion";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import type { MotionValue } from "framer-motion";
 
 import { cn } from "../../lib/utils";
 
-interface ThreeDScrollTriggerRowProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface ThreeDScrollTriggerRowProps extends
+  React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   baseVelocity?: number;
   direction?: 1 | -1;
@@ -23,11 +23,11 @@ interface ThreeDScrollTriggerRowProps
 
 export const wrap = (min: number, max: number, v: number) => {
   const rangeSize = max - min;
-  return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
+  return ((v - min) % rangeSize + rangeSize) % rangeSize + min;
 };
 
 const ThreeDScrollTriggerContext =
-  React.createContext<MotionValue<number> | null>(null);
+React.createContext<MotionValue<number> | null>(null);
 
 export function ThreeDScrollTriggerContainer({
   children,
@@ -38,11 +38,11 @@ export function ThreeDScrollTriggerContainer({
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
     damping: 50,
-    stiffness: 400,
+    stiffness: 400
   });
   const velocityFactor = useTransform(smoothVelocity, (v) => {
     const sign = v < 0 ? -1 : 1;
-    const magnitude = Math.min(5, (Math.abs(v) / 1000) * 5);
+    const magnitude = Math.min(5, Math.abs(v) / 1000 * 5);
     return sign * magnitude;
   });
 
@@ -51,8 +51,8 @@ export function ThreeDScrollTriggerContainer({
       <div className={cn("relative w-full", className)} {...props}>
         {children}
       </div>
-    </ThreeDScrollTriggerContext.Provider>
-  );
+    </ThreeDScrollTriggerContext.Provider>);
+
 }
 
 export function ThreeDScrollTriggerRow(props: ThreeDScrollTriggerRowProps) {
@@ -61,9 +61,9 @@ export function ThreeDScrollTriggerRow(props: ThreeDScrollTriggerRowProps) {
     return (
       <ThreeDScrollTriggerRowImpl
         {...props}
-        velocityFactor={sharedVelocityFactor}
-      />
-    );
+        velocityFactor={sharedVelocityFactor} />);
+
+
   }
   return <ThreeDScrollTriggerRowLocal {...props} />;
 }
@@ -92,7 +92,7 @@ function ThreeDScrollTriggerRowImpl({
     const container = containerRef.current;
     if (!container) return;
 
-    // Use a single observer for the container to update the number of copies
+
     const ro = new ResizeObserver(([entry]) => {
       const containerWidth = entry.contentRect.width;
       const block = container.querySelector(
@@ -129,9 +129,9 @@ function ThreeDScrollTriggerRowImpl({
     const scrollDirection = velocity >= 0 ? 1 : -1;
     const currentDirection = direction * scrollDirection;
 
-    const pixelsPerSecond = (unitWidth * baseVelocity) / 100;
+    const pixelsPerSecond = unitWidth * baseVelocity / 100;
     const moveBy =
-      currentDirection * pixelsPerSecond * (1 + speedMultiplier) * dt;
+    currentDirection * pixelsPerSecond * (1 + speedMultiplier) * dt;
 
     const newX = baseXRef.current + moveBy;
     baseXRef.current = wrap(0, unitWidth, newX);
@@ -144,27 +144,27 @@ function ThreeDScrollTriggerRowImpl({
     <div
       ref={containerRef}
       className={cn("w-full overflow-hidden whitespace-nowrap", className)}
-      {...props}
-    >
+      {...props}>
+      
       <motion.div
         className="inline-flex will-change-transform transform-gpu"
-        style={{ x: useTransform(x, (v) => `${-v}px`) }}
-      >
-        {Array.from({ length: numCopies }).map((_, i) => (
-          <div
-            key={i}
-            className={cn(
-              "inline-flex shrink-0",
-              i === 0 && "threed-scroll-trigger-block"
-            )}
-            aria-hidden={i !== 0}
-          >
+        style={{ x: useTransform(x, (v) => `${-v}px`) }}>
+        
+        {Array.from({ length: numCopies }).map((_, i) =>
+        <div
+          key={i}
+          className={cn(
+            "inline-flex shrink-0",
+            i === 0 && "threed-scroll-trigger-block"
+          )}
+          aria-hidden={i !== 0}>
+          
             {childrenArray}
           </div>
-        ))}
+        )}
       </motion.div>
-    </div>
-  );
+    </div>);
+
 }
 
 function ThreeDScrollTriggerRowLocal(props: ThreeDScrollTriggerRowProps) {
@@ -172,17 +172,17 @@ function ThreeDScrollTriggerRowLocal(props: ThreeDScrollTriggerRowProps) {
   const localVelocity = useVelocity(scrollY);
   const localSmoothVelocity = useSpring(localVelocity, {
     damping: 50,
-    stiffness: 400,
+    stiffness: 400
   });
   const localVelocityFactor = useTransform(localSmoothVelocity, (v) => {
     const sign = v < 0 ? -1 : 1;
-    const magnitude = Math.min(5, (Math.abs(v) / 1000) * 5);
+    const magnitude = Math.min(5, Math.abs(v) / 1000 * 5);
     return sign * magnitude;
   });
   return (
     <ThreeDScrollTriggerRowImpl
       {...props}
-      velocityFactor={localVelocityFactor}
-    />
-  );
+      velocityFactor={localVelocityFactor} />);
+
+
 }

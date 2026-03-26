@@ -8,38 +8,38 @@ import PixelBackground from "@/components/PixelBackground";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CLASSES = [
-  {
-    value: "guerreiro",
-    label: "Guerreiro",
-    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
-    desc: "Força e resistência",
-    stats: { str: 90, int: 20, agi: 45, fth: 30 },
-  },
-  {
-    value: "mago",
-    label: "Mago",
-    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
-    desc: "Poder arcano",
-    stats: { str: 15, int: 95, agi: 35, fth: 55 },
-  },
-  {
-    value: "druida",
-    label: "Druida",
-    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
-    desc: "Poder da natureza",
-    stats: { str: 45, int: 70, agi: 40, fth: 85 },
-  },
-  {
-    value: "arqueiro",
-    label: "Arqueiro",
-    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
-    desc: "Precisão e distância",
-    stats: { str: 40, int: 30, agi: 95, fth: 20 },
-  },
-];
+{
+  value: "guerreiro",
+  label: "Guerreiro",
+  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
+  desc: "Força e resistência",
+  stats: { str: 90, int: 20, agi: 45, fth: 30 }
+},
+{
+  value: "mago",
+  label: "Mago",
+  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
+  desc: "Poder arcano",
+  stats: { str: 15, int: 95, agi: 35, fth: 55 }
+},
+{
+  value: "druida",
+  label: "Druida",
+  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
+  desc: "Poder da natureza",
+  stats: { str: 45, int: 70, agi: 40, fth: 85 }
+},
+{
+  value: "arqueiro",
+  label: "Arqueiro",
+  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
+  desc: "Precisão e distância",
+  stats: { str: 40, int: 30, agi: 95, fth: 20 }
+}];
+
 
 const DEFAULT_IMG =
-  "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png";
+"https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png";
 
 const CreateCharacter = () => {
   const supabase = createClient();
@@ -55,7 +55,7 @@ const CreateCharacter = () => {
     setLoading(true);
 
     const {
-      data: { user },
+      data: { user }
     } = await supabase.auth.getUser();
     if (!user) return;
 
@@ -63,25 +63,25 @@ const CreateCharacter = () => {
     if (!chosen) return;
 
     const { error } = await supabase.from("characters").insert([
-      {
-        user_id: user.id,
-        name: name.trim(),
-        class: selectedClass,
-        forca: chosen.stats.str,
-        inteligencia: chosen.stats.int,
-        agilidade: chosen.stats.agi,
-        fe: chosen.stats.fth,
-        hp: 100,
-        max_hp: 100,
-        mp: 50,
-        max_mp: 50,
-        gold: 0,
-        level: 1,
-        xp: 0,
-        xp_boost_multiplier: 1,
-        xp_boost_expires_at: null,
-      },
-    ]);
+    {
+      user_id: user.id,
+      name: name.trim(),
+      class: selectedClass,
+      forca: chosen.stats.str,
+      inteligencia: chosen.stats.int,
+      agilidade: chosen.stats.agi,
+      fe: chosen.stats.fth,
+      hp: 100,
+      max_hp: 100,
+      mp: 50,
+      max_mp: 50,
+      gold: 0,
+      level: 1,
+      xp: 0,
+      xp_boost_multiplier: 1,
+      xp_boost_expires_at: null
+    }]
+    );
 
     if (error) {
       console.error("Erro:", error.message);
@@ -120,8 +120,8 @@ const CreateCharacter = () => {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nome do herói..."
                   maxLength={16}
-                  required
-                />
+                  required />
+                
               </div>
 
               <div>
@@ -129,29 +129,29 @@ const CreateCharacter = () => {
                   ✦ Classe
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {CLASSES.map((c) => (
-                    <button
-                      key={c.value}
-                      type="button"
-                      className={`flex flex-col items-center p-3 border-2 transition-all ${
-                        selectedClass === c.value
-                          ? "bg-[#2a2540] border-[#f5c542]"
-                          : "bg-[#0f0d1a] border-[#2a2540] hover:border-[#6b6480]"
-                      }`}
-                      onClick={() => setSelectedClass(c.value)}
-                    >
+                  {CLASSES.map((c) =>
+                  <button
+                    key={c.value}
+                    type="button"
+                    className={`flex flex-col items-center p-3 border-2 transition-all ${
+                    selectedClass === c.value ?
+                    "bg-[#2a2540] border-[#f5c542]" :
+                    "bg-[#0f0d1a] border-[#2a2540] hover:border-[#6b6480]"}`
+                    }
+                    onClick={() => setSelectedClass(c.value)}>
+                    
                       <Image
-                        src={c.img}
-                        alt={c.label}
-                        width={40}
-                        height={40}
-                        className="w-10 h-10 mb-1 object-contain"
-                      />
+                      src={c.img}
+                      alt={c.label}
+                      width={40}
+                      height={40}
+                      className="w-10 h-10 mb-1 object-contain" />
+                    
                       <span className="text-xs uppercase tracking-tighter">
                         {c.label}
                       </span>
                     </button>
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -161,12 +161,12 @@ const CreateCharacter = () => {
                   className="rpg-btn w-full py-3 text-xl tracking-[2px] transition-all cursor-pointer"
                   style={{
                     backgroundColor:
-                      loading || !selectedClass ? "#2a2540" : "#f5c542",
+                    loading || !selectedClass ? "#2a2540" : "#f5c542",
                     color: loading || !selectedClass ? "#6b6480" : "black",
-                    border: "none",
+                    border: "none"
                   }}
-                  disabled={loading || !selectedClass}
-                >
+                  disabled={loading || !selectedClass}>
+                  
                   {loading ? "A CRIAR..." : "COMEÇAR AVENTURA"}
                 </button>
               </div>
@@ -183,18 +183,18 @@ const CreateCharacter = () => {
                     animate={{ opacity: 1, y: [0, -8, 0] }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{
-                      y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
-                    }}
-                  >
+                      y: { repeat: Infinity, duration: 3, ease: "easeInOut" }
+                    }}>
+                    
                     <Image
                       src={chosen ? chosen.img : DEFAULT_IMG}
                       width={200}
                       height={200}
                       className={`w-50 h-50 object-contain ${
-                        !chosen ? "opacity-10 grayscale invert" : ""
-                      }`}
-                      alt="Preview"
-                    />
+                      !chosen ? "opacity-10 grayscale invert" : ""}`
+                      }
+                      alt="Preview" />
+                    
                   </motion.div>
                 </AnimatePresence>
                 <div className="absolute bottom-2 w-24 h-4 bg-black/40 blur-lg rounded-full" />
@@ -211,14 +211,14 @@ const CreateCharacter = () => {
 
               <div className="w-full space-y-3">
                 {[
-                  { key: "str", label: "FORÇA", color: "#ef4444" },
-                  { key: "int", label: "INTELIGÊNCIA", color: "#3b82f6" },
-                  { key: "agi", label: "AGILIDADE", color: "#eab308" },
-                  { key: "fth", label: "FÉ", color: "#22c55e" },
-                ].map((stat) => {
-                  const val = chosen
-                    ? chosen.stats[stat.key as keyof typeof chosen.stats]
-                    : 0;
+                { key: "str", label: "FORÇA", color: "#ef4444" },
+                { key: "int", label: "INTELIGÊNCIA", color: "#3b82f6" },
+                { key: "agi", label: "AGILIDADE", color: "#eab308" },
+                { key: "fth", label: "FÉ", color: "#22c55e" }].
+                map((stat) => {
+                  const val = chosen ?
+                  chosen.stats[stat.key as keyof typeof chosen.stats] :
+                  0;
                   return (
                     <div key={stat.key}>
                       <div className="flex justify-between text-[10px] text-[#cbd5e1] mb-1 tracking-wider">
@@ -230,11 +230,11 @@ const CreateCharacter = () => {
                           initial={{ width: 0 }}
                           animate={{ width: `${val}%` }}
                           className="h-full"
-                          style={{ backgroundColor: stat.color }}
-                        />
+                          style={{ backgroundColor: stat.color }} />
+                        
                       </div>
-                    </div>
-                  );
+                    </div>);
+
                 })}
               </div>
             </div>
@@ -258,8 +258,8 @@ const CreateCharacter = () => {
           border-bottom: 2px solid rgba(0, 0, 0, 0.3) !important;
         }
       `}</style>
-    </>
-  );
+    </>);
+
 };
 
 export default CreateCharacter;

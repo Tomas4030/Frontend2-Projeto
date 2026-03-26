@@ -24,7 +24,7 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
   countTablet = 50,
   countMobile = 40,
   zIndex = 0,
-  height = '100vh',
+  height = '100vh'
 }) => {
   useLayoutEffect(() => {
     const script = document.createElement('script');
@@ -42,24 +42,24 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
         window.particlesJS('js-particles', {
           particles: {
             number: {
-              value: getParticleCount(),
+              value: getParticleCount()
             },
             color: {
-              value: colors,
+              value: colors
             },
             shape: {
-              type: 'circle',
+              type: 'circle'
             },
             opacity: {
               value: 1,
-              random: false,
+              random: false
             },
             size: {
               value: size,
-              random: true,
+              random: true
             },
             line_linked: {
-              enable: false,
+              enable: false
             },
             move: {
               enable: true,
@@ -67,22 +67,22 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
               direction: 'none',
               random: true,
               straight: false,
-              out_mode: 'out',
-            },
+              out_mode: 'out'
+            }
           },
           interactivity: {
             detect_on: 'canvas',
             events: {
               onhover: {
-                enable: false,
+                enable: false
               },
               onclick: {
-                enable: false,
+                enable: false
               },
-              resize: true,
-            },
+              resize: true
+            }
           },
-          retina_detect: true,
+          retina_detect: true
         });
       }
     };
@@ -103,9 +103,9 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
         top: 0,
         left: 0,
         zIndex: zIndex,
-        pointerEvents: 'none',
-      }}
-    >
+        pointerEvents: 'none'
+      }}>
+      
       <style>{`
         #js-particles canvas {
           position: absolute;
@@ -133,8 +133,8 @@ const ParticlesBackground: React.FC<ParticlesBackgroundProps> = ({
           </filter>
         </defs>
       </svg>
-    </div>
-  );
+    </div>);
+
 };
 
 export default ParticlesBackground;

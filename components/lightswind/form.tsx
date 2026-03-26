@@ -6,9 +6,9 @@ import {
   FieldPath,
   FieldValues,
   FormProvider,
-  useFormContext,
-} from "react-hook-form";
-import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion"; // Import HTMLMotionProps
+  useFormContext } from
+"react-hook-form";
+import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 
 import { cn } from "../../lib/utils";
 import { Label } from "./label";
@@ -17,8 +17,8 @@ const Form = FormProvider;
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
-> = {
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>> =
+{
   name: TName;
 };
 
@@ -28,15 +28,15 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
->({
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>>(
+{
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
   return (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />
-    </FormFieldContext.Provider>
-  );
+    </FormFieldContext.Provider>);
+
 };
 
 const useFormField = () => {
@@ -58,7 +58,7 @@ const useFormField = () => {
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
-    ...fieldState,
+    ...fieldState
   };
 };
 
@@ -72,85 +72,85 @@ const FormItemContext = React.createContext<FormItemContextValue>(
 
 const FormItem = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => {
-  const id = React.useId();
+  React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => {
+    const id = React.useId();
 
-  return (
-    <FormItemContext.Provider value={{ id }}>
+    return (
+      <FormItemContext.Provider value={{ id }}>
       <div ref={ref} className={cn("space-y-2", className)} {...props} />
-    </FormItemContext.Provider>
-  );
-});
+    </FormItemContext.Provider>);
+
+  });
 FormItem.displayName = "FormItem";
 
 const FormLabel = React.forwardRef<
   HTMLLabelElement,
-  React.LabelHTMLAttributes<HTMLLabelElement>
->(({ className, ...props }, ref) => {
-  const { error, formItemId } = useFormField();
+  React.LabelHTMLAttributes<HTMLLabelElement>>(
+  ({ className, ...props }, ref) => {
+    const { error, formItemId } = useFormField();
 
-  return (
-    <Label
-      ref={ref}
-      className={cn(error && "text-destructive", className)}
-      htmlFor={formItemId}
-      {...props}
-    />
-  );
-});
+    return (
+      <Label
+        ref={ref}
+        className={cn(error && "text-destructive", className)}
+        htmlFor={formItemId}
+        {...props} />);
+
+
+  });
 FormLabel.displayName = "FormLabel";
 
 const FormControl = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
+  React.HTMLAttributes<HTMLDivElement>>(
+  ({ ...props }, ref) => {
+    const { error, formItemId, formDescriptionId, formMessageId } = useFormField();
 
-  return (
-    <div
-      ref={ref}
-      id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
-});
+    return (
+      <div
+        ref={ref}
+        id={formItemId}
+        aria-describedby={
+        !error ?
+        `${formDescriptionId}` :
+        `${formDescriptionId} ${formMessageId}`
+        }
+        aria-invalid={!!error}
+        {...props} />);
+
+
+  });
 FormControl.displayName = "FormControl";
 
 const FormDescription = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => {
-  const { formDescriptionId } = useFormField();
+  React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) => {
+    const { formDescriptionId } = useFormField();
 
-  return (
-    <p
-      ref={ref}
-      id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
-  );
-});
+    return (
+      <p
+        ref={ref}
+        id={formDescriptionId}
+        className={cn("text-sm text-muted-foreground", className)}
+        {...props} />);
+
+
+  });
 FormDescription.displayName = "FormDescription";
 
-// Modified FormMessage to use HTMLMotionProps for a <p> element
+
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
-  HTMLMotionProps<"p"> & { children?: React.ReactNode } // Extend with HTMLMotionProps<"p">
->(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message) : children;
+  HTMLMotionProps<"p"> & {children?: React.ReactNode;}>(
+  ({ className, children, ...props }, ref) => {
+    const { error, formMessageId } = useFormField();
+    const body = error ? String(error?.message) : children;
 
-  return (
-    <AnimatePresence>
-      {body ? (
+    return (
+      <AnimatePresence>
+      {body ?
         <motion.p
           ref={ref}
           key={formMessageId}
@@ -163,14 +163,14 @@ const FormMessage = React.forwardRef<
             "text-sm font-medium text-destructive overflow-hidden",
             className
           )}
-          {...props} // Pass through Framer Motion props
-        >
+          {...props}>
+          
           {body}
-        </motion.p>
-      ) : null}
-    </AnimatePresence>
-  );
-});
+        </motion.p> :
+        null}
+    </AnimatePresence>);
+
+  });
 FormMessage.displayName = "FormMessage";
 
 export {
@@ -181,5 +181,4 @@ export {
   FormControl,
   FormDescription,
   FormMessage,
-  FormField,
-};
+  FormField };

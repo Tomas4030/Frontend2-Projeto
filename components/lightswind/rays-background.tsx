@@ -5,15 +5,15 @@ import { motion } from "framer-motion";
 import { cn } from "../../lib/utils";
 
 interface RaysBackgroundProps {
-  /** Theme variant - 'light' or 'dark' */
+
   theme?: "light" | "dark";
-  /** Enable/disable animation */
+
   animated?: boolean;
-  /** Animation speed multiplier (1 = normal, 2 = double speed, 0.5 = half speed) */
+
   animationSpeed?: number;
-  /** Opacity of the effect (0-1) */
+
   opacity?: number;
-  /** Custom color scheme for rays */
+
   colors?: {
     purple?: string;
     yellow?: string;
@@ -21,11 +21,11 @@ interface RaysBackgroundProps {
     teal?: string;
     blue?: string;
   };
-  /** Blur amount for rays in pixels */
+
   blurAmount?: number;
-  /** Children to render on top of the background */
+
   children?: React.ReactNode;
-  /** Additional className for the wrapper */
+
   className?: string;
 }
 
@@ -39,11 +39,11 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
     yellow: "rgba(238, 248, 86, 1)",
     pink: "rgba(248, 72, 202, 1)",
     teal: "rgba(119, 235, 195, 1)",
-    blue: "rgba(77, 71, 214, 1)",
+    blue: "rgba(77, 71, 214, 1)"
   },
   blurAmount = 6,
   children,
-  className = "",
+  className = ""
 }) => {
   const isLightTheme = theme === "light";
 
@@ -51,20 +51,20 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
     <div
       className={cn(
         "absolute left-0 top-0 w-full min-h-screen max-h-screen overflow-hidden bg-background",
-        className,
-      )}
-    >
-      {/* Color Ray Container */}
+        className
+      )}>
+      
+      {}
       <div
         className="absolute left-0 right-0 w-full h-full mx-auto overflow-hidden pointer-events-none"
         style={{
           maxWidth: "45%",
           top: "-60%",
-          transform: "scaleX(3.5) scaleY(3)", // Vertical spread increased
-          mixBlendMode: isLightTheme ? "darken" : "normal",
-        }}
-      >
-        {/* Light Rays */}
+          transform: "scaleX(3.5) scaleY(3)",
+          mixBlendMode: isLightTheme ? "darken" : "normal"
+        }}>
+        
+        {}
         <div
           style={{
             position: "absolute",
@@ -73,31 +73,31 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
             right: 0,
             bottom: 0,
             background:
-              "radial-gradient(rgba(255, 255, 255, .6), rgba(0, 0, 0, .7))",
+            "radial-gradient(rgba(255, 255, 255, .6), rgba(0, 0, 0, .7))",
             overflow: "hidden",
             WebkitMaskImage:
-              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
+            "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
             maskImage:
-              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
+            "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
             WebkitMaskRepeat: "no-repeat",
             maskRepeat: "no-repeat",
             mixBlendMode: "color-burn",
-            opacity: 0.6,
-          }}
-        >
-          {/* Before pseudo element - Light rays pattern 1 */}
+            opacity: 0.6
+          }}>
+          
+          {}
           <motion.div
             animate={
-              animated
-                ? {
-                    rotate: 360,
-                  }
-                : {}
+            animated ?
+            {
+              rotate: 360
+            } :
+            {}
             }
             transition={{
               duration: 10 / animationSpeed,
               repeat: Infinity,
-              ease: "linear",
+              ease: "linear"
             }}
             style={{
               position: "absolute",
@@ -164,26 +164,26 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
               backgroundBlendMode: "exclusion, hard-light, overlay",
               mixBlendMode: "hard-light",
               WebkitMaskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
               maskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
-            }}
-          />
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)"
+            }} />
+          
 
-          {/* After pseudo element - Light rays pattern 2 */}
+          {}
           <motion.div
             animate={
-              animated
-                ? {
-                    rotate: -360,
-                  }
-                : {}
+            animated ?
+            {
+              rotate: -360
+            } :
+            {}
             }
             transition={{
               duration: 6 / animationSpeed,
               repeat: Infinity,
               ease: "linear",
-              delay: 10 / animationSpeed, // keeping the logical delay
+              delay: 10 / animationSpeed
             }}
             style={{
               position: "absolute",
@@ -250,17 +250,17 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
                 )
               `,
               backgroundBlendMode:
-                "exclusion, exclusion, difference, exclusion",
+              "exclusion, exclusion, difference, exclusion",
               mixBlendMode: "color-burn",
               WebkitMaskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
               maskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)",
-            }}
-          />
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 1%, rgba(0, 0, 0, .7) 5%, rgba(0, 0, 0, .5) 10%, rgba(0, 0, 0, .3) 22%, rgba(0, 0, 0, .15) 35%, transparent 50%)"
+            }} />
+          
         </div>
 
-        {/* Color Rays */}
+        {}
         <div
           style={{
             position: "absolute",
@@ -273,26 +273,26 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
             opacity: opacity,
             filter: `blur(${blurAmount}px)`,
             WebkitMaskImage:
-              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 6%, rgba(0, 0, 0, .7) 11%, rgba(0, 0, 0, .5) 18%, rgba(0, 0, 0, .3) 26%, rgba(0, 0, 0, .15) 35%, transparent 70%)",
+            "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 6%, rgba(0, 0, 0, .7) 11%, rgba(0, 0, 0, .5) 18%, rgba(0, 0, 0, .3) 26%, rgba(0, 0, 0, .15) 35%, transparent 70%)",
             maskImage:
-              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 6%, rgba(0, 0, 0, .7) 11%, rgba(0, 0, 0, .5) 18%, rgba(0, 0, 0, .3) 26%, rgba(0, 0, 0, .15) 35%, transparent 70%)",
+            "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 6%, rgba(0, 0, 0, .7) 11%, rgba(0, 0, 0, .5) 18%, rgba(0, 0, 0, .3) 26%, rgba(0, 0, 0, .15) 35%, transparent 70%)",
             WebkitMaskRepeat: "no-repeat",
-            maskRepeat: "no-repeat",
-          }}
-        >
-          {/* Color Rays Before */}
+            maskRepeat: "no-repeat"
+          }}>
+          
+          {}
           <motion.div
             animate={
-              animated
-                ? {
-                    rotate: -360,
-                  }
-                : {}
+            animated ?
+            {
+              rotate: -360
+            } :
+            {}
             }
             transition={{
               duration: 8 / animationSpeed,
               repeat: Infinity,
-              ease: "linear",
+              ease: "linear"
             }}
             style={{
               position: "absolute",
@@ -311,29 +311,29 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
                 ${colors.purple}
               )`,
               WebkitMaskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 5%, rgba(0, 0, 0, .7) 13%, rgba(0, 0, 0, .5) 22%, rgba(0, 0, 0, .3) 29%, rgba(0, 0, 0, .15) 37%, transparent 46%)",
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 5%, rgba(0, 0, 0, .7) 13%, rgba(0, 0, 0, .5) 22%, rgba(0, 0, 0, .3) 29%, rgba(0, 0, 0, .15) 37%, transparent 46%)",
               maskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 5%, rgba(0, 0, 0, .7) 13%, rgba(0, 0, 0, .5) 22%, rgba(0, 0, 0, .3) 29%, rgba(0, 0, 0, .15) 37%, transparent 46%)",
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 5%, rgba(0, 0, 0, .7) 13%, rgba(0, 0, 0, .5) 22%, rgba(0, 0, 0, .3) 29%, rgba(0, 0, 0, .15) 37%, transparent 46%)",
               WebkitMaskRepeat: "no-repeat",
               maskRepeat: "no-repeat",
               filter: `blur(${blurAmount * 1.5}px)`,
-              mixBlendMode: isLightTheme ? "overlay" : "color-dodge",
-            }}
-          />
+              mixBlendMode: isLightTheme ? "overlay" : "color-dodge"
+            }} />
+          
 
-          {/* Color Rays After */}
+          {}
           <motion.div
             animate={
-              animated
-                ? {
-                    rotate: -360,
-                  }
-                : {}
+            animated ?
+            {
+              rotate: -360
+            } :
+            {}
             }
             transition={{
               duration: 80 / animationSpeed,
               repeat: Infinity,
-              ease: "linear",
+              ease: "linear"
             }}
             style={{
               position: "absolute",
@@ -343,22 +343,22 @@ const RaysBackground: React.FC<RaysBackgroundProps> = ({
               left: 0,
               willChange: "transform",
               WebkitMaskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 9%, rgba(0, 0, 0, .7) 17%, rgba(0, 0, 0, .5) 25%, rgba(0, 0, 0, .3) 33%, rgba(0, 0, 0, .15) 41%, transparent 50%)",
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 9%, rgba(0, 0, 0, .7) 17%, rgba(0, 0, 0, .5) 25%, rgba(0, 0, 0, .3) 33%, rgba(0, 0, 0, .15) 41%, transparent 50%)",
               maskImage:
-                "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 9%, rgba(0, 0, 0, .7) 17%, rgba(0, 0, 0, .5) 25%, rgba(0, 0, 0, .3) 33%, rgba(0, 0, 0, .15) 41%, transparent 50%)",
+              "radial-gradient(circle at 50% 50%, rgba(0, 0, 0, .9) 9%, rgba(0, 0, 0, .7) 17%, rgba(0, 0, 0, .5) 25%, rgba(0, 0, 0, .3) 33%, rgba(0, 0, 0, .15) 41%, transparent 50%)",
               WebkitMaskRepeat: "no-repeat",
               maskRepeat: "no-repeat",
               filter: `blur(${blurAmount * 0.5}px)`,
-              mixBlendMode: isLightTheme ? "hard-light" : "multiply",
-            }}
-          />
+              mixBlendMode: isLightTheme ? "hard-light" : "multiply"
+            }} />
+          
         </div>
       </div>
 
-      {/* Content */}
+      {}
       <div className="relative z-10 w-full h-full">{children}</div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default RaysBackground;

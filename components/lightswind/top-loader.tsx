@@ -4,33 +4,33 @@ import * as React from "react";
 import { cn } from "../../lib/utils";
 
 interface TopLoaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Whether the loader is currently active */
+
   isLoading?: boolean;
-  /** The color of the loader bar */
+
   color?: string;
-  /** The height of the loader bar in pixels */
+
   height?: number;
-  /** The speed of the loader animation in milliseconds */
+
   speed?: number;
-  /** Whether to show the spinner */
+
   showSpinner?: boolean;
-  /** The easing function for the animation */
+
   easing?: string;
-  /** The minimum percentage to start at */
+
   minimum?: number;
-  /** The parent element to render the loader in */
+
   parent?: string;
-  /** Whether to automatically increment the loader */
+
   trickle?: boolean;
-  /** How much to increase during trickle */
+
   trickleRate?: number;
-  /** How often to trickle in milliseconds */
+
   trickleSpeed?: number;
-  /** Custom template for the loader */
+
   template?: string;
-  /** Z-index for the loader elements */
+
   zIndex?: number;
-  /** Current progress value (0-1) */
+
   progress?: number;
 }
 
@@ -59,7 +59,7 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
     const requestRef = React.useRef<number | null>(null);
     const loaderIdRef = React.useRef<string>(`top-loader-${Math.random().toString(36).substring(2, 9)}`);
 
-    // CSS styles for the loader
+
     const styles = React.useMemo(() => {
       return {
         container: {
@@ -69,7 +69,7 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
           left: 0,
           width: '100%',
           height: `${height}px`,
-          zIndex: zIndex,
+          zIndex: zIndex
         } as React.CSSProperties,
         bar: {
           position: 'absolute',
@@ -80,8 +80,8 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
           background: color,
           boxShadow: `0 0 15px ${color}, 0 0 8px ${color}`,
           transition: `transform ${speed}ms ${easing}`,
-          transform: `translate3d(-${100 - (currentProgress * 100)}%, 0, 0)`,
-          zIndex: zIndex,
+          transform: `translate3d(-${100 - currentProgress * 100}%, 0, 0)`,
+          zIndex: zIndex
         } as React.CSSProperties,
         spinner: {
           display: showSpinner ? 'block' : 'none',
@@ -96,12 +96,12 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
           borderLeftColor: color,
           borderRadius: '50%',
           animation: 'top-loader-spinner 400ms linear infinite',
-          zIndex: zIndex,
-        } as React.CSSProperties,
+          zIndex: zIndex
+        } as React.CSSProperties
       };
     }, [color, currentProgress, easing, height, showSpinner, speed, zIndex]);
 
-    // Helper functions
+
     const clamp = (n: number, min: number, max: number): number => {
       if (n < min) return min;
       if (n > max) return max;
@@ -112,7 +112,7 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
       n = clamp(n, minimum, 1);
       progressRef.current = n;
       setCurrentProgress(n);
-      
+
       if (n === 1) {
         setTimeout(() => {
           setCurrentProgress(0);
@@ -125,16 +125,16 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
 
     const inc = React.useCallback((amount?: number) => {
       let n = progressRef.current;
-      
+
       if (!isStartedRef.current) {
         set(minimum);
         return;
       }
-      
+
       if (typeof amount !== 'number') {
         amount = (1 - n) * clamp(Math.random() * n, 0.1, 0.95);
       }
-      
+
       n = clamp(n + amount, 0, 0.994);
       set(n);
     }, [minimum, set]);
@@ -145,12 +145,12 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
 
     React.useEffect(() => {
       if (!mounted) return;
-      
+
       if (progress !== undefined) {
         set(progress);
         return;
       }
-      
+
       if (isLoading && trickle) {
         const tick = () => {
           if (!isLoading) return;
@@ -161,9 +161,9 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
             }
           }, trickleSpeed);
         };
-        
+
         tick();
-        
+
         return () => {
           if (requestRef.current) {
             window.clearTimeout(requestRef.current);
@@ -175,7 +175,7 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
 
     React.useEffect(() => {
       setMounted(true);
-      
+
       const style = document.createElement('style');
       style.textContent = `
         @keyframes top-loader-spinner {
@@ -184,7 +184,7 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
         }
       `;
       document.head.appendChild(style);
-      
+
       return () => {
         document.head.removeChild(style);
         if (requestRef.current) {
@@ -195,7 +195,7 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
 
     React.useEffect(() => {
       if (!mounted) return;
-      
+
       if (isLoading) {
         if (currentProgress === 0) {
           set(minimum);
@@ -224,12 +224,12 @@ const TopLoader = React.forwardRef<HTMLDivElement, TopLoaderProps>(
         aria-busy={isLoading}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={Math.round(currentProgress * 100)}
-      >
+        aria-valuenow={Math.round(currentProgress * 100)}>
+        
         <div className="top-loader-bar" style={styles.bar} />
         {showSpinner && <div className="top-loader-spinner" style={styles.spinner} />}
-      </div>
-    );
+      </div>);
+
   }
 );
 

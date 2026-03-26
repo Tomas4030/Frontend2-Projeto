@@ -23,7 +23,7 @@ const Auth = () => {
 
     if (!email || !password) {
       toast.error("Campos incompletos", {
-        description: "Precisas de preencher todos os pergaminhos!",
+        description: "Precisas de preencher todos os pergaminhos!"
       });
       return;
     }
@@ -32,18 +32,18 @@ const Auth = () => {
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     });
 
     if (error) {
       if (error.status === 400 || error.message.includes("credentials")) {
         toast.error("Acesso Negado!", {
           description:
-            "Este herói não existe ou a chave (senha) está incorreta.",
+          "Este herói não existe ou a chave (senha) está incorreta."
         });
       } else {
         toast.error("Erro no Portal", {
-          description: error.message,
+          description: error.message
         });
       }
       setLoading(false);
@@ -54,7 +54,7 @@ const Auth = () => {
       localStorage.setItem("token", data.session.access_token);
 
       toast.success("Bem-vindo de volta!", {
-        description: "As portas do reino abriram-se para ti.",
+        description: "As portas do reino abriram-se para ti."
       });
 
       router.push("/dashboard");
@@ -89,8 +89,8 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="heroi@reino.com"
-                  required
-                />
+                  required />
+                
               </div>
 
               <div>
@@ -103,13 +103,13 @@ const Auth = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     style={{ paddingRight: 44 }}
-                    required
-                  />
+                    required />
+                  
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() => setShowPassword((v) => !v)}
-                  >
+                    onClick={() => setShowPassword((v) => !v)}>
+                    
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
@@ -119,8 +119,8 @@ const Auth = () => {
                 <button
                   type="submit"
                   className={`rpg-btn ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={loading}
-                >
+                  disabled={loading}>
+                  
                   {loading ? "A VERIFICAR..." : "⚔  ENTRAR NO REINO"}
                 </button>
               </div>
@@ -137,14 +137,14 @@ const Auth = () => {
               alt="Login"
               fill
               className="h-full w-full object-cover object-right"
-              style={{ filter: "brightness(0.85) saturate(1.2)" }}
-            />
+              style={{ filter: "brightness(0.85) saturate(1.2)" }} />
+            
             <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />
           </div>
         </div>
       </div>
-    </>
-  );
+    </>);
+
 };
 
 export default function Page() {

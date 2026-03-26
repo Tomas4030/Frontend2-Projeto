@@ -2,7 +2,7 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-// Define button style variants as a constant object (not exported)
+
 const buttonStyles = {
   variant: {
     default: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -11,13 +11,13 @@ const buttonStyles = {
     secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
     ghost: "hover:bg-accent hover:text-accent-foreground",
     link: "text-primary underline-offset-4 hover:underline",
-    github: "bg-white text-black hover:bg-gray-100 border   flex items-center gap-2 font-medium",
+    github: "bg-white text-black hover:bg-gray-100 border   flex items-center gap-2 font-medium"
   },
   size: {
     default: "h-10 px-4 py-2",
     sm: "h-9 rounded-md px-3",
     lg: "h-11 rounded-md px-8",
-    icon: "h-10 w-10",
+    icon: "h-10 w-10"
   }
 };
 
@@ -27,14 +27,14 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   asChild?: boolean;
 }
 
-// Define the buttonVariants function (exported)
+
 export function buttonVariants(options: {
   variant?: keyof typeof buttonStyles.variant;
   size?: keyof typeof buttonStyles.size;
   className?: string;
 } = {}): string {
   const { variant = "default", size = "default", className } = options;
-  
+
   return cn(
     `inline-flex items-center justify-center gap-2 whitespace-nowrap 
     rounded-md text-sm font-medium ring-offset-background 
@@ -53,28 +53,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     if (asChild) {
       return (
         <React.Fragment>
-          {React.Children.map(props.children, child => {
+          {React.Children.map(props.children, (child) => {
             if (React.isValidElement(child)) {
-              // Instead of cloneElement with complex props, use a wrapper
+
               return (
                 <span className={buttonVariants({ variant, size, className })}>
                   {child}
-                </span>
-              );
+                </span>);
+
             }
             return child;
           })}
-        </React.Fragment>
-      );
+        </React.Fragment>);
+
     }
 
     return (
-      <button 
-        className={buttonVariants({ variant, size, className })} 
-        ref={ref} 
-        {...props} 
-      />
-    );
+      <button
+        className={buttonVariants({ variant, size, className })}
+        ref={ref}
+        {...props} />);
+
+
   }
 );
 Button.displayName = "Button";

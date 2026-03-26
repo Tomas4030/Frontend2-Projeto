@@ -15,7 +15,7 @@ interface UseAutoResizeTextareaProps {
 
 function useAutoResizeTextarea({
   minHeight,
-  maxHeight,
+  maxHeight
 }: UseAutoResizeTextareaProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -59,27 +59,28 @@ function useAutoResizeTextarea({
 const MIN_HEIGHT = 48;
 const MAX_HEIGHT = 164;
 
-const AnimatedPlaceholder = ({ showSearch }: { showSearch: boolean }) => (
-  <AnimatePresence mode="wait">
+const AnimatedPlaceholder = ({ showSearch }: {showSearch: boolean;}) =>
+<AnimatePresence mode="wait">
     <motion.p
-      key={showSearch ? "search" : "ask"}
-      initial={{ opacity: 0, y: 5 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -5 }}
-      transition={{ duration: 0.1 }}
-      className="pointer-events-none w-[1500px] text-sm absolute 
-      text-black/70 dark:text-white/70"
-    >
+    key={showSearch ? "search" : "ask"}
+    initial={{ opacity: 0, y: 5 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -5 }}
+    transition={{ duration: 0.1 }}
+    className="pointer-events-none w-[1500px] text-sm absolute 
+      text-black/70 dark:text-white/70">
+
+    
       {showSearch ? "Search the web..." : "Ask Skiper Ai..."}
     </motion.p>
-  </AnimatePresence>
-);
+  </AnimatePresence>;
+
 
 export function AiInput() {
   const [value, setValue] = useState("");
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: MIN_HEIGHT,
-    maxHeight: MAX_HEIGHT,
+    maxHeight: MAX_HEIGHT
   });
   const [showSearch, setShowSearch] = useState(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -89,9 +90,9 @@ export function AiInput() {
     e.preventDefault();
     e.stopPropagation();
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input
+      fileInputRef.current.value = "";
     }
-    setImagePreview(null); // Use null instead of empty string
+    setImagePreview(null);
   };
 
   const handelChange = (e: any) => {
@@ -134,13 +135,13 @@ export function AiInput() {
                 onChange={(e) => {
                   setValue(e.target.value);
                   adjustHeight();
-                }}
-              />
-              {!value && (
-                <div className="absolute left-4 top-3">
+                }} />
+              
+              {!value &&
+              <div className="absolute left-4 top-3">
                   <AnimatedPlaceholder showSearch={showSearch} />
                 </div>
-              )}
+              }
             </div>
           </div>
 
@@ -149,40 +150,40 @@ export function AiInput() {
               <label
                 className={cn(
                   "cursor-pointer relative rounded-full p-2 bg-black/5 dark:bg-white/5",
-                  imagePreview
-                    ? "bg-[#ff3f17]/15 border border-[#ff3f17] text-[#ff3f17]"
-                    : "bg-black/5 dark:bg-white/5 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"
-                )}
-              >
+                  imagePreview ?
+                  "bg-[#ff3f17]/15 border border-[#ff3f17] text-[#ff3f17]" :
+                  "bg-black/5 dark:bg-white/5 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"
+                )}>
+                
                 <input
                   type="file"
                   ref={fileInputRef}
                   onChange={handelChange}
-                  className="hidden"
-                />
+                  className="hidden" />
+                
                 <Paperclip
                   className={cn(
                     "w-4 h-4 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors",
                     imagePreview && "text-[#ff3f17]"
-                  )}
-                />
-                {imagePreview && (
-                  <div className="absolute w-[100px] h-[100px] top-14 -left-4">
+                  )} />
+                
+                {imagePreview &&
+                <div className="absolute w-[100px] h-[100px] top-14 -left-4">
                     <Image
-                      className="object-cover rounded-2xl"
-                      src={imagePreview || "/picture1.jpeg"}
-                      height={500}
-                      width={500}
-                      alt="additional image"
-                    />
+                    className="object-cover rounded-2xl"
+                    src={imagePreview || "/picture1.jpeg"}
+                    height={500}
+                    width={500}
+                    alt="additional image" />
+                  
                     <button
-                      onClick={handelClose}
-                      className="bg-[#e8e8e8] text-[#464646] absolute -top-1 -left-1 shadow-3xl rounded-full rotate-45"
-                    >
+                    onClick={handelClose}
+                    className="bg-[#e8e8e8] text-[#464646] absolute -top-1 -left-1 shadow-3xl rounded-full rotate-45">
+                    
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
-                )}
+                }
               </label>
               <button
                 type="button"
@@ -191,16 +192,16 @@ export function AiInput() {
                 }}
                 className={cn(
                   "rounded-full transition-all flex items-center gap-2 px-1.5 py-1 border h-8",
-                  showSearch
-                    ? "bg-[#ff3f17]/15 border-[#ff3f17] text-[#ff3f17]"
-                    : "bg-black/5 dark:bg-white/5 border-transparent text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"
-                )}
-              >
+                  showSearch ?
+                  "bg-[#ff3f17]/15 border-[#ff3f17] text-[#ff3f17]" :
+                  "bg-black/5 dark:bg-white/5 border-transparent text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"
+                )}>
+                
                 <div className="w-4 h-4 flex items-center justify-center flex-shrink-0">
                   <motion.div
                     animate={{
                       rotate: showSearch ? 180 : 0,
-                      scale: showSearch ? 1.1 : 1,
+                      scale: showSearch ? 1.1 : 1
                     }}
                     whileHover={{
                       rotate: showSearch ? 180 : 15,
@@ -208,38 +209,38 @@ export function AiInput() {
                       transition: {
                         type: "spring",
                         stiffness: 300,
-                        damping: 10,
-                      },
+                        damping: 10
+                      }
                     }}
                     transition={{
                       type: "spring",
                       stiffness: 260,
-                      damping: 25,
-                    }}
-                  >
+                      damping: 25
+                    }}>
+                    
                     <Globe
                       className={cn(
                         "w-4 h-4",
                         showSearch ? "text-[#ff3f17]" : "text-inherit"
-                      )}
-                    />
+                      )} />
+                    
                   </motion.div>
                 </div>
                 <AnimatePresence>
-                  {showSearch && (
-                    <motion.span
-                      initial={{ width: 0, opacity: 0 }}
-                      animate={{
-                        width: "auto",
-                        opacity: 1,
-                      }}
-                      exit={{ width: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="text-sm overflow-hidden whitespace-nowrap text-[#ff3f17] flex-shrink-0"
-                    >
+                  {showSearch &&
+                  <motion.span
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{
+                      width: "auto",
+                      opacity: 1
+                    }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-sm overflow-hidden whitespace-nowrap text-[#ff3f17] flex-shrink-0">
+                    
                       Search
                     </motion.span>
-                  )}
+                  }
                 </AnimatePresence>
               </button>
             </div>
@@ -249,17 +250,17 @@ export function AiInput() {
                 onClick={handleSubmit}
                 className={cn(
                   "rounded-full p-2 transition-colors",
-                  value
-                    ? "bg-[#ff3f17]/15 text-[#ff3f17]"
-                    : "bg-black/5 dark:bg-white/5 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"
-                )}
-              >
+                  value ?
+                  "bg-[#ff3f17]/15 text-[#ff3f17]" :
+                  "bg-black/5 dark:bg-white/5 text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white"
+                )}>
+                
                 <Send className="w-4 h-4" />
               </button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>);
+
 }

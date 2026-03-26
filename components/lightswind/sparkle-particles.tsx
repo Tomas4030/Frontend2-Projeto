@@ -3,7 +3,7 @@
 import { useEffect, useId, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import type { IOptions, RecursivePartial, MoveDirection } from "@tsparticles/engine"; // Import MoveDirection
+import type { IOptions, RecursivePartial, MoveDirection } from "@tsparticles/engine";
 
 interface SparkleParticlesProps {
   className?: string;
@@ -13,7 +13,7 @@ interface SparkleParticlesProps {
   maxSpeed?: number;
   minMoveSpeed?: number | null;
   maxOpacity?: number;
-  customDirection?: MoveDirection | "none" | "" | "bottom" | "bottomLeft" | "bottomRight" | "left" | "right" | "top" | "topLeft" | "topRight"; // Allow string literals for common directions
+  customDirection?: MoveDirection | "none" | "" | "bottom" | "bottomLeft" | "bottomRight" | "left" | "right" | "top" | "topLeft" | "topRight";
   opacityAnimationSpeed?: number;
   minParticleOpacity?: number | null;
   particleColor?: string;
@@ -50,7 +50,7 @@ export function SparkleParticles({
   hoverMode = "grab",
   particleCount = 4,
   particleShape = "circle",
-  enableCollisions = false,
+  enableCollisions = false
 }: SparkleParticlesProps) {
   const [isEngineReady, setIsEngineReady] = useState(false);
   const [activeColor, setActiveColor] = useState("#000000");
@@ -59,9 +59,9 @@ export function SparkleParticles({
   useEffect(() => {
     const resolveThemeColor = () => {
       if (particleColor) return particleColor;
-      return document.documentElement.classList.contains("dark")
-        ? "#ffffff"
-        : "#000000";
+      return document.documentElement.classList.contains("dark") ?
+      "#ffffff" :
+      "#000000";
     };
 
     setActiveColor(resolveThemeColor());
@@ -78,7 +78,7 @@ export function SparkleParticles({
 
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["class"]
     });
 
     return () => observer.disconnect();
@@ -87,19 +87,19 @@ export function SparkleParticles({
   const mergedOptions: RecursivePartial<IOptions> = {
     background: {
       color: {
-        value: backgroundColor,
-      },
+        value: backgroundColor
+      }
     },
     fullScreen: {
       enable: false,
-      zIndex: zIndexLevel,
+      zIndex: zIndexLevel
     },
     fpsLimit: 300,
     interactivity: {
       events: {
         onClick: {
           enable: clickEffect,
-          mode: "push",
+          mode: "push"
         },
         onHover: {
           enable: enableHoverGrab,
@@ -107,77 +107,77 @@ export function SparkleParticles({
           parallax: {
             enable: enableParallax,
             force: 60,
-            smooth: 10,
-          },
+            smooth: 10
+          }
         },
         resize: {
-          enable: true,
-        },
+          enable: true
+        }
       },
       modes: {
         push: { quantity: particleCount },
         repulse: {
           distance: 200,
-          duration: 0.4,
-        },
-      },
+          duration: 0.4
+        }
+      }
     },
     particles: {
       color: {
-        value: activeColor,
+        value: activeColor
       },
       shape: {
-        type: particleShape,
+        type: particleShape
       },
       move: {
         enable: true,
-        direction: customDirection === "" ? "none" : customDirection, // Type assertion for customDirection
+        direction: customDirection === "" ? "none" : customDirection,
         speed: {
           min: minMoveSpeed || maxSpeed / 130,
-          max: maxSpeed,
+          max: maxSpeed
         },
-        straight: true,
+        straight: true
       },
       collisions: {
         enable: enableCollisions,
         mode: "bounce" as const,
         bounce: {
           horizontal: { value: 1 },
-          vertical: { value: 1 },
-        },
+          vertical: { value: 1 }
+        }
       },
       number: {
-        value: baseDensity,
+        value: baseDensity
       },
       opacity: {
         value: {
           min: minParticleOpacity || maxOpacity / 10,
-          max: maxOpacity,
+          max: maxOpacity
         },
         animation: {
           enable: true,
           sync: false,
-          speed: opacityAnimationSpeed,
-        },
+          speed: opacityAnimationSpeed
+        }
       },
       size: {
         value: {
           min: minParticleSize || maxParticleSize / 1.5,
-          max: maxParticleSize,
-        },
-      },
+          max: maxParticleSize
+        }
+      }
     },
     detectRetina: true,
-    ...userOptions,
+    ...userOptions
   };
 
   return (
-    isEngineReady && (
-      <Particles
-        id={instanceId}
-        options={mergedOptions}
-        className={className}
-      />
-    )
-  );
+    isEngineReady &&
+    <Particles
+      id={instanceId}
+      options={mergedOptions}
+      className={className} />);
+
+
+
 }

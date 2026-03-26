@@ -4,8 +4,8 @@ interface RippleButtonProps {
   text?: string;
   bgColor?: string;
   circleColor?: string;
-  width?: string;  // e.g., "200px" or "100%"
-  height?: string; // e.g., "50px"
+  width?: string;
+  height?: string;
 }
 
 const RippleButton: React.FC<RippleButtonProps> = ({
@@ -13,7 +13,7 @@ const RippleButton: React.FC<RippleButtonProps> = ({
   bgColor,
   circleColor,
   width,
-  height,
+  height
 }) => {
   return (
     <>
@@ -22,9 +22,9 @@ const RippleButton: React.FC<RippleButtonProps> = ({
         style={{
           backgroundColor: bgColor,
           width: width,
-          height: height,
-        }}
-      >
+          height: height
+        }}>
+        
         <span className="circle1"></span>
         <span className="circle2"></span>
         <span className="circle3"></span>
@@ -92,8 +92,8 @@ const RippleButton: React.FC<RippleButtonProps> = ({
           transition: 1.5s ease;
         }
       `}</style>
-    </>
-  );
+    </>);
+
 };
 
 export default RippleButton;

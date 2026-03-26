@@ -14,9 +14,9 @@ const AnimatedRangeInput: React.FC<AnimatedRangeInputProps> = ({
   onChange,
   icon,
   labelId,
-  fillColor = "#ff5722", // Orange
+  fillColor = "#ff5722"
 }) => {
-  // Handle reverse direction: Top = 100, Bottom = 0
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = Number(e.target.value);
     const correctedValue = 100 - rawValue;
@@ -25,14 +25,14 @@ const AnimatedRangeInput: React.FC<AnimatedRangeInputProps> = ({
 
   return (
     <div className="relative flex items-center justify-center w-40 h-60 font-primarylw">
-      {/* Left side icon */}
+      {}
       <div className="absolute -left-10 flex flex-col items-center gap-2">
         <div className="text-black text-xl">{icon}</div>
       </div>
 
-      {/* Slider container */}
+      {}
       <div className="relative flex items-center justify-center w-16 h-full rounded-xl border border-gray-300 overflow-hidden bg-white">
-        {/* Animated Fill (based on `value`) */}
+        {}
         <AnimatePresence>
           <motion.div
             key="fill"
@@ -47,24 +47,24 @@ const AnimatedRangeInput: React.FC<AnimatedRangeInputProps> = ({
               width: "100%",
               backgroundColor: fillColor,
               zIndex: 1,
-              borderRadius: "inherit",
-            }}
-          />
+              borderRadius: "inherit"
+            }} />
+          
         </AnimatePresence>
 
-        {/* Value display */}
+        {}
         <span className="absolute text-black text-sm font-bold z-10">
           {value}%
         </span>
 
-        {/* Hidden rotated input */}
+        {}
         <input
           id={labelId}
           type="range"
           min={0}
           max={100}
           step={1}
-          value={100 - value} // reverse direction
+          value={100 - value}
           onChange={handleChange}
           style={{
             transform: "rotate(-90deg)",
@@ -73,15 +73,15 @@ const AnimatedRangeInput: React.FC<AnimatedRangeInputProps> = ({
             position: "relative",
             zIndex: 2,
             background: "transparent",
-            WebkitAppearance: "none", // necessary for WebKit
-            appearance: "none", // for Firefox
-            cursor: "pointer",
+            WebkitAppearance: "none",
+            appearance: "none",
+            cursor: "pointer"
 
-          }}
-        />
+          }} />
+        
       </div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default AnimatedRangeInput;

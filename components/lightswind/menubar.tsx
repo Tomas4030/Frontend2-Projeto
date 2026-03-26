@@ -47,12 +47,12 @@ function Menubar({ className, children, ...props }: MenubarProps) {
           className
         )}
         role="menubar"
-        {...props}
-      >
+        {...props}>
+        
         {children}
       </div>
-    </MenubarContext.Provider>
-  );
+    </MenubarContext.Provider>);
+
 }
 
 interface MenubarMenuProps {
@@ -61,16 +61,16 @@ interface MenubarMenuProps {
 }
 
 function MenubarMenu({ value, children }: MenubarMenuProps) {
-  // Always call useId unconditionally
+
   const generatedId = React.useId();
-  // Then, use the provided value if it exists, otherwise use the generatedId
-  const menuId = value ?? generatedId; // Use nullish coalescing operator for clarity
+
+  const menuId = value ?? generatedId;
 
   return (
     <div className="relative" data-value={menuId}>
       {children}
-    </div>
-  );
+    </div>);
+
 }
 
 interface MenubarTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
@@ -78,14 +78,14 @@ interface MenubarTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 function MenubarTrigger({ className, children, ...props }: MenubarTriggerProps) {
   const { openMenu, setOpenMenu } = useMenubarContext();
   const triggerRef = React.useRef<HTMLButtonElement>(null);
-  
+
   const [menuId, setMenuId] = React.useState<string>("");
 
   React.useEffect(() => {
     if (triggerRef.current) {
       setMenuId(triggerRef.current.parentElement?.getAttribute("data-value") || "");
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   const isOpen = openMenu === menuId;
 
@@ -106,21 +106,21 @@ function MenubarTrigger({ className, children, ...props }: MenubarTriggerProps) 
       aria-expanded={isOpen}
       data-state={isOpen ? "open" : "closed"}
       onClick={handleClick}
-      {...props}
-    >
+      {...props}>
+      
       {children}
-    </button>
-  );
+    </button>);
+
 }
 
 interface MenubarContentProps extends HTMLMotionProps<"div"> {
-  // Add any specific props for MenubarContent here if needed, e.g., side, align
+
 }
 
 function MenubarContent({ className, children, ...props }: MenubarContentProps) {
   const { openMenu } = useMenubarContext();
   const menuContentRef = React.useRef<HTMLDivElement>(null);
-  
+
   const [currentMenuId, setCurrentMenuId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -134,27 +134,27 @@ function MenubarContent({ className, children, ...props }: MenubarContentProps) 
 
   return (
     <AnimatePresence>
-      {shouldBeOpen && (
-        <motion.div
-          ref={menuContentRef}
-          initial={{ opacity: 0, y: -5, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -5, scale: 0.95 }}
-          transition={{ duration: 0.15, ease: "easeOut" }}
-          className={cn(
-            `absolute left-0 top-0 z-50 mt-10 min-w-[8rem] flex-col
+      {shouldBeOpen &&
+      <motion.div
+        ref={menuContentRef}
+        initial={{ opacity: 0, y: -5, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -5, scale: 0.95 }}
+        transition={{ duration: 0.15, ease: "easeOut" }}
+        className={cn(
+          `absolute left-0 top-0 z-50 mt-10 min-w-[8rem] flex-col
              rounded-md border   bg-popover p-1
              text-popover-foreground shadow-md`,
-            className
-          )}
-          role="menu"
-          {...props}
-        >
+          className
+        )}
+        role="menu"
+        {...props}>
+        
           {children}
         </motion.div>
-      )}
-    </AnimatePresence>
-  );
+      }
+    </AnimatePresence>);
+
 }
 
 interface MenubarItemProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -181,11 +181,11 @@ function MenubarItem({ className, inset, children, ...props }: MenubarItemProps)
       )}
       role="menuitem"
       onClick={handleClick}
-      {...props}
-    >
+      {...props}>
+      
       {children}
-    </div>
-  );
+    </div>);
+
 }
 
 export {
@@ -193,5 +193,4 @@ export {
   MenubarMenu,
   MenubarTrigger,
   MenubarContent,
-  MenubarItem,
-};
+  MenubarItem };

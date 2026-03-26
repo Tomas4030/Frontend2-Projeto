@@ -1,7 +1,7 @@
 "use client";
 import * as React from "react";
-import { cn } from "../../lib/utils"; // Ensure this utility is present or replace with className logic
-import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion"; // Import HTMLMotionProps
+import { cn } from "../../lib/utils";
+import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
 
 interface HoverCardContextType {
   open: boolean;
@@ -25,7 +25,7 @@ const HoverCard: React.FC<HoverCardProps> = ({
   open: controlledOpen,
   onOpenChange,
   openDelay = 700,
-  closeDelay = 300,
+  closeDelay = 300
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
 
@@ -74,7 +74,7 @@ const HoverCard: React.FC<HoverCardProps> = ({
     }
   }, [open, closeDelay, setOpen]);
 
-  // Clear timers on unmount
+
   React.useEffect(() => {
     return () => {
       if (openTimerRef.current) clearTimeout(openTimerRef.current);
@@ -88,13 +88,13 @@ const HoverCard: React.FC<HoverCardProps> = ({
         className="relative inline-block"
         onMouseEnter={handleOpen}
         onMouseLeave={handleClose}
-        onFocusCapture={handleOpen} // Use capture phase to ensure it fires before child's onFocus
-        onBlurCapture={handleClose}  // Use capture phase
-      >
+        onFocusCapture={handleOpen}
+        onBlurCapture={handleClose}>
+        
         {children}
       </div>
-    </HoverCardContext.Provider>
-  );
+    </HoverCardContext.Provider>);
+
 };
 
 interface HoverCardTriggerProps {
@@ -103,22 +103,22 @@ interface HoverCardTriggerProps {
 }
 
 const HoverCardTrigger: React.FC<HoverCardTriggerProps> = ({ children, asChild = false }) => {
-  // If asChild is true, we just render the child directly.
-  // The onMouseEnter/Leave/Focus/Blur listeners are on the parent HoverCard div.
+
+
   if (asChild) {
     return <>{children}</>;
   }
 
-  // If not asChild, we wrap the children in a div to ensure the HoverCard has a DOM element to attach listeners to.
-  // This div also needs to be part of the hover/focus interaction, so it's placed inside the HoverCard's event listeners.
-  // The outer div in HoverCard handles the events, so this div simply renders the content.
-  return <div tabIndex={0}>{children}</div>; // Add tabIndex for keyboard accessibility
+
+
+
+  return <div tabIndex={0}>{children}</div>;
 };
 
-// ---
-// **CHANGE MADE HERE:**
-// Changed `React.HTMLAttributes<HTMLDivElement>` to `HTMLMotionProps<"div">`
-// ---
+
+
+
+
 interface HoverCardContentProps extends HTMLMotionProps<"div"> {
   align?: "center" | "start" | "end";
   sideOffset?: number;
@@ -135,33 +135,33 @@ const HoverCardContent = React.forwardRef<HTMLDivElement, HoverCardContentProps>
 
     return (
       <AnimatePresence>
-        {open && ( // Conditionally render the motion.div based on `open` state
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, scale: 0.95, y: -5 }} // Start invisible, slightly smaller, and slightly up
-            animate={{ opacity: 1, scale: 1, y: 0 }}       // Fade in, grow to full size, move to natural position
-            exit={{ opacity: 0, scale: 0.95, y: -5 }}      // Fade out, shrink, and move up on exit
-            transition={{ duration: 0.2, ease: "easeOut" }} // Smooth transition
-            className={cn(
-              `absolute z-50 w-64 rounded-md border   bg-white
+        {open &&
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, scale: 0.95, y: -5 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: -5 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className={cn(
+            `absolute z-50 w-64 rounded-md border   bg-white
                p-4 text-black shadow-md`,
-              className
-            )}
-            style={{
-              top: `calc(100% + ${sideOffset}px)`, // Position below the trigger
-              left: align === "center" ? "50%" : align === "start" ? "0" : "auto",
-              right: align === "end" ? "0" : "auto",
-              transform: align === "center" ? "translateX(-50%)" : "none", // Center horizontally if align="center"
-              // No need for transform here directly, framer-motion handles it
-            }}
-            {...props} // Pass through Framer Motion props
-          />
-        )}
-      </AnimatePresence>
-    );
+            className
+          )}
+          style={{
+            top: `calc(100% + ${sideOffset}px)`,
+            left: align === "center" ? "50%" : align === "start" ? "0" : "auto",
+            right: align === "end" ? "0" : "auto",
+            transform: align === "center" ? "translateX(-50%)" : "none"
+
+          }}
+          {...props} />
+
+        }
+      </AnimatePresence>);
+
   }
 );
 HoverCardContent.displayName = "HoverCardContent";
 
-// Exports
+
 export { HoverCard, HoverCardTrigger, HoverCardContent };

@@ -2,8 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 
-export interface InteractiveGridBackgroundProps
-  extends React.HTMLProps<HTMLDivElement> {
+export interface InteractiveGridBackgroundProps extends
+  React.HTMLProps<HTMLDivElement> {
   gridSize?: number;
   gridColor?: string;
   darkGridColor?: string;
@@ -18,7 +18,7 @@ export interface InteractiveGridBackgroundProps
   children?: React.ReactNode;
   showFade?: boolean;
   fadeIntensity?: number;
-  idleRandomCount?: number; // ✅ how many random cells move during idle
+  idleRandomCount?: number;
 }
 
 const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
@@ -44,18 +44,18 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const trailRef = useRef<{ x: number; y: number }[]>([]);
-  const idleTargetsRef = useRef<{ x: number; y: number }[]>([]);
-  const idlePositionsRef = useRef<{ x: number; y: number }[]>([]);
+  const trailRef = useRef<{x: number;y: number;}[]>([]);
+  const idleTargetsRef = useRef<{x: number;y: number;}[]>([]);
+  const idlePositionsRef = useRef<{x: number;y: number;}[]>([]);
   const mouseActiveRef = useRef(false);
   const lastMouseTimeRef = useRef(Date.now());
 
-  // Detect dark mode
+
   useEffect(() => {
     const updateDarkMode = () => {
       const prefersDark =
-        window.matchMedia &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches;
       setIsDarkMode(
         document.documentElement.classList.contains("dark") || prefersDark
       );
@@ -66,7 +66,7 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
     return () => observer.disconnect();
   }, []);
 
-  // Mouse tracking
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const container = containerRef.current;
@@ -76,7 +76,7 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
       const rawY = e.clientY - rect.top;
 
       if (rawX < 0 || rawY < 0 || rawX > rect.width || rawY > rect.height)
-        return;
+      return;
 
       mouseActiveRef.current = true;
       lastMouseTimeRef.current = Date.now();
@@ -95,7 +95,7 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [gridSize, trailLength]);
 
-  // Drawing logic
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -113,17 +113,17 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
     const lineColor = isDarkMode ? darkGridColor : gridColor;
     const glowColor = isDarkMode ? darkEffectColor : effectColor;
 
-    // Initialize idle positions
+
     idleTargetsRef.current = Array.from({ length: idleRandomCount }, () => ({
       x: Math.floor(Math.random() * cols),
-      y: Math.floor(Math.random() * rows),
+      y: Math.floor(Math.random() * rows)
     }));
     idlePositionsRef.current = idleTargetsRef.current.map((p) => ({ ...p }));
 
     const draw = () => {
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-      // Draw grid lines
+
       ctx.strokeStyle = lineColor;
       ctx.lineWidth = 1;
       for (let x = 0; x <= canvasWidth; x += gridSize) {
@@ -139,7 +139,7 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
         ctx.stroke();
       }
 
-      // Idle animation logic
+
       const idleThreshold = 2000;
       if (Date.now() - lastMouseTimeRef.current > idleThreshold) {
         mouseActiveRef.current = false;
@@ -150,10 +150,10 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
           const dy = target.y - pos.y;
 
           if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) {
-            // new random target when reached
+
             idleTargetsRef.current[i] = {
               x: Math.floor(Math.random() * cols),
-              y: Math.floor(Math.random() * rows),
+              y: Math.floor(Math.random() * rows)
             };
           } else {
             pos.x += dx * idleSpeed;
@@ -166,12 +166,12 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
           if (!last || last.x !== roundedX || last.y !== roundedY) {
             trailRef.current.unshift({ x: roundedX, y: roundedY });
             if (trailRef.current.length > trailLength * idleRandomCount)
-              trailRef.current.pop();
+            trailRef.current.pop();
           }
         });
       }
 
-      // Draw trail glow
+
       trailRef.current.forEach((cell, idx) => {
         const alpha = 1 - idx * (1 / (trailLength + 1));
         const rgbaColor = glowColor.replace(/[\d.]+\)$/g, `${alpha})`);
@@ -192,45 +192,45 @@ const InteractiveGridBackground: React.FC<InteractiveGridBackgroundProps> = ({
 
     draw();
   }, [
-    gridSize,
-    width,
-    height,
-    gridColor,
-    darkGridColor,
-    effectColor,
-    darkEffectColor,
-    isDarkMode,
-    trailLength,
-    idleSpeed,
-    glow,
-    glowRadius,
-    idleRandomCount,
-  ]);
+  gridSize,
+  width,
+  height,
+  gridColor,
+  darkGridColor,
+  effectColor,
+  darkEffectColor,
+  isDarkMode,
+  trailLength,
+  idleSpeed,
+  glow,
+  glowRadius,
+  idleRandomCount]
+  );
 
   return (
     <div
       ref={containerRef}
       className={`relative ${className}`}
       style={{ width: width || "99vw", height: height || "100vh" }}
-      {...props}
-    >
+      {...props}>
+      
       <canvas
         ref={canvasRef}
-        className="absolute top-0 left-0 z-0 pointer-events-none"
-      />
+        className="absolute top-0 left-0 z-0 pointer-events-none" />
+      
 
-      {showFade && (
-        <div
-          className="pointer-events-none absolute inset-0 bg-white dark:bg-black"
-          style={{
-            maskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
-            WebkitMaskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
-          }}
-        />
-      )}
+      {showFade &&
+      <div
+        className="pointer-events-none absolute inset-0 bg-white dark:bg-black"
+        style={{
+          maskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`,
+          WebkitMaskImage: `radial-gradient(ellipse at center, transparent ${fadeIntensity}%, black)`
+        }} />
+
+      }
       <div className="relative z-0 w-full h-full">{children}</div>
-    </div>
-  );
+    </div>);
+
 };
 
 export default InteractiveGridBackground;

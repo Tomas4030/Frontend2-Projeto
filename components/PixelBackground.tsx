@@ -11,7 +11,7 @@ const STARS: Star[] = Array.from({ length: 20 }, () => ({
   x: Math.random() * 100,
   y: Math.random() * 100,
   delay: Math.random() * 3,
-  size: Math.random() > 0.7 ? 3 : 2,
+  size: Math.random() > 0.7 ? 3 : 2
 }));
 
 export default function PixelBackground() {
@@ -95,20 +95,20 @@ export default function PixelBackground() {
       <div className="pixel-background">
         <div className="bg-grid" />
 
-        {stars.map((star, i) => (
-          <div
-            key={i}
-            className="pixel-star"
-            style={{
-              left: `${star.x}%`,
-              top: `${star.y}%`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              animationDelay: `${star.delay}s`,
-            }}
-          />
-        ))}
+        {stars.map((star, i) =>
+        <div
+          key={i}
+          className="pixel-star"
+          style={{
+            left: `${star.x}%`,
+            top: `${star.y}%`,
+            width: `${star.size}px`,
+            height: `${star.size}px`,
+            animationDelay: `${star.delay}s`
+          }} />
+
+        )}
       </div>
-    </>
-  );
+    </>);
+
 }

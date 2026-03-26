@@ -18,17 +18,17 @@ export interface VideoTextProps {
   dominantBaseline?: string;
   fontFamily?: string;
   as?:
-    | "div"
-    | "span"
-    | "section"
-    | "article"
-    | "p"
-    | "h1"
-    | "h2"
-    | "h3"
-    | "h4"
-    | "h5"
-    | "h6";
+  "div" |
+  "span" |
+  "section" |
+  "article" |
+  "p" |
+  "h1" |
+  "h2" |
+  "h3" |
+  "h4" |
+  "h5" |
+  "h6";
 }
 
 export function VideoText({
@@ -52,7 +52,7 @@ export function VideoText({
 
   useEffect(() => {
     const responsiveFontSize =
-      typeof fontSize === "number" ? `${fontSize}vw` : fontSize;
+    typeof fontSize === "number" ? `${fontSize}vw` : fontSize;
 
     const newSvgMask = `<svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%'>
       <text x='50%' y='50%'
@@ -67,35 +67,35 @@ export function VideoText({
   }, [content, fontSize, fontWeight, textAnchor, dominantBaseline, fontFamily]);
 
   const validTags = [
-    "div",
-    "span",
-    "section",
-    "article",
-    "p",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-  ] as const;
+  "div",
+  "span",
+  "section",
+  "article",
+  "p",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6"] as
+  const;
   type ValidTag = (typeof validTags)[number];
 
   const MotionComponent = motion[
-    validTags.includes(as) ? as : "div"
-  ] as React.ComponentType<
-    { className?: string; children?: React.ReactNode } & HTMLMotionProps<"div">
-  >;
+  validTags.includes(as) ? as : "div"] as
+  React.ComponentType<
+    {className?: string;children?: React.ReactNode;} & HTMLMotionProps<"div">>;
+
 
   if (!svgMask) {
     return (
       <MotionComponent
         className={cn("relative size-full", className)}
-        {...motionProps}
-      >
+        {...motionProps}>
+        
         <span className="sr-only">{content}</span>
-      </MotionComponent>
-    );
+      </MotionComponent>);
+
   }
 
   const dataUrlMask = `url("data:image/svg+xml,${encodeURIComponent(svgMask)}")`;
@@ -103,8 +103,8 @@ export function VideoText({
   return (
     <MotionComponent
       className={cn("relative overflow-hidden", className)}
-      {...motionProps}
-    >
+      {...motionProps}>
+      
       <div
         className="absolute inset-0 flex items-center justify-center"
         style={{
@@ -116,22 +116,22 @@ export function VideoText({
           WebkitMaskRepeat: "no-repeat",
           maskPosition: "center",
           WebkitMaskPosition: "center",
-          opacity: 1,
-        }}
-      >
+          opacity: 1
+        }}>
+        
         <video
           className="w-full h-full object-cover"
           autoPlay={autoPlay}
           muted={muted}
           loop={loop}
           preload={preload}
-          playsInline
-        >
+          playsInline>
+          
           <source src={src} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
       <span className="sr-only">{content}</span>
-    </MotionComponent>
-  );
+    </MotionComponent>);
+
 }

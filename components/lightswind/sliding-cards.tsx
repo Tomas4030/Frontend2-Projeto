@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { cn } from "../../lib/utils"; // Optional utility for className merging
+import { cn } from "../../lib/utils";
 
 export type CardContent = {
   id: string | number;
@@ -24,7 +24,7 @@ const SlidingCards: React.FC<SlidingCardsProps> = ({
   cards,
   className = "",
   cardSize = "w-24 h-24",
-  onCardClick,
+  onCardClick
 }) => {
   const cardStackRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLElement[]>([]);
@@ -126,32 +126,32 @@ const SlidingCards: React.FC<SlidingCardsProps> = ({
       className={cn(
         "relative w-64 h-[22rem] grid place-content-center touch-none select-none",
         className
-      )}
-    >
-      {cards.map(({ id, icon, bgClass = "bg-gradient-to-br from-pink-300 to-orange-200" }, index) => (
-        <article
-          key={id}
-          onClick={() => onCardClick?.(index)}
-          className={cn(
-            "card absolute inset-4 grid place-content-center rounded-xl border border-gray-400 shadow-md cursor-grab transition-transform ease-in-out",
-            bgClass
-          )}
-        >
+      )}>
+      
+      {cards.map(({ id, icon, bgClass = "bg-gradient-to-br from-pink-300 to-orange-200" }, index) =>
+      <article
+        key={id}
+        onClick={() => onCardClick?.(index)}
+        className={cn(
+          "card absolute inset-4 grid place-content-center rounded-xl border border-gray-400 shadow-md cursor-grab transition-transform ease-in-out",
+          bgClass
+        )}>
+        
           <span className={cn("aspect-square grid place-content-center", cardSize)}>
-            {icon || (
-              <svg
-                className="w-full h-full fill-white drop-shadow-md"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 16 16"
-              >
+            {icon ||
+          <svg
+            className="w-full h-full fill-white drop-shadow-md"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16">
+            
                 <circle cx="8" cy="8" r="6" />
               </svg>
-            )}
+          }
           </span>
         </article>
-      ))}
-    </section>
-  );
+      )}
+    </section>);
+
 };
 
 export default SlidingCards;

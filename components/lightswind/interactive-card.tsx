@@ -1,35 +1,35 @@
 "use client";
 import { useRef, useState } from "react";
 import { motion, useMotionValue, useTransform, useMotionTemplate } from "framer-motion";
-import { cn } from "../../lib/utils"; // Assuming cn is a utility for conditionally joining class names
+import { cn } from "../../lib/utils";
 
 export const InteractiveCard = ({
   children,
   className,
   InteractiveColor = "#07eae6ff",
-  // backgroundColor = "#0c0d16",
-  // whiteCardBackgroundColor = "#173eff",
+
+
   borderRadius = "48px",
   rotationFactor = 0.4,
   transitionDuration = 0.3,
   transitionEasing = "easeInOut",
-  // Add a prop to accept Tailwind background classes
-  // Example: "bg-gray-900 dark:bg-gray-800"
-  tailwindBgClass = "bg-transparent backdrop-blur-md",
-}: {
-  children: React.ReactNode;
-  className?: string;
-  InteractiveColor?: string;
-  // If you're using tailwindBgClass, you might not need these anymore,
-  // or you could use them as fallbacks/defaults
-  // backgroundColor?: string;
-  // whiteCardBackgroundColor?: string;
-  borderRadius?: string;
-  rotationFactor?: number;
-  transitionDuration?: number;
-  transitionEasing?: string;
-  tailwindBgClass?: string; // Prop to accept Tailwind background classes
-}) => {
+
+
+  tailwindBgClass = "bg-transparent backdrop-blur-md"
+
+
+
+
+
+
+
+
+
+
+
+
+
+}: {children: React.ReactNode;className?: string;InteractiveColor?: string;borderRadius?: string;rotationFactor?: number;transitionDuration?: number;transitionEasing?: string;tailwindBgClass?: string;}) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -63,50 +63,50 @@ export const InteractiveCard = ({
       onPointerLeave={() => setIsHovered(false)}
       style={{
         perspective: 1000,
-        borderRadius,
+        borderRadius
       }}
-      className="relative w-[320px] aspect-[17/21] isolate"
-    >
+      className="relative w-[320px] aspect-[17/21] isolate">
+      
       <motion.div
         style={{
           rotateX: rotateXTrans,
           rotateY: rotateYTrans,
           transformStyle: "preserve-3d",
-          transition: `transform ${transitionDuration}s ${transitionEasing}`,
+          transition: `transform ${transitionDuration}s ${transitionEasing}`
         }}
-        className="w-full h-full rounded-xl overflow-hidden border shadow-lg"
-      >
-        {/* Background Interactive Layer */}
+        className="w-full h-full rounded-xl overflow-hidden border shadow-lg">
+        
+        {}
         <motion.div
           className="absolute inset-0 rounded-xl z-0"
           style={{
             background: interactiveBackground,
             transition: `opacity ${transitionDuration}s ${transitionEasing}`,
             opacity: isHovered ? 0.6 : 0,
-            pointerEvents: "none",
-          }}
-        />
+            pointerEvents: "none"
+          }} />
+        
 
-        {/* Content */}
+        {}
         <div
-          // Use cn to combine your custom className with the Tailwind background class
-          // You can also add dark mode classes here
+
+
           className={cn(
             "relative z-10 w-full h-full",
-            tailwindBgClass, // <--- Apply the Tailwind background class here
-            className, // Existing class for outer styling
-            // Example: Add a default text color for contrast
+            tailwindBgClass,
+            className,
+
             "text-foreground"
           )}
           style={{
-            borderRadius, // Keep borderRadius from props
-            // Remove the direct backgroundColor style application
-            // as it's now handled by Tailwind classes
-          }}
-        >
+            borderRadius
+
+
+          }}>
+          
           {children}
         </div>
       </motion.div>
-    </motion.div>
-  );
+    </motion.div>);
+
 };

@@ -23,7 +23,7 @@ const NavEffect: React.FC<NavEffectProps> = ({
   duration = 0.3,
   fontSize = "text-sm md:text-base",
   className = "",
-  boxBgColor = "rgba(0, 0, 0, 0.1)",
+  boxBgColor = "rgba(0, 0, 0, 0.1)"
 }) => {
   const renderEffect = () => {
     switch (effectType) {
@@ -35,19 +35,19 @@ const NavEffect: React.FC<NavEffectProps> = ({
               hover: {
                 width: "100%",
                 opacity: 1,
-                transition: { duration, ease: "easeInOut" },
-              },
+                transition: { duration, ease: "easeInOut" }
+              }
             }}
             style={{
               backgroundColor: underlineColor,
               height: underlineHeight,
               bottom: "0px",
               left: "0px",
-              borderRadius: "9999px",
+              borderRadius: "9999px"
             }}
-            className="absolute w-full"
-          />
-        );
+            className="absolute w-full" />);
+
+
 
       case "overline":
         return (
@@ -57,19 +57,19 @@ const NavEffect: React.FC<NavEffectProps> = ({
               hover: {
                 width: "100%",
                 opacity: 1,
-                transition: { duration, ease: "easeInOut" },
-              },
+                transition: { duration, ease: "easeInOut" }
+              }
             }}
             style={{
               backgroundColor: underlineColor,
               height: underlineHeight,
               top: "0px",
               left: "0px",
-              borderRadius: "9999px",
+              borderRadius: "9999px"
             }}
-            className="absolute w-full"
-          />
-        );
+            className="absolute w-full" />);
+
+
 
       case "box":
         return (
@@ -79,16 +79,16 @@ const NavEffect: React.FC<NavEffectProps> = ({
               hover: {
                 opacity: 1,
                 scale: 1,
-                transition: { duration, ease: "easeOut" },
-              },
+                transition: { duration, ease: "easeOut" }
+              }
             }}
             style={{
               backgroundColor: boxBgColor,
-              borderRadius: "8px",
+              borderRadius: "8px"
             }}
-            className="absolute inset-0 -z-10"
-          />
-        );
+            className="absolute inset-0 -z-10" />);
+
+
 
       case "slide":
         return (
@@ -98,17 +98,17 @@ const NavEffect: React.FC<NavEffectProps> = ({
               hover: {
                 x: "0%",
                 opacity: 1,
-                transition: { duration, ease: "easeInOut" },
-              },
+                transition: { duration, ease: "easeInOut" }
+              }
             }}
             style={{
               backgroundColor: underlineColor,
               height: underlineHeight,
-              borderRadius: "9999px",
+              borderRadius: "9999px"
             }}
-            className="absolute bottom-0 left-0 w-full"
-          />
-        );
+            className="absolute bottom-0 left-0 w-full" />);
+
+
 
       default:
         return null;
@@ -127,23 +127,23 @@ const NavEffect: React.FC<NavEffectProps> = ({
         className
       )}
       variants={
-        effectType === "grow"
-          ? {
-              initial: { scale: 1 },
-              hover: {
-                scale: 1.1,
-                transition: { duration, ease: "easeInOut" },
-              },
-            }
-          : undefined
-      }
-    >
+      effectType === "grow" ?
+      {
+        initial: { scale: 1 },
+        hover: {
+          scale: 1.1,
+          transition: { duration, ease: "easeInOut" }
+        }
+      } :
+      undefined
+      }>
+      
       <span className="relative inline-block pb-[2px]">
         {children}
         {renderEffect()}
       </span>
-    </motion.li>
-  );
+    </motion.li>);
+
 };
 
 export default NavEffect;

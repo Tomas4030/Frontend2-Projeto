@@ -1,10 +1,10 @@
 "use client";
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { motion, HTMLMotionProps } from "framer-motion"; // Import motion and HTMLMotionProps
+import { motion, HTMLMotionProps } from "framer-motion";
 
-// Extend HTMLMotionProps instead of React.InputHTMLAttributes directly
-// HTMLMotionProps already includes React.InputHTMLAttributes
+
+
 export interface InputProps extends HTMLMotionProps<"input"> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -27,25 +27,25 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         ref={ref}
         onFocus={(e) => {
           setIsFocused(true);
-          props.onFocus?.(e); // Call original onFocus if it exists
+          props.onFocus?.(e);
         }}
         onBlur={(e) => {
           setIsFocused(false);
-          props.onBlur?.(e); // Call original onBlur if it exists
+          props.onBlur?.(e);
         }}
-        // Animate properties based on isFocused state
+
         animate={{
-          scale: isFocused ? 1.005 : 1, // Slight scale up when focused
+          scale: isFocused ? 1.005 : 1
         }}
         transition={{
           type: "spring",
           stiffness: 400,
           damping: 20,
-          duration: 0.1 // Keep duration very short
+          duration: 0.1
         }}
-        {...props}
-      />
-    );
+        {...props} />);
+
+
   }
 );
 Input.displayName = "Input";

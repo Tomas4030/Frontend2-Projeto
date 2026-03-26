@@ -9,14 +9,14 @@ import {
   Html,
   Environment,
   ContactShadows,
-  Center,
-} from "@react-three/drei";
+  Center } from
+"@react-three/drei";
 import { OBJLoader } from "three-stdlib";
 import * as THREE from "three";
 
-// ---
-// Types and Constants
-// ---
+
+
+
 
 export interface ViewerProps {
   url: string;
@@ -32,43 +32,43 @@ export interface ViewerProps {
   fillLightIntensity?: number;
   rimLightIntensity?: number;
   environmentPreset?:
-    | "city"
-    | "sunset"
-    | "night"
-    | "dawn"
-    | "studio"
-    | "apartment"
-    | "forest"
-    | "park"
-    | "none";
+  "city" |
+  "sunset" |
+  "night" |
+  "dawn" |
+  "studio" |
+  "apartment" |
+  "forest" |
+  "park" |
+  "none";
   autoRotate?: boolean;
   autoRotateSpeed?: number;
   onModelLoaded?: () => void;
 }
 
 const isTouch =
-  typeof window !== "undefined" &&
-  ("ontouchstart" in window || navigator.maxTouchPoints > 0);
+typeof window !== "undefined" && (
+"ontouchstart" in window || navigator.maxTouchPoints > 0);
 
-const deg2rad = (d: number) => (d * Math.PI) / 180;
+const deg2rad = (d: number) => d * Math.PI / 180;
 
-// ---
-// Reusable Components
-// ---
+
+
+
 
 const Loader: FC = () => {
   const { progress } = useProgress();
   return (
     <Html center>
       <div className="text-gray-400 text-lg">{`${Math.round(progress)} %`}</div>
-    </Html>
-  );
+    </Html>);
+
 };
 
-// Component for handling GLTF/GLB models
-const GltfContent: FC<{ url: string; onLoaded: () => void }> = ({
+
+const GltfContent: FC<{url: string;onLoaded: () => void;}> = ({
   url,
-  onLoaded,
+  onLoaded
 }) => {
   const { scene } = useGLTF(url);
   useLayoutEffect(() => {
@@ -85,10 +85,10 @@ const GltfContent: FC<{ url: string; onLoaded: () => void }> = ({
   return <primitive object={scene.clone()} />;
 };
 
-// Component for handling FBX models
-const FbxContent: FC<{ url: string; onLoaded: () => void }> = ({
+
+const FbxContent: FC<{url: string;onLoaded: () => void;}> = ({
   url,
-  onLoaded,
+  onLoaded
 }) => {
   const fbx = useFBX(url);
   useLayoutEffect(() => {
@@ -105,10 +105,10 @@ const FbxContent: FC<{ url: string; onLoaded: () => void }> = ({
   return <primitive object={fbx.clone()} />;
 };
 
-// Component for handling OBJ models
-const ObjContent: FC<{ url: string; onLoaded: () => void }> = ({
+
+const ObjContent: FC<{url: string;onLoaded: () => void;}> = ({
   url,
-  onLoaded,
+  onLoaded
 }) => {
   const obj = useLoader(OBJLoader as unknown as any, url);
   useLayoutEffect(() => {
@@ -163,13 +163,13 @@ const SceneContent: FC<{
       <group ref={modelRef}>
         <ModelComponent />
       </group>
-    </Center>
-  );
+    </Center>);
+
 };
 
-// ---
-// Main Viewer Component
-// ---
+
+
+
 
 const ModelViewer: FC<ViewerProps> = ({
   url,
@@ -187,12 +187,12 @@ const ModelViewer: FC<ViewerProps> = ({
   environmentPreset = "forest",
   autoRotate = false,
   autoRotateSpeed = 0.35,
-  onModelLoaded,
+  onModelLoaded
 }) => {
-  // Preload hook calls should also be unconditional.
-  // The 'useGLTF.preload' hook is called here, but if you had other preloaders,
-  // they would need to be handled similarly.
-  // We'll call useGLTF.preload unconditionally, but it's only effective for gltf/glb files.
+
+
+
+
   useEffect(() => void useGLTF.preload(url), [url]);
 
   return (
@@ -203,45 +203,45 @@ const ModelViewer: FC<ViewerProps> = ({
           fov: 50,
           position: [0, 0, defaultZoom],
           near: 0.01,
-          far: 100,
+          far: 100
         }}
         gl={{
           toneMapping: THREE.ACESFilmicToneMapping,
-          outputColorSpace: THREE.SRGBColorSpace,
+          outputColorSpace: THREE.SRGBColorSpace
         }}
-        frameloop="demand"
-      >
+        frameloop="demand">
+        
         <Suspense fallback={<Loader />}>
           <SceneContent
             url={url}
             autoRotate={autoRotate}
             autoRotateSpeed={deg2rad(autoRotateSpeed)}
-            onLoaded={onModelLoaded}
-          />
+            onLoaded={onModelLoaded} />
+          
         </Suspense>
 
-        {environmentPreset !== "none" && (
-          <Environment preset={environmentPreset as any} />
-        )}
+        {environmentPreset !== "none" &&
+        <Environment preset={environmentPreset as any} />
+        }
 
         <ambientLight intensity={ambientIntensity} />
         <directionalLight
           position={[5, 5, 5]}
           intensity={keyLightIntensity}
-          castShadow
-        />
+          castShadow />
+        
         <directionalLight
           position={[-5, 2, 5]}
-          intensity={fillLightIntensity}
-        />
+          intensity={fillLightIntensity} />
+        
         <directionalLight position={[0, 4, -5]} intensity={rimLightIntensity} />
 
         <ContactShadows
           position={[0, -0.5, 0]}
           opacity={0.35}
           scale={10}
-          blur={2}
-        />
+          blur={2} />
+        
 
         <OrbitControls
           makeDefault
@@ -251,11 +251,11 @@ const ModelViewer: FC<ViewerProps> = ({
           minDistance={minZoomDistance}
           maxDistance={maxZoomDistance}
           autoRotate={isTouch ? false : autoRotate}
-          autoRotateSpeed={autoRotateSpeed}
-        />
+          autoRotateSpeed={autoRotateSpeed} />
+        
       </Canvas>
-    </div>
-  );
+    </div>);
+
 };
 
 export default ModelViewer;

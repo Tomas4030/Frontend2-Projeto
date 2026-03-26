@@ -5,61 +5,61 @@ import { cn } from "../../lib/utils";
 import { Input } from "./input";
 
 export interface TypewriterInputProps {
-  /** The value of the input */
+
   value?: string;
-  /** Callback when value changes */
+
   onChange?: (value: string) => void;
-  /** Placeholder text */
+
   placeholder?: string;
-  /** Input name attribute */
+
   name?: string;
-  /** Input id attribute */
+
   id?: string;
-  /** Enable typewriter animation */
+
   enableAnimation?: boolean;
-  /** Animation duration in milliseconds */
+
   animationDuration?: number;
-  /** Scale factor for character animation */
+
   scaleFactor?: number;
-  /** Animation delay between characters */
+
   animationDelay?: number;
-  /** Input background color */
+
   inputBackground?: string;
-  /** Text color */
+
   textColor?: string;
-  /** Caret color */
+
   caretColor?: string;
-  /** Font weight */
+
   fontWeight?: "normal" | "medium" | "semibold" | "bold" | "black";
-  /** Font size */
+
   fontSize?: "xs" | "sm" | "base" | "lg" | "xl";
-  /** Border radius */
+
   borderRadius?: "none" | "sm" | "md" | "lg" | "xl" | "full";
-  /** Shadow intensity */
+
   shadowIntensity?: "none" | "sm" | "md" | "lg" | "xl";
-  /** Disable input */
+
   disabled?: boolean;
-  /** Make input readonly */
+
   readOnly?: boolean;
-  /** Input width */
+
   width?: string;
-  /** Custom className for container */
+
   className?: string;
-  /** Custom className for input */
+
   inputClassName?: string;
-  /** Custom className for animated text */
+
   textClassName?: string;
-  /** Enable shake animation on focus */
+
   enableShakeAnimation?: boolean;
-  /** Custom styles */
+
   style?: React.CSSProperties;
-  /** ARIA label for accessibility */
+
   ariaLabel?: string;
-  /** Callback when input is focused */
+
   onFocus?: () => void;
-  /** Callback when input loses focus */
+
   onBlur?: () => void;
-  /** Callback when Enter key is pressed */
+
   onEnter?: () => void;
 }
 
@@ -100,15 +100,15 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
   var prevValueRef = useRef(value);
   var timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  // Update internal value when prop changes
+
   useEffect(
     function () {
       setInternalValue(value);
     },
-    [value],
+    [value]
   );
 
-  // Handle animation when value changes
+
   useEffect(
     function () {
       if (!enableAnimation) return;
@@ -117,9 +117,9 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
       var currentValue = internalValue;
 
       if (
-        currentValue.length > prevValue.length &&
-        currentValue.slice(-1) !== " "
-      ) {
+      currentValue.length > prevValue.length &&
+      currentValue.slice(-1) !== " ")
+      {
         setShowCaret(false);
 
         if (timeoutRef.current) {
@@ -137,7 +137,7 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
 
       prevValueRef.current = currentValue;
     },
-    [internalValue, enableAnimation, animationDuration],
+    [internalValue, enableAnimation, animationDuration]
   );
 
   var handleInputChange = function (e: React.ChangeEvent<HTMLInputElement>) {
@@ -159,7 +159,7 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
     medium: "font-medium",
     semibold: "font-semibold",
     bold: "font-bold",
-    black: "font-black",
+    black: "font-black"
   };
 
   var fontSizeClasses = {
@@ -167,7 +167,7 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
     sm: "text-sm",
     base: "text-base",
     lg: "text-lg",
-    xl: "text-xl",
+    xl: "text-xl"
   };
 
   var borderRadiusClasses = {
@@ -176,7 +176,7 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
     md: "rounded-md",
     lg: "rounded-lg",
     xl: "rounded-xl",
-    full: "rounded-full",
+    full: "rounded-full"
   };
 
   var shadowClasses = {
@@ -184,106 +184,106 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
     sm: "shadow-sm",
     md: "shadow-md",
     lg: "shadow-lg",
-    xl: "shadow-xl",
+    xl: "shadow-xl"
   };
 
   return (
     <>
       <style>
         {"\n" +
-          "          .typewriter-container {\n" +
-          "            position: relative;\n" +
-          "            width: " +
-          width +
-          ";\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-input {\n" +
-          "            color: transparent !important;\n" +
-          "            caret-color: " +
-          (showCaret ? caretColor : "transparent") +
-          ";\n" +
-          "            background-color: " +
-          inputBackground +
-          ";\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-input::placeholder {\n" +
-          "            color: rgba(0, 0, 0, 0.3);\n" +
-          "            font-weight: 700;\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-input:focus {\n" +
-          "            box-shadow: rgba(0, 0, 0, 0.1) 0 5px 20px;\n" +
-          "            border: 0.5px solid #000000;\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-label {\n" +
-          "            position: absolute;\n" +
-          "            top: 50%;\n" +
-          "            left: 12px;\n" +
-          "            transform: translateY(-50%);\n" +
-          "            pointer-events: none;\n" +
-          "            letter-spacing: 0;\n" +
-          "            color: " +
-          textColor +
-          ";\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-char {\n" +
-          "            display: inline-block;\n" +
-          "            font-family: inherit;\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-char--animate {\n" +
-          "            animation: typewriter-print " +
-          animationDuration +
-          "ms 1 ease-in-out;\n" +
-          "          }\n" +
-          "          \n" +
-          "          .typewriter-container--shake {\n" +
-          "            animation: typewriter-shake " +
-          animationDuration +
-          "ms 1 ease-in-out;\n" +
-          "          }\n" +
-          "          \n" +
-          "          @keyframes typewriter-print {\n" +
-          "            from {\n" +
-          "              transform: scale(" +
-          scaleFactor +
-          ");\n" +
-          "              position: absolute;\n" +
-          "            }\n" +
-          "            99% {\n" +
-          "              position: absolute;\n" +
-          "            }\n" +
-          "            to {\n" +
-          "              transform: scale(1);\n" +
-          "              position: relative;\n" +
-          "            }\n" +
-          "          }\n" +
-          "          \n" +
-          "          @keyframes typewriter-shake {\n" +
-          "            from, to {\n" +
-          "              transform: scale(1);\n" +
-          "            }\n" +
-          "            50% {\n" +
-          "              transform: scale(0.97);\n" +
-          "            }\n" +
-          "          }\n" +
-          "        "}
+        "          .typewriter-container {\n" +
+        "            position: relative;\n" +
+        "            width: " +
+        width +
+        ";\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-input {\n" +
+        "            color: transparent !important;\n" +
+        "            caret-color: " + (
+        showCaret ? caretColor : "transparent") +
+        ";\n" +
+        "            background-color: " +
+        inputBackground +
+        ";\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-input::placeholder {\n" +
+        "            color: rgba(0, 0, 0, 0.3);\n" +
+        "            font-weight: 700;\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-input:focus {\n" +
+        "            box-shadow: rgba(0, 0, 0, 0.1) 0 5px 20px;\n" +
+        "            border: 0.5px solid #000000;\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-label {\n" +
+        "            position: absolute;\n" +
+        "            top: 50%;\n" +
+        "            left: 12px;\n" +
+        "            transform: translateY(-50%);\n" +
+        "            pointer-events: none;\n" +
+        "            letter-spacing: 0;\n" +
+        "            color: " +
+        textColor +
+        ";\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-char {\n" +
+        "            display: inline-block;\n" +
+        "            font-family: inherit;\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-char--animate {\n" +
+        "            animation: typewriter-print " +
+        animationDuration +
+        "ms 1 ease-in-out;\n" +
+        "          }\n" +
+        "          \n" +
+        "          .typewriter-container--shake {\n" +
+        "            animation: typewriter-shake " +
+        animationDuration +
+        "ms 1 ease-in-out;\n" +
+        "          }\n" +
+        "          \n" +
+        "          @keyframes typewriter-print {\n" +
+        "            from {\n" +
+        "              transform: scale(" +
+        scaleFactor +
+        ");\n" +
+        "              position: absolute;\n" +
+        "            }\n" +
+        "            99% {\n" +
+        "              position: absolute;\n" +
+        "            }\n" +
+        "            to {\n" +
+        "              transform: scale(1);\n" +
+        "              position: relative;\n" +
+        "            }\n" +
+        "          }\n" +
+        "          \n" +
+        "          @keyframes typewriter-shake {\n" +
+        "            from, to {\n" +
+        "              transform: scale(1);\n" +
+        "            }\n" +
+        "            50% {\n" +
+        "              transform: scale(0.97);\n" +
+        "            }\n" +
+        "          }\n" +
+        "        "}
       </style>
 
       <div
         className={cn(
           "typewriter-container",
           {
-            "typewriter-container--shake": isAnimating && enableShakeAnimation,
+            "typewriter-container--shake": isAnimating && enableShakeAnimation
           },
-          className,
+          className
         )}
-        style={style}
-      >
+        style={style}>
+        
         <Input
           type="text"
           value={internalValue}
@@ -304,10 +304,10 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
             fontSizeClasses[fontSize],
             borderRadiusClasses[borderRadius],
             shadowClasses[shadowIntensity],
-            inputClassName,
+            inputClassName
           )}
-          {...props}
-        />
+          {...props} />
+        
 
         <label
           htmlFor={id || "typewriter-" + name}
@@ -315,26 +315,26 @@ export const TypewriterInput: React.FC<TypewriterInputProps> = ({
             "typewriter-label",
             fontWeightClasses[fontWeight],
             fontSizeClasses[fontSize],
-            textClassName,
-          )}
-        >
+            textClassName
+          )}>
+          
           {characters.map(function (char, index) {
             return (
               <span
                 key={char + "-" + index}
                 className={cn("typewriter-char", {
                   "typewriter-char--animate":
-                    isAnimating && index === characters.length - 1,
-                })}
-              >
+                  isAnimating && index === characters.length - 1
+                })}>
+                
                 {char}
-              </span>
-            );
+              </span>);
+
           })}
         </label>
       </div>
-    </>
-  );
+    </>);
+
 };
 
 export default TypewriterInput;

@@ -7,25 +7,25 @@ import { cva } from "class-variance-authority";
 import { Progress } from "./progress";
 
 
-/* Toast Components */
-const ToastProvider = ({ children }: { children: React.ReactNode }) => {
+
+const ToastProvider = ({ children }: {children: React.ReactNode;}) => {
   return <div className="toast-provider">{children}</div>;
 };
 
 const ToastViewport = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) =>
   <div
     ref={ref}
     className={cn(
       `fixed z-[40] flex flex-col-reverse gap-2 right-4 
-      top-4 w-auto max-w-sm `, 
+      top-4 w-auto max-w-sm `,
       className
     )}
-    {...props}
-  />
-));
+    {...props} />
+
+);
 
 ToastViewport.displayName = "ToastViewport";
 
@@ -39,12 +39,12 @@ const toastVariants = cva(
         destructive: "border-red-500 bg-red-100 text-red-800",
         success: "border-green-500 bg-green-100 text-green-800",
         warning: "border-yellow-500 bg-yellow-100 text-yellow-800",
-        info: "border-blue-500 bg-blue-100 text-blue-800",
-      },
+        info: "border-blue-500 bg-blue-100 text-blue-800"
+      }
     },
     defaultVariants: {
-      variant: "default",
-    },
+      variant: "default"
+    }
   }
 );
 
@@ -62,7 +62,7 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 
     React.useEffect(() => {
       if (!isOpen) return;
-      
+
       const startTime = Date.now();
       const endTime = startTime + duration;
 
@@ -73,7 +73,7 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       intervalRef.current = setInterval(() => {
         const now = Date.now();
         const timeLeft = Math.max(0, endTime - now);
-        const newProgress = 100 - (timeLeft / duration) * 100;
+        const newProgress = 100 - timeLeft / duration * 100;
 
         setProgress(newProgress);
 
@@ -97,49 +97,49 @@ const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       <div
         ref={ref}
         className={cn(
-          toastVariants({ variant }), 
-          "relative z-50 pb-2",  // Removed fixed positioning for better stacking
+          toastVariants({ variant }),
+          "relative z-50 pb-2",
           className
         )}
-        style={{ 
-          marginBottom: '8px',  // Add spacing between toasts
-          zIndex: 51  // Ensure proper stacking
+        style={{
+          marginBottom: '8px',
+          zIndex: 51
         }}
-        {...props}
-      >
+        {...props}>
+        
         <div className="w-full min-h-8">
           {props.children}
-          {/* Bottom Progress Bar */}
+          {}
           <div className="absolute bottom-0 left-0 right-0 h-1">
-            <Progress 
-              value={progress} 
+            <Progress
+              value={progress}
               className="h-1 rounded-none"
               indicatorClassName={cn(
-                variant === "destructive" ? "bg-red-600" : 
-                variant === "success" ? "bg-green-600" : 
-                variant === "warning" ? "bg-yellow-600" : 
-                variant === "info" ? "bg-blue-600" : 
+                variant === "destructive" ? "bg-red-600" :
+                variant === "success" ? "bg-green-600" :
+                variant === "warning" ? "bg-yellow-600" :
+                variant === "info" ? "bg-blue-600" :
                 "bg-gray-600"
-              )}
-            />
+              )} />
+            
           </div>
         </div>
 
-        {/* Close Button */}
+        {}
         <ToastClose onClick={() => {
           setIsOpen(false);
           onClose?.();
         }} />
-      </div>
-    );
+      </div>);
+
   }
 );
 Toast.displayName = "Toast";
 
 const ToastClose = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
+  React.ButtonHTMLAttributes<HTMLButtonElement>>(
+  ({ className, ...props }, ref) =>
   <button
     ref={ref}
     className={cn(
@@ -147,35 +147,35 @@ const ToastClose = React.forwardRef<
       className
     )}
     aria-label="Close toast"
-    {...props}
-  >
+    {...props}>
+    
     <X className="h-4 w-4" />
   </button>
-));
+);
 ToastClose.displayName = "ToastClose";
 
 const ToastTitle = React.forwardRef<
   HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) =>
   <h2
     ref={ref}
     className={cn("text-sm font-semibold", className)}
-    {...props}
-  />
-));
+    {...props} />
+
+);
 ToastTitle.displayName = "ToastTitle";
 
 const ToastDescription = React.forwardRef<
   HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLParagraphElement>>(
+  ({ className, ...props }, ref) =>
   <p
     ref={ref}
     className={cn("text-sm opacity-90", className)}
-    {...props}
-  />
-));
+    {...props} />
+
+);
 ToastDescription.displayName = "ToastDescription";
 
 export {
@@ -184,5 +184,4 @@ export {
   Toast,
   ToastTitle,
   ToastDescription,
-  ToastClose,
-};
+  ToastClose };

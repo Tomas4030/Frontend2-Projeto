@@ -47,30 +47,30 @@ export type Character = {
 function getAvatarUrl(url: string, size = 80) {
   return url.replace(
     "/upload/",
-    `/upload/f_auto,q_auto,w_${size},h_${size},c_fill/`,
+    `/upload/f_auto,q_auto,w_${size},h_${size},c_fill/`
   );
 }
 
 export const CLASS_AVATARS: Record<CharacterClass, string> = {
   guerreiro: getAvatarUrl(
-    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png"
   ),
   mago: getAvatarUrl(
-    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png"
   ),
   druida: getAvatarUrl(
-    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png"
   ),
   arqueiro: getAvatarUrl(
-    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
-  ),
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png"
+  )
 };
 
 export const CLASS_TITLE: Record<CharacterClass, string> = {
   guerreiro: "Guerreiro",
   mago: "Mago",
   druida: "Druida",
-  arqueiro: "Arqueiro",
+  arqueiro: "Arqueiro"
 };
 
 export const QUEST_DIFFICULTY_CONFIG: Record<
@@ -80,12 +80,12 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     hp: number;
     attr: number;
     mana: number;
-    gold: { min: number; max: number };
+    gold: {min: number;max: number;};
     label: string;
     sublabel: string;
     color: string;
-  }
-> = {
+  }> =
+{
   easy: {
     xp: 10,
     hp: 5,
@@ -94,7 +94,7 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     gold: { min: 6, max: 12 },
     label: "RANK E",
     sublabel: "Fácil",
-    color: "#4ade80",
+    color: "#4ade80"
   },
   medium: {
     xp: 25,
@@ -104,7 +104,7 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     gold: { min: 14, max: 24 },
     label: "RANK C",
     sublabel: "Médio",
-    color: "#f5c542",
+    color: "#f5c542"
   },
   hard: {
     xp: 50,
@@ -114,14 +114,14 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     gold: { min: 28, max: 42 },
     label: "RANK S",
     sublabel: "Difícil",
-    color: "#ef4444",
-  },
+    color: "#ef4444"
+  }
 };
 
 export const DIFFICULTY_COLORS: Record<Difficulty, string> = {
   easy: QUEST_DIFFICULTY_CONFIG.easy.color,
   medium: QUEST_DIFFICULTY_CONFIG.medium.color,
-  hard: QUEST_DIFFICULTY_CONFIG.hard.color,
+  hard: QUEST_DIFFICULTY_CONFIG.hard.color
 };
 
 export function getRandomInt(min: number, max: number) {

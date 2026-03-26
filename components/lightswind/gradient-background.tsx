@@ -2,24 +2,24 @@
 
 import { useEffect, useRef } from "react";
 
-/**
- * Valid blur sizes supported by Tailwind CSS.
- */
+
+
+
 export type BlurSize = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 
-/**
- * @typedef {Object} HellBackgroundProps
- * @property {BlurSize} [backdropBlurAmount] - The size of the backdrop blur to apply.
- * @property {string} [className] - Additional CSS classes to apply to the container div.
- */
+
+
+
+
+
 interface HellBackgroundProps {
   backdropBlurAmount?: string;
   className?: string;
 }
 
-/**
- * A mapping from simplified blur size names to full Tailwind CSS backdrop-blur classes.
- */
+
+
+
 const blurClassMap: Record<BlurSize, string> = {
   none: "backdrop-blur-none",
   sm: "backdrop-blur-sm",
@@ -27,7 +27,7 @@ const blurClassMap: Record<BlurSize, string> = {
   lg: "backdrop-blur-lg",
   xl: "backdrop-blur-xl",
   "2xl": "backdrop-blur-2xl",
-  "3xl": "backdrop-blur-3xl",
+  "3xl": "backdrop-blur-3xl"
 };
 
 const vertexShaderSource = `
@@ -92,7 +92,7 @@ void main() {
 
 function GradientBackground({
   backdropBlurAmount = "none",
-  className = "",
+  className = ""
 }: HellBackgroundProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -107,9 +107,9 @@ function GradientBackground({
     }
 
     const compileShader = (
-      type: number,
-      source: string,
-    ): WebGLShader | null => {
+    type: number,
+    source: string)
+    : WebGLShader | null => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source);
@@ -125,7 +125,7 @@ function GradientBackground({
     const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = compileShader(
       gl.FRAGMENT_SHADER,
-      fragmentShaderSource,
+      fragmentShaderSource
     );
     if (!vertexShader || !fragmentShader) return;
 
@@ -147,7 +147,7 @@ function GradientBackground({
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW,
+      gl.STATIC_DRAW
     );
 
     const positionLocation = gl.getAttribLocation(program, "a_position");
@@ -178,20 +178,20 @@ function GradientBackground({
   }, []);
 
   const finalBlurClass =
-    blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
+  blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
 
   return (
     <div
-      className={`w-full max-w-screen h-full overflow-hidden bg-black dark:bg-black ${className}`}
-    >
+      className={`w-full max-w-screen h-full overflow-hidden bg-black dark:bg-black ${className}`}>
+      
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full max-w-screen h-full overflow-hidden"
-        style={{ display: "block" }}
-      />
+        style={{ display: "block" }} />
+      
       <div className={`absolute inset-0 ${finalBlurClass}`} />
-    </div>
-  );
+    </div>);
+
 }
 
 export default GradientBackground;

@@ -49,7 +49,7 @@ export function SlidingLogoMarquee({
   onItemClick,
   enableSpillEffect = false,
   animationSteps = 8,
-  showControls = true,
+  showControls = true
 }: SlidingLogoMarqueeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -78,9 +78,9 @@ export function SlidingLogoMarquee({
     setIsPlaying(!isPlaying);
   };
 
-  const blurDivs = Array.from({ length: animationSteps }, (_, index) => (
-    <div key={index} style={{ "--index": index } as React.CSSProperties} />
-  ));
+  const blurDivs = Array.from({ length: animationSteps }, (_, index) =>
+  <div key={index} style={{ "--index": index } as React.CSSProperties} />
+  );
 
   return (
     <>
@@ -264,8 +264,8 @@ export function SlidingLogoMarquee({
         className={cn("sliding-marquee-container relative", className)}
         style={{ width, background: backgroundColor }}
         onMouseEnter={() => pauseOnHover && setIsPlaying(false)}
-        onMouseLeave={() => pauseOnHover && setIsPlaying(true)}
-      >
+        onMouseLeave={() => pauseOnHover && setIsPlaying(true)}>
+        
         {showGridBackground && <div className="" />}
 
         <div
@@ -274,56 +274,57 @@ export function SlidingLogoMarquee({
           data-direction={direction}
           data-blurring={enableBlur}
           data-play-state={isPlaying ? "running" : "paused"}
-          data-spill={enableSpillEffect}
-        >
+          data-spill={enableSpillEffect}>
+          
           <div className="sliding-marquee-inner">
-            {enableBlur && (
-              <div className="sliding-marquee-blur sliding-marquee-blur--left">
+            {enableBlur &&
+            <div className="sliding-marquee-blur sliding-marquee-blur--left">
                 {blurDivs}
               </div>
-            )}
+            }
 
             <ul className="sliding-marquee-list text-foreground">
-              {items.map((item, index) => (
-                <li
-                  key={item.id}
-                  className="sliding-marquee-item text-foreground"
-                  style={{ "--index": index } as React.CSSProperties}
-                  onClick={() => handleItemClick(item)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      handleItemClick(item);
-                    }
-                  }}
-                >
+              {items.map((item, index) =>
+              <li
+                key={item.id}
+                className="sliding-marquee-item text-foreground"
+                style={{ "--index": index } as React.CSSProperties}
+                onClick={() => handleItemClick(item)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleItemClick(item);
+                  }
+                }}>
+                
                   {item.content}
                 </li>
-              ))}
+              )}
             </ul>
 
-            {enableBlur && (
-              <div className="sliding-marquee-blur sliding-marquee-blur--right">
+            {enableBlur &&
+            <div className="sliding-marquee-blur sliding-marquee-blur--right">
                 {blurDivs}
               </div>
-            )}
+            }
           </div>
         </div>
 
-        {showControls && (
-          <button
-            onClick={togglePlayState}
-            className="absolute top-0 right-0 z-10 px-2 py-1 text-xs bg-white/10 text-foreground
+        {showControls &&
+        <button
+          onClick={togglePlayState}
+          className="absolute top-0 right-0 z-10 px-2 py-1 text-xs bg-white/10 text-foreground
             rounded hover:bg-background/20 transition-colors"
-            aria-label={isPlaying ? "Pause animation" : "Play animation"}
-          >
+
+          aria-label={isPlaying ? "Pause animation" : "Play animation"}>
+          
             {isPlaying ? <Pause /> : <Play />}
           </button>
-        )}
+        }
       </div>
-    </>
-  );
+    </>);
+
 }
 
 export default SlidingLogoMarquee;

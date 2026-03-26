@@ -20,19 +20,19 @@ interface ScrollStackProps {
 }
 
 const defaultBackgrounds = [
-  "https://images.pexels.com/photos/6985136/pexels-photo-6985136.jpeg",
-  "https://images.pexels.com/photos/6985128/pexels-photo-6985128.jpeg",
-  "https://images.pexels.com/photos/2847648/pexels-photo-2847648.jpeg",
-];
+"https://images.pexels.com/photos/6985136/pexels-photo-6985136.jpeg",
+"https://images.pexels.com/photos/6985128/pexels-photo-6985128.jpeg",
+"https://images.pexels.com/photos/2847648/pexels-photo-2847648.jpeg"];
+
 
 const ScrollStack: React.FC<ScrollStackProps> = ({
   cards,
-  backgroundColor = "bg-background", // Changed default to "bg-background"
+  backgroundColor = "bg-background",
   cardHeight = "60vh",
   animationDuration = "0.5s",
   sectionHeightMultiplier = 3,
   intersectionThreshold = 0.1,
-  className = "",
+  className = ""
 }) => {
   const scrollableSectionRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -47,7 +47,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     maxHeight: "500px",
     borderRadius: "20px",
     transition: `transform ${animationDuration} cubic-bezier(0.19, 1, 0.22, 1), opacity ${animationDuration} cubic-bezier(0.19, 1, 0.22, 1)`,
-    willChange: "transform, opacity",
+    willChange: "transform, opacity"
   };
 
   useEffect(() => {
@@ -70,7 +70,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
           const sectionRect = sectionRef.current.getBoundingClientRect();
           const parentRect =
-            scrollableSectionRef.current?.getBoundingClientRect();
+          scrollableSectionRef.current?.getBoundingClientRect();
           const viewportHeight = parentRect?.height ?? window.innerHeight;
 
           const sectionTop = sectionRect.top - (parentRect?.top ?? 0);
@@ -120,9 +120,9 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
     return {
       transform: `translateY(${translateY}) scale(${scale})`,
-      opacity: isVisible ? (index === 0 ? 0.9 : 1) : 0,
+      opacity: isVisible ? index === 0 ? 0.9 : 1 : 0,
       zIndex: 10 + index * 10,
-      pointerEvents: isVisible ? "auto" : "none",
+      pointerEvents: isVisible ? "auto" : "none"
     };
   };
 
@@ -130,28 +130,29 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     <section
       ref={scrollableSectionRef}
       className="relative max-h-screen w-full lg:w-[100%] overflow-y-scroll 
-      scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300"
-    >
+      scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-300">
+
+      
       <div
         ref={sectionRef}
         className={`relative ${className}`}
-        style={{ height: `${sectionHeightMultiplier * 85}vh` }}
-      >
+        style={{ height: `${sectionHeightMultiplier * 85}vh` }}>
+        
         <div
           className={`sticky top-0 w-full h-screen flex items-center 
-            justify-center overflow-hidden ${backgroundColor}`} // Applied as a Tailwind class
-        >
+            justify-center overflow-hidden ${backgroundColor}`}>
+          
           <div className="container px-6 lg:px-8 mx-auto h-full flex flex-col justify-center">
             <div
               ref={cardsContainerRef}
               className="relative w-full max-w-5xl mx-auto flex-shrink-0"
-              style={{ height: cardHeight }}
-            >
+              style={{ height: cardHeight }}>
+              
               {cards.slice(0, 5).map((card, index) => {
                 const cardTransform = getCardTransform(index);
                 const backgroundImage =
-                  card.backgroundImage ||
-                  defaultBackgrounds[index % defaultBackgrounds.length];
+                card.backgroundImage ||
+                defaultBackgrounds[index % defaultBackgrounds.length];
 
                 return (
                   <div
@@ -168,54 +169,54 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
                       opacity: cardTransform.opacity,
                       zIndex: cardTransform.zIndex,
                       pointerEvents:
-                        cardTransform.pointerEvents as React.CSSProperties["pointerEvents"],
-                    }}
-                  >
+                      cardTransform.pointerEvents as React.CSSProperties["pointerEvents"]
+                    }}>
+                    
                     <div
                       className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 to-black/80"
                       style={{
                         backgroundImage: `url('${backgroundImage}')`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
-                        backgroundBlendMode: "overlay",
-                      }}
-                    />
+                        backgroundBlendMode: "overlay"
+                      }} />
+                    
 
-                    {card.badge && (
-                      <div className="absolute top-4 right-4 z-20">
+                    {card.badge &&
+                    <div className="absolute top-4 right-4 z-20">
                         <div className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm text-white">
                           <span className="text-sm font-medium">
                             {card.badge}
                           </span>
                         </div>
                       </div>
-                    )}
+                    }
 
                     <div className="relative z-10 p-5 sm:p-6 md:p-8 h-full flex items-center">
-                      {card.content ? (
-                        card.content
-                      ) : (
-                        <div className="max-w-lg">
+                      {card.content ?
+                      card.content :
+
+                      <div className="max-w-lg">
                           <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight mb-4">
                             {card.title}
                           </h3>
-                          {card.subtitle && (
-                            <p className="text-lg text-white/80">
+                          {card.subtitle &&
+                        <p className="text-lg text-white/80">
                               {card.subtitle}
                             </p>
-                          )}
+                        }
                         </div>
-                      )}
+                      }
                     </div>
-                  </div>
-                );
+                  </div>);
+
               })}
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default ScrollStack;

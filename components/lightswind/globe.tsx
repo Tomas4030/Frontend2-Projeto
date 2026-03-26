@@ -1,35 +1,35 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import createGlobe from "cobe";
-import { cn } from "../../lib/utils"; // Assuming cn utility is available for Tailwind classes
+import { cn } from "../../lib/utils";
 
-// Utility function to convert a hex color string to a normalized RGB array
-// Handles #RGB and #RRGGBB formats.
+
+
 const hexToRgbNormalized = (hex: string): [number, number, number] => {
   let r = 0,
     g = 0,
     b = 0;
 
-  // Remove the # if present
+
   const cleanHex = hex.startsWith("#") ? hex.slice(1) : hex;
 
   if (cleanHex.length === 3) {
-    // Handle shorthand hex codes (e.g., #00F -> #0000FF)
+
     r = parseInt(cleanHex[0] + cleanHex[0], 16);
     g = parseInt(cleanHex[1] + cleanHex[1], 16);
     b = parseInt(cleanHex[2] + cleanHex[2], 16);
   } else if (cleanHex.length === 6) {
-    // Handle full hex codes (e.g., #RRGGBB)
+
     r = parseInt(cleanHex.substring(0, 2), 16);
     g = parseInt(cleanHex.substring(2, 4), 16);
     b = parseInt(cleanHex.substring(4, 6), 16);
   } else {
-    // Fallback for invalid hex (or if you want to throw an error)
+
     console.warn(`Invalid hex color: ${hex}. Falling back to black.`);
     return [0, 0, 0];
   }
 
-  // Normalize to 0-1 range
+
   return [r / 255, g / 255, b / 255];
 };
 
@@ -41,7 +41,7 @@ interface GlobeProps {
   diffuse?: number;
   mapSamples?: number;
   mapBrightness?: number;
-  // Allow color props to be either a hex string or an RGB array
+
   baseColor?: [number, number, number] | string;
   markerColor?: [number, number, number] | string;
   glowColor?: [number, number, number] | string;
@@ -55,44 +55,44 @@ const Globe: React.FC<GlobeProps> = ({
   diffuse = 1.2,
   mapSamples = 60000,
   mapBrightness = 10,
-  baseColor = "#ffffff", // Removed default here, handled in useEffect
-  markerColor = "#ffffff", // Removed default here
-  glowColor = "#ffffff", // Removed default here
-  
+  baseColor = "#ffffff",
+  markerColor = "#ffffff",
+  glowColor = "#ffffff"
+
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const globeRef = useRef<any>(null); // To store the cobe globe instance
+  const globeRef = useRef<any>(null);
 
-  // Refs for interactive rotation and dragging state
+
   const phiRef = useRef(0);
-  const thetaRef = useRef(theta); // Initialize thetaRef with prop theta
+  const thetaRef = useRef(theta);
   const isDragging = useRef(false);
   const lastMouseX = useRef(0);
   const lastMouseY = useRef(0);
-  const autoRotateSpeed = 0.003; // Define auto-rotation speed
+  const autoRotateSpeed = 0.003;
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Resolve color props to the [R, G, B] format required by cobe
+
     const resolvedBaseColor: [number, number, number] =
-      typeof baseColor === "string"
-        ? hexToRgbNormalized(baseColor)
-        : baseColor || [0.4, 0.6509, 1]; // Default if not provided or invalid hex
+    typeof baseColor === "string" ?
+    hexToRgbNormalized(baseColor) :
+    baseColor || [0.4, 0.6509, 1];
 
     const resolvedMarkerColor: [number, number, number] =
-      typeof markerColor === "string"
-        ? hexToRgbNormalized(markerColor)
-        : markerColor || [1, 0, 0]; // Default if not provided or invalid hex
+    typeof markerColor === "string" ?
+    hexToRgbNormalized(markerColor) :
+    markerColor || [1, 0, 0];
 
     const resolvedGlowColor: [number, number, number] =
-      typeof glowColor === "string"
-        ? hexToRgbNormalized(glowColor)
-        : glowColor || [0.2745, 0.5765, 0.898]; // Default if not provided or invalid hex
+    typeof glowColor === "string" ?
+    hexToRgbNormalized(glowColor) :
+    glowColor || [0.2745, 0.5765, 0.898];
 
     const initGlobe = () => {
-      // Destroy existing globe instance if it exists to prevent multiple instances
+
       if (globeRef.current) {
         globeRef.current.destroy();
         globeRef.current = null;
@@ -112,37 +112,37 @@ const Globe: React.FC<GlobeProps> = ({
         width: internalWidth,
         height: internalHeight,
         phi: phiRef.current,
-        theta: thetaRef.current, // Use thetaRef for initial and interactive theta
+        theta: thetaRef.current,
         dark: dark,
         scale: scale,
         diffuse: diffuse,
         mapSamples: mapSamples,
         mapBrightness: mapBrightness,
-        baseColor: resolvedBaseColor, // Use converted/resolved colors
-        markerColor: resolvedMarkerColor, // Use converted/resolved colors
-        glowColor: resolvedGlowColor, // Use converted/resolved colors
+        baseColor: resolvedBaseColor,
+        markerColor: resolvedMarkerColor,
+        glowColor: resolvedGlowColor,
         opacity: 1,
         offset: [0, 0],
-        markers: [
+        markers: [],
 
-        ],
+
         onRender: (state: Record<string, any>) => {
           if (!isDragging.current) {
-            // Only auto-rotate if not currently dragging
+
             phiRef.current += autoRotateSpeed;
           }
           state.phi = phiRef.current;
-          state.theta = thetaRef.current; // Ensure cobe uses the updated thetaRef
-        },
+          state.theta = thetaRef.current;
+        }
       });
     };
 
-    // --- Mouse Interaction Handlers ---
+
     const onMouseDown = (e: MouseEvent) => {
       isDragging.current = true;
       lastMouseX.current = e.clientX;
       lastMouseY.current = e.clientY;
-      canvas.style.cursor = "grabbing"; // Change cursor to indicate dragging
+      canvas.style.cursor = "grabbing";
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -150,13 +150,13 @@ const Globe: React.FC<GlobeProps> = ({
         const deltaX = e.clientX - lastMouseX.current;
         const deltaY = e.clientY - lastMouseY.current;
 
-        // Adjust rotation sensitivity as needed
+
         const rotationSpeed = 0.005;
 
-        // Update phi (horizontal rotation)
+
         phiRef.current += deltaX * rotationSpeed;
-        // Update theta (vertical rotation), clamp to prevent flipping
-        // Clamped between -PI/2 and PI/2 to prevent globe from going upside down
+
+
         thetaRef.current = Math.max(
           -Math.PI / 2,
           Math.min(Math.PI / 2, thetaRef.current - deltaY * rotationSpeed)
@@ -169,25 +169,25 @@ const Globe: React.FC<GlobeProps> = ({
 
     const onMouseUp = () => {
       isDragging.current = false;
-      canvas.style.cursor = "grab"; // Change cursor back
+      canvas.style.cursor = "grab";
     };
 
     const onMouseLeave = () => {
-      // If mouse leaves canvas while dragging, stop dragging
+
       if (isDragging.current) {
         isDragging.current = false;
         canvas.style.cursor = "grab";
       }
     };
-    // --- End Mouse Interaction Handlers ---
+
 
     initGlobe();
 
-    // Attach event listeners for mouse interaction
+
     canvas.addEventListener("mousedown", onMouseDown);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mouseup", onMouseUp);
-    canvas.addEventListener("mouseleave", onMouseLeave); // Important for when mouse leaves canvas during a drag
+    canvas.addEventListener("mouseleave", onMouseLeave);
 
     const handleResize = () => {
       initGlobe();
@@ -195,10 +195,10 @@ const Globe: React.FC<GlobeProps> = ({
 
     window.addEventListener("resize", handleResize);
 
-    // Cleanup function: destroy the globe instance and remove event listeners when component unmounts
+
     return () => {
       window.removeEventListener("resize", handleResize);
-      // Remove mouse event listeners on cleanup
+
       if (canvas) {
         canvas.removeEventListener("mousedown", onMouseDown);
         canvas.removeEventListener("mousemove", onMouseMove);
@@ -211,16 +211,16 @@ const Globe: React.FC<GlobeProps> = ({
       }
     };
   }, [
-    theta,
-    dark,
-    scale,
-    diffuse,
-    mapSamples,
-    mapBrightness,
-    baseColor, // Include color props in dependency array so globe re-initializes if they change
-    markerColor,
-    glowColor,
-  ]);
+  theta,
+  dark,
+  scale,
+  diffuse,
+  mapSamples,
+  mapBrightness,
+  baseColor,
+  markerColor,
+  glowColor]
+  );
 
   return (
     <div
@@ -230,27 +230,27 @@ const Globe: React.FC<GlobeProps> = ({
       )}
       style={{
         width: "auto",
-        height: "auto", // Container takes full viewport height
-        display: "flex", // Ensure flexbox properties are active for centering
+        height: "auto",
+        display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        overflow: "hidden", // Prevent scrollbars if content overflows
-      }}
-    >
+        overflow: "hidden"
+      }}>
+      
       <canvas
         ref={canvasRef}
         style={{
-          width: "20rem", // Canvas takes full width of its parent (which is constrained)
-          height: "20rem", // Canvas takes full height of its parent (which is constrained)
-          maxWidth: "auto", // Limit max width to viewport height to ensure square aspect in landscape
-          maxHeight: "auto", // Limit max height to viewport width to ensure square aspect in portrait
-          aspectRatio: "1", // Force a 1:1 aspect ratio for the canvas element
-          display: "block", // Ensure canvas behaves as a block element
-          cursor: "grab", // Default cursor
-        }}
-      />
-    </div>
-  );
+          width: "20rem",
+          height: "20rem",
+          maxWidth: "auto",
+          maxHeight: "auto",
+          aspectRatio: "1",
+          display: "block",
+          cursor: "grab"
+        }} />
+      
+    </div>);
+
 };
 
 export default Globe;

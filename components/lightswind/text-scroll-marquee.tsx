@@ -8,8 +8,8 @@ import {
   useTransform,
   useVelocity,
   useAnimationFrame,
-  useMotionValue,
-} from "framer-motion";
+  useMotionValue } from
+"framer-motion";
 import { wrap } from "@motionone/utils";
 import { cn } from "../../lib/utils";
 
@@ -28,20 +28,20 @@ export default function TextScrollMarquee({
   className,
   scrollDependent = false,
   delay = 0,
-  direction = "left",
+  direction = "left"
 }: TextScrollMarqueeProps) {
   const baseX = useMotionValue(0);
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const smoothVelocity = useSpring(scrollVelocity, {
     damping: 50,
-    stiffness: 400,
+    stiffness: 400
   });
   const velocityFactor = useTransform(smoothVelocity, [0, 1000], [0, 2], {
-    clamp: false,
+    clamp: false
   });
 
-  // ✅ Use modular wrap from -100% to 0% for seamless loop
+
   const x = useTransform(baseX, (v) => `${wrap(-100, 0, v % 100)}%`);
 
   const directionFactor = useRef<number>(direction === "left" ? 1 : -1);
@@ -81,14 +81,14 @@ export default function TextScrollMarquee({
     <div className="overflow-hidden whitespace-nowrap flex flex-nowrap">
       <motion.div
         className="flex whitespace-nowrap gap-10 flex-nowrap"
-        style={{ x }}
-      >
-        {[...Array(4)].map((_, index) => (
-          <span key={index} className={cn("block text-[5vw]", className)}>
+        style={{ x }}>
+        
+        {[...Array(4)].map((_, index) =>
+        <span key={index} className={cn("block text-[5vw]", className)}>
             {children}
           </span>
-        ))}
+        )}
       </motion.div>
-    </div>
-  );
+    </div>);
+
 }

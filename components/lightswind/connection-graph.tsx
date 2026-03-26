@@ -6,20 +6,20 @@ import { cn } from "../../lib/utils";
 interface Node {
   id: string;
   content: React.ReactNode;
-  position: { x: number; y: number }; // absolute positions
+  position: {x: number;y: number;};
 }
 
 interface Connection {
-  from: string; // source node id
-  to: string; // target node id
-  direction?: "horizontal" | "vertical"; // optional override
+  from: string;
+  to: string;
+  direction?: "horizontal" | "vertical";
 }
 
 interface ConnectionGraphProps {
   nodes: Node[];
   connections: Connection[];
   beamColor?: string;
-  beamDuration?: number; // ms
+  beamDuration?: number;
   className?: string;
 }
 
@@ -28,30 +28,32 @@ const ConnectionGraph: React.FC<ConnectionGraphProps> = ({
   connections,
   beamColor = "#ff4500",
   beamDuration = 2000,
-  className,
+  className
 }) => {
   return (
     <div className={cn("relative w-full h-full", className)}>
-      {/* Render Nodes */}
-      {nodes.map((node) => (
-        <div
-          key={node.id}
-          className="absolute flex items-center justify-center rounded-xl 
+      {}
+      {nodes.map((node) =>
+      <div
+        key={node.id}
+        className="absolute flex items-center justify-center rounded-xl 
           shadow-lg bg-white dark:bg-neutral-900 border border-neutral-200 
           dark:border-neutral-700 w-28 h-28"
-          style={{ left: node.position.x, top: node.position.y }}
-        >
+
+
+        style={{ left: node.position.x, top: node.position.y }}>
+        
           {node.content}
         </div>
-      ))}
+      )}
 
-      {/* Render Connections */}
+      {}
       {connections.map((conn, i) => {
         const from = nodes.find((n) => n.id === conn.from);
         const to = nodes.find((n) => n.id === conn.to);
         if (!from || !to) return null;
 
-        const x1 = from.position.x + 56; // center offset
+        const x1 = from.position.x + 56;
         const y1 = from.position.y + 56;
         const x2 = to.position.x + 56;
         const y2 = to.position.y + 56;
@@ -62,19 +64,19 @@ const ConnectionGraph: React.FC<ConnectionGraphProps> = ({
           <svg
             key={i}
             className="absolute pointer-events-none overflow-visible"
-            style={{ left: 0, top: 0 }}
-          >
-            {/* Line */}
+            style={{ left: 0, top: 0 }}>
+            
+            {}
             <line
               x1={x1}
               y1={y1}
               x2={x2}
               y2={y2}
               stroke="rgba(200,200,200,0.4)"
-              strokeWidth={2}
-            />
+              strokeWidth={2} />
+            
 
-            {/* Beam animation */}
+            {}
             <motion.circle
               r={6}
               fill={beamColor}
@@ -82,17 +84,17 @@ const ConnectionGraph: React.FC<ConnectionGraphProps> = ({
               animate={{
                 x: [x1, x2],
                 y: [y1, y2],
-                opacity: [0, 1, 1, 0],
+                opacity: [0, 1, 1, 0]
               }}
               transition={{
                 duration: beamDuration / 1000,
                 repeat: Infinity,
                 ease: "easeInOut",
-                repeatDelay: Math.random() * 2, // random splash timing
-              }}
-            />
+                repeatDelay: Math.random() * 2
+              }} />
+            
 
-            {/* Splash at the end */}
+            {}
             <motion.circle
               r={0}
               cx={x2}
@@ -102,14 +104,14 @@ const ConnectionGraph: React.FC<ConnectionGraphProps> = ({
               transition={{
                 duration: 0.8,
                 repeat: Infinity,
-                repeatDelay: beamDuration / 1000 + Math.random() * 2,
-              }}
-            />
-          </svg>
-        );
+                repeatDelay: beamDuration / 1000 + Math.random() * 2
+              }} />
+            
+          </svg>);
+
       })}
-    </div>
-  );
+    </div>);
+
 };
 
 export default ConnectionGraph;

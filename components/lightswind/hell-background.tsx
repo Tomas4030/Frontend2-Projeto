@@ -2,20 +2,20 @@
 
 import { useEffect, useRef } from "react";
 
-/**
- * Valid blur sizes supported by Tailwind CSS.
- */
+
+
+
 export type BlurSize = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 
 interface HellBackgroundProps {
   backdropBlurAmount?: BlurSize;
   className?: string;
-  color?: string; // e.g., "#FF0000"
+  color?: string;
 }
 
-/**
- * A mapping from simplified blur size names to full Tailwind CSS backdrop-blur classes.
- */
+
+
+
 const blurClassMap: Record<BlurSize, string> = {
   none: "backdrop-blur-none",
   sm: "backdrop-blur-sm",
@@ -23,7 +23,7 @@ const blurClassMap: Record<BlurSize, string> = {
   lg: "backdrop-blur-lg",
   xl: "backdrop-blur-xl",
   "2xl": "backdrop-blur-2xl",
-  "3xl": "backdrop-blur-3xl",
+  "3xl": "backdrop-blur-3xl"
 };
 
 const vertexShaderSource = `
@@ -102,7 +102,7 @@ const fragmentShaderSource = `
 function HellBackground({
   backdropBlurAmount = "none",
   className = "",
-  color = "#DE443B",
+  color = "#DE443B"
 }: HellBackgroundProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -117,9 +117,9 @@ function HellBackground({
     }
 
     const compileShader = (
-      type: number,
-      source: string,
-    ): WebGLShader | null => {
+    type: number,
+    source: string)
+    : WebGLShader | null => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source);
@@ -135,7 +135,7 @@ function HellBackground({
     const vertexShader = compileShader(gl.VERTEX_SHADER, vertexShaderSource);
     const fragmentShader = compileShader(
       gl.FRAGMENT_SHADER,
-      fragmentShaderSource,
+      fragmentShaderSource
     );
     if (!vertexShader || !fragmentShader) return;
 
@@ -157,7 +157,7 @@ function HellBackground({
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW,
+      gl.STATIC_DRAW
     );
 
     const positionLocation = gl.getAttribLocation(program, "a_position");
@@ -171,9 +171,9 @@ function HellBackground({
     const hexToRgb = (hex: string) => {
       const bigint = parseInt(hex.replace("#", ""), 16);
       return {
-        r: ((bigint >> 16) & 255) / 255,
-        g: ((bigint >> 8) & 255) / 255,
-        b: (bigint & 255) / 255,
+        r: (bigint >> 16 & 255) / 255,
+        g: (bigint >> 8 & 255) / 255,
+        b: (bigint & 255) / 255
       };
     };
 
@@ -201,18 +201,18 @@ function HellBackground({
   }, [color]);
 
   const finalBlurClass =
-    blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
+  blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
 
   return (
     <div className={`w-full max-w-screen h-full overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full max-w-screen h-full overflow-hidden"
-        style={{ display: "block" }}
-      />
+        style={{ display: "block" }} />
+      
       <div className={`absolute inset-0 ${finalBlurClass}`} />
-    </div>
-  );
+    </div>);
+
 }
 
 export default HellBackground;

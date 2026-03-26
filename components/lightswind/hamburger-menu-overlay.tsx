@@ -11,53 +11,53 @@ export interface MenuItem {
 }
 
 export interface HamburgerMenuOverlayProps {
-  /** Array of menu items */
+
   items: MenuItem[];
-  /** Button position from top */
+
   buttonTop?: string;
-  /** Button position from left */
+
   buttonLeft?: string;
-  /** Button size */
+
   buttonSize?: "sm" | "md" | "lg";
-  /** Button background color */
+
   buttonColor?: string;
-  /** Overlay background color/gradient */
+
   overlayBackground?: string;
-  /** Menu text color */
+
   textColor?: string;
-  /** Menu font size */
+
   fontSize?: "sm" | "md" | "lg" | "xl" | "2xl";
-  /** Font family */
+
   fontFamily?: string;
-  /** Font weight */
+
   fontWeight?: "normal" | "medium" | "semibold" | "bold";
-  /** Animation duration in seconds */
+
   animationDuration?: number;
-  /** Stagger delay between menu items */
+
   staggerDelay?: number;
-  /** Menu items alignment */
+
   menuAlignment?: "left" | "center" | "right";
-  /** Custom class for container */
+
   className?: string;
-  /** Custom class for button */
+
   buttonClassName?: string;
-  /** Custom class for menu items */
+
   menuItemClassName?: string;
-  /** Disable overlay close on item click */
+
   keepOpenOnItemClick?: boolean;
-  /** Custom button content */
+
   customButton?: React.ReactNode;
-  /** ARIA label for accessibility */
+
   ariaLabel?: string;
-  /** Callback when menu opens */
+
   onOpen?: () => void;
-  /** Callback when menu closes */
+
   onClose?: () => void;
-  /** Menu items layout direction */
+
   menuDirection?: "vertical" | "horizontal";
-  /** Enable blur backdrop */
+
   enableBlur?: boolean;
-  /** Z-index for overlay */
+
   zIndex?: number;
 }
 
@@ -85,7 +85,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
   onClose,
   menuDirection = "vertical",
   enableBlur = false,
-  zIndex = 1000,
+  zIndex = 1000
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
@@ -94,7 +94,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
   const buttonSizes = {
     sm: "w-10 h-10",
     md: "w-12 h-12",
-    lg: "w-16 h-16",
+    lg: "w-16 h-16"
   };
 
   const fontSizes = {
@@ -102,7 +102,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
     md: "text-3xl md:text-4xl",
     lg: "text-4xl md:text-5xl",
     xl: "text-5xl md:text-6xl",
-    "2xl": "text-6xl md:text-7xl",
+    "2xl": "text-6xl md:text-7xl"
   };
 
   const toggleMenu = () => {
@@ -131,7 +131,7 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
     }
   };
 
-  // Close menu on escape key
+
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isOpen) {
@@ -293,52 +293,52 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
         `}
       </style>
 
-      {/* Navigation Overlay */}
+      {}
       <div
         ref={navRef}
         className={cn(`flex flex-col items-center justify-center h-full
            hamburger-overlay-${zIndex}`, isOpen && "open")}
-        aria-hidden={!isOpen}
-      >
+        aria-hidden={!isOpen}>
+        
         <ul
           className={cn(
             `mt-20 menu-items-${zIndex}`,
             menuDirection === "horizontal" && "flex flex-wrap "
-          )}
-        >
-          {items.map((item, index) => (
-            <li
-              key={index}
-              className={cn(
-                `menu-item-${zIndex}`,
-                fontSizes[fontSize],
-                isOpen && "visible",
-                menuItemClassName
-              )}
-              style={{
-                transitionDelay: isOpen ? `${index * staggerDelay}s` : "0s",
-              }}
-              onClick={() => handleItemClick(item)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  handleItemClick(item);
-                }
-              }}
-              tabIndex={isOpen ? 0 : -1}
-              role="button"
-              aria-label={`Navigate to ${item.label}`}
-            >
+          )}>
+          
+          {items.map((item, index) =>
+          <li
+            key={index}
+            className={cn(
+              `menu-item-${zIndex}`,
+              fontSizes[fontSize],
+              isOpen && "visible",
+              menuItemClassName
+            )}
+            style={{
+              transitionDelay: isOpen ? `${index * staggerDelay}s` : "0s"
+            }}
+            onClick={() => handleItemClick(item)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleItemClick(item);
+              }
+            }}
+            tabIndex={isOpen ? 0 : -1}
+            role="button"
+            aria-label={`Navigate to ${item.label}`}>
+            
               <span>
                 {item.icon && <span className="menu-icon">{item.icon}</span>}
                 {item.label}
               </span>
             </li>
-          ))}
+          )}
         </ul>
       </div>
 
-      {/* Hamburger Button */}
+      {}
       <button
         className={cn(
           `hamburger-button-${zIndex}`,
@@ -348,35 +348,35 @@ export const HamburgerMenuOverlay: React.FC<HamburgerMenuOverlayProps> = ({
         onClick={toggleMenu}
         aria-label={ariaLabel}
         aria-expanded={isOpen}
-        aria-controls="navigation-menu"
-      >
-        {customButton || (
-          <div className="relative w-full h-full flex items-center justify-center">
+        aria-controls="navigation-menu">
+        
+        {customButton ||
+        <div className="relative w-full h-full flex items-center justify-center">
             <Menu
-              className={cn(
-                "absolute transition-all duration-300",
-                isOpen
-                  ? "opacity-0 rotate-45 scale-0"
-                  : "opacity-100 rotate-0 scale-100"
-              )}
-              size={buttonSize === "sm" ? 16 : buttonSize === "md" ? 20 : 24}
-              color={textColor}
-            />
+            className={cn(
+              "absolute transition-all duration-300",
+              isOpen ?
+              "opacity-0 rotate-45 scale-0" :
+              "opacity-100 rotate-0 scale-100"
+            )}
+            size={buttonSize === "sm" ? 16 : buttonSize === "md" ? 20 : 24}
+            color={textColor} />
+          
             <X
-              className={cn(
-                "absolute transition-all duration-300",
-                isOpen
-                  ? "opacity-100 rotate-0 scale-100"
-                  : "opacity-0 -rotate-45 scale-0"
-              )}
-              size={buttonSize === "sm" ? 16 : buttonSize === "md" ? 20 : 24}
-              color={textColor}
-            />
+            className={cn(
+              "absolute transition-all duration-300",
+              isOpen ?
+              "opacity-100 rotate-0 scale-100" :
+              "opacity-0 -rotate-45 scale-0"
+            )}
+            size={buttonSize === "sm" ? 16 : buttonSize === "md" ? 20 : 24}
+            color={textColor} />
+          
           </div>
-        )}
+        }
       </button>
-    </div>
-  );
+    </div>);
+
 };
 
 export default HamburgerMenuOverlay;

@@ -14,7 +14,7 @@ type GoogleAnalyticsPageTrackerProps = {
 };
 
 export function GoogleAnalyticsPageTracker({
-  measurementId,
+  measurementId
 }: GoogleAnalyticsPageTrackerProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -28,7 +28,7 @@ export function GoogleAnalyticsPageTracker({
     const pagePath = query ? `${pathname}?${query}` : pathname;
 
     window.gtag("config", measurementId, {
-      page_path: pagePath,
+      page_path: pagePath
     });
   }, [measurementId, pathname, searchParams]);
 

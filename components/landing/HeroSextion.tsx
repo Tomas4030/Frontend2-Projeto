@@ -50,7 +50,7 @@ const HeroSection = () => {
       `}</style>
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left content */}
+          {}
           <div className="animate-slide-in">
             <h1 className="text-2xl md:text-4xl lg:text-5xl leading-tight mb-6 pixel-shadow text-foreground">
               Transforma a tua vida num{" "}
@@ -74,24 +74,24 @@ const HeroSection = () => {
               </Button>
             </div>
 
-            {/* Stats */}
+            {}
             <div className="flex gap-8 mt-10">
               {[
-                { value: "10K+", label: "Aventureiros" },
-                { value: "1M+", label: "Missões" },
-                { value: "99%", label: "Motivação" },
-              ].map((stat) => (
-                <div key={stat.label}>
+              { value: "10K+", label: "Aventureiros" },
+              { value: "1M+", label: "Missões" },
+              { value: "99%", label: "Motivação" }].
+              map((stat) =>
+              <div key={stat.label}>
                   <p className="font-pixel text-sm text-accent">{stat.value}</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     {stat.label}
                   </p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
-          {/* Right image */}
+          {}
           <div className="relative animate-float-y">
             <div className="hidden rpg-border overflow-hidden w-full h-64 md:block lg:h-100 rounded-lg">
               <Image
@@ -101,11 +101,11 @@ const HeroSection = () => {
                 className="object-cover rounded-lg"
                 priority
                 fetchPriority="high"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px"
-              />
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 600px" />
+              
             </div>
 
-            {/* Floating XP badge */}
+            {}
             <div className="hidden md:block absolute -bottom-4 -left-4 bg-card rpg-border px-4 py-3 rounded-lg animate-fade-in-up">
               <p className="font-pixel text-[10px] text-primary">+250 XP</p>
               <p className="text-xs text-muted-foreground">Missão completa!</p>
@@ -113,8 +113,8 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default HeroSection;

@@ -1,27 +1,27 @@
 import React from "react";
 
-// Define the types for the component's props.
-export interface TrialButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /**
-   * The text to display inside the button.
-   */
+
+export interface TrialButtonProps extends
+  React.ButtonHTMLAttributes<HTMLButtonElement> {
+
+
+
   children: React.ReactNode;
 }
 
-/**
- * A reusable button component with a shiny, animated gradient effect.
- *
- * This component integrates Tailwind CSS for base styling and
- * uses a custom style block for advanced gradient animations.
- */
+
+
+
+
+
+
 export const TrialButton: React.FC<TrialButtonProps> = ({
   children,
   ...props
 }) => {
   return (
     <>
-      {/* Global styles for custom properties and keyframes */}
+      {}
       <style>
         {`
         @import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,500&display=swap");
@@ -204,10 +204,21 @@ export const TrialButton: React.FC<TrialButtonProps> = ({
           flex items-center justify-center /* Center children */
         
 "
-        {...props}
-      >
+
+
+
+
+
+
+
+
+
+
+
+        {...props}>
+        
         <span className="">{children}</span>
       </button>
-    </>
-  );
+    </>);
+
 };

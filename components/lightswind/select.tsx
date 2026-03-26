@@ -3,7 +3,7 @@ import * as React from "react";
 import { createPortal } from "react-dom";
 import { Check, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, HTMLMotionProps } from "framer-motion";
-import { cn } from "../../lib/utils"; // Assuming you have this utility function
+import { cn } from "../../lib/utils";
 
 interface SelectContextType {
   value: string;
@@ -16,7 +16,7 @@ interface SelectContextType {
 }
 
 const SelectContext = React.createContext<SelectContextType | undefined>(
-  undefined,
+  undefined
 );
 
 interface SelectProps {
@@ -38,10 +38,10 @@ const Select: React.FC<SelectProps> = ({
   defaultOpen = false,
   open,
   onOpenChange,
-  disabled = false,
+  disabled = false
 }) => {
   const [selectedValue, setSelectedValue] = React.useState(
-    value || defaultValue,
+    value || defaultValue
   );
   const [isOpen, setIsOpen] = React.useState(open || defaultOpen);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
@@ -72,7 +72,7 @@ const Select: React.FC<SelectProps> = ({
       }
       onValueChange?.(newValue);
     },
-    [onValueChange, value],
+    [onValueChange, value]
   );
 
   const handleOpenChange = React.useCallback(
@@ -84,7 +84,7 @@ const Select: React.FC<SelectProps> = ({
       }
       onOpenChange?.(newOpen);
     },
-    [onOpenChange, open, disabled],
+    [onOpenChange, open, disabled]
   );
 
   return (
@@ -96,12 +96,12 @@ const Select: React.FC<SelectProps> = ({
         setOpen: handleOpenChange,
         triggerRef,
         searchQuery,
-        setSearchQuery,
-      }}
-    >
+        setSearchQuery
+      }}>
+      
       {children}
-    </SelectContext.Provider>
-  );
+    </SelectContext.Provider>);
+
 };
 
 const SelectGroup: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
@@ -111,8 +111,8 @@ const SelectGroup: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   return (
     <div className="px-1 py-1.5" {...props}>
       {children}
-    </div>
-  );
+    </div>);
+
 };
 SelectGroup.displayName = "SelectGroup";
 
@@ -126,12 +126,12 @@ const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
     if (!context) {
       throw new Error("SelectValue must be used within a Select");
     }
-    // This is a bit of a hack to get the children from the parent Select component.
-    // A better implementation would involve passing a map of values to display labels via context.
-    // For simplicity, we are assuming children are passed directly or can be inferred.
+
+
+
     const parentChildren =
-      (context as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED
-        ?.children || children;
+    (context as any).__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED?.
+    children || children;
 
     let displayValue: React.ReactNode = null;
 
@@ -141,18 +141,18 @@ const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
         if (displayValue) return;
 
         const nodeProps = node.props as Record<string, unknown>;
-        // Check if it's a SelectItem
+
         if (
-          (node.type as { displayName?: string }).displayName ===
-            "SelectItem" &&
-          nodeProps.value === context.value
-        ) {
+        (node.type as {displayName?: string;}).displayName ===
+        "SelectItem" &&
+        nodeProps.value === context.value)
+        {
           displayValue = nodeProps.children as React.ReactNode;
-        }
-        // Check if it's a SelectGroup and recurse
-        else if (
-          (node.type as { displayName?: string }).displayName === "SelectGroup"
-        ) {
+        } else
+
+        if (
+        (node.type as {displayName?: string;}).displayName === "SelectGroup")
+        {
           findDisplayValue(nodeProps.children as React.ReactNode);
         }
       });
@@ -164,12 +164,12 @@ const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
 
     return (
       <span ref={ref} className={cn("text-sm", className)} {...props}>
-        {content || (
-          <span className="text-muted-foreground">Select an option</span>
-        )}
-      </span>
-    );
-  },
+        {content ||
+        <span className="text-muted-foreground">Select an option</span>
+        }
+      </span>);
+
+  }
 );
 SelectValue.displayName = "SelectValue";
 
@@ -200,53 +200,55 @@ const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
         data-state={open ? "open" : "closed"}
         className={cn(
           "flex h-10 w-full items-center justify-between rounded-md border bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-          className,
+          className
         )}
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        {...props}
-      >
-        {open ? (
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-            placeholder="Search..."
-            className="w-full bg-transparent p-0 text-sm 
+        {...props}>
+        
+        {open ?
+        <input
+          ref={searchInputRef}
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onClick={(e) => e.stopPropagation()}
+          placeholder="Search..."
+          className="w-full bg-transparent p-0 text-sm 
     border-none outline-none ring-0 focus:outline-none focus:ring-0 
     active:outline-none active:ring-0"
-            style={{ boxShadow: "none" }} // ensure Chrome removes highlight
-          />
-        ) : (
-          children
-        )}
+
+
+          style={{ boxShadow: "none" }} /> :
+
+
+        children
+        }
         <ChevronDown
           className={cn(
             "h-4 w-4 opacity-50 transition-transform duration-200",
-            open && "rotate-180",
-          )}
-        />
-      </button>
-    );
-  },
+            open && "rotate-180"
+          )} />
+        
+      </button>);
+
+  }
 );
 SelectTrigger.displayName = "SelectTrigger";
 
 const SelectScrollUpButton: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
-  props,
-) => <div {...props} />;
+props) =>
+<div {...props} />;
 SelectScrollUpButton.displayName = "SelectScrollUpButton";
 
 const SelectScrollDownButton: React.FC<React.HTMLAttributes<HTMLDivElement>> = (
-  props,
-) => <div {...props} />;
+props) =>
+<div {...props} />;
 SelectScrollDownButton.displayName = "SelectScrollDownButton";
 
-// *** FIX APPLIED HERE: Replaced React.HTMLAttributes with HTMLMotionProps ***
+
 interface SelectContentProps extends Omit<HTMLMotionProps<"div">, "children"> {
-  children: React.ReactNode; // Explicitly define children as standard ReactNode
+  children: React.ReactNode;
   position?: "popper" | "item-aligned";
   align?: "start" | "center" | "end";
   sideOffset?: number;
@@ -254,16 +256,16 @@ interface SelectContentProps extends Omit<HTMLMotionProps<"div">, "children"> {
 
 const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
   (
-    {
-      className,
-      children,
-      position = "popper",
-      align = "start",
-      sideOffset = 4,
-      ...props
-    },
-    ref,
-  ) => {
+  {
+    className,
+    children,
+    position = "popper",
+    align = "start",
+    sideOffset = 4,
+    ...props
+  },
+  ref) =>
+  {
     const context = React.useContext(SelectContext);
     if (!context) {
       throw new Error("SelectContent must be used within a Select");
@@ -273,16 +275,16 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
     const contentRef = React.useRef<HTMLDivElement | null>(null);
 
     const [calculatedStyle, setCalculatedStyle] =
-      React.useState<React.CSSProperties>({});
+    React.useState<React.CSSProperties>({});
     const [currentSide, setCurrentSide] = React.useState<"top" | "bottom">(
-      "bottom",
+      "bottom"
     );
 
     React.useEffect(() => {
       if (!open || !triggerRef.current) return;
 
       const updatePosition = () => {
-        if (!triggerRef.current) return; // Guard against null ref
+        if (!triggerRef.current) return;
 
         const triggerRect = triggerRef.current.getBoundingClientRect();
         const viewportHeight = window.innerHeight;
@@ -291,58 +293,58 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
         const spaceBelow = viewportHeight - triggerRect.bottom;
         const spaceAbove = triggerRect.top;
 
-        const preferredMaxHeight = 224; // A common max-height for dropdowns (e.g., tailwind's h-56)
+        const preferredMaxHeight = 224;
 
-        // Decide whether to show the dropdown below or above the trigger
+
         const showBelow =
-          spaceBelow >= preferredMaxHeight || spaceBelow > spaceAbove;
+        spaceBelow >= preferredMaxHeight || spaceBelow > spaceAbove;
 
         const newSide = showBelow ? "bottom" : "top";
         setCurrentSide(newSide);
 
-        // Define the styles that will be applied
+
         const newStyles: React.CSSProperties = {
           position: "absolute",
-          width: `${triggerRect.width}px`,
+          width: `${triggerRect.width}px`
         };
 
-        // --- START OF FIX ---
-        // This is the key change. We now calculate position differently
-        // for 'top' and 'bottom' to ensure it's always attached correctly.
+
+
+
 
         if (newSide === "bottom") {
-          const availableHeight = spaceBelow - sideOffset - 8; // 8px for margin
+          const availableHeight = spaceBelow - sideOffset - 8;
           newStyles.maxHeight = `${Math.min(preferredMaxHeight, Math.max(0, availableHeight))}px`;
           newStyles.top = `${triggerRect.bottom + window.scrollY + sideOffset}px`;
         } else {
-          // Position above the trigger
-          const availableHeight = spaceAbove - sideOffset - 8; // 8px for margin
+
+          const availableHeight = spaceAbove - sideOffset - 8;
           newStyles.maxHeight = `${Math.min(preferredMaxHeight, Math.max(0, availableHeight))}px`;
-          // By setting `bottom`, we anchor the dropdown's bottom edge to the trigger's top edge.
-          // This solves the gap issue completely.
+
+
           newStyles.bottom = `${viewportHeight - triggerRect.top - window.scrollY + sideOffset}px`;
         }
 
-        // --- END OF FIX ---
 
-        // Handle horizontal alignment
+
+
         let left = triggerRect.left;
         if (align === "center") {
-          // This calculation was slightly off, corrected to center based on content width if known,
-          // but for a select, centering on trigger is usually sufficient.
+
+
           left =
-            triggerRect.left + triggerRect.width / 2 - triggerRect.width / 2; // Assumes content width = trigger width
+          triggerRect.left + triggerRect.width / 2 - triggerRect.width / 2;
         } else if (align === "end") {
           left = triggerRect.right - triggerRect.width;
         }
 
-        // Prevent overflow from the right edge of the viewport
+
         if (left + triggerRect.width > viewportWidth) {
-          left = viewportWidth - triggerRect.width - 8; // 8px margin
+          left = viewportWidth - triggerRect.width - 8;
         }
-        // Prevent overflow from the left edge of the viewport
+
         if (left < 0) {
-          left = 8; // 8px margin
+          left = 8;
         }
 
         newStyles.left = `${left + window.scrollX}px`;
@@ -363,11 +365,11 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
       if (!open) return;
       const handleClickOutside = (e: MouseEvent) => {
         if (
-          contentRef.current &&
-          !contentRef.current.contains(e.target as Node) &&
-          triggerRef.current &&
-          !triggerRef.current.contains(e.target as Node)
-        ) {
+        contentRef.current &&
+        !contentRef.current.contains(e.target as Node) &&
+        triggerRef.current &&
+        !triggerRef.current.contains(e.target as Node))
+        {
           setOpen(false);
         }
       };
@@ -393,7 +395,7 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
           (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
       },
-      [ref],
+      [ref]
     );
 
     const filteredChildren = React.useMemo(() => {
@@ -412,9 +414,9 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
             return (
               React.Children.map(
                 childProps.children as React.ReactNode,
-                getChildText,
-              )?.join("") ?? ""
-            );
+                getChildText
+              )?.join("") ?? "");
+
           }
         }
         return "";
@@ -427,22 +429,22 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
 
         const childProps = child.props as Record<string, unknown>;
         if (
-          (child.type as { displayName?: string }).displayName === "SelectGroup"
-        ) {
+        (child.type as {displayName?: string;}).displayName === "SelectGroup")
+        {
           const matchedItems = React.Children.toArray(
-            childProps.children as React.ReactNode,
+            childProps.children as React.ReactNode
           ).filter((groupChild) => {
             if (
-              React.isValidElement(groupChild) &&
-              (groupChild.type as { displayName?: string }).displayName ===
-                "SelectItem"
-            ) {
+            React.isValidElement(groupChild) &&
+            (groupChild.type as {displayName?: string;}).displayName ===
+            "SelectItem")
+            {
               const groupChildProps = groupChild.props as Record<
                 string,
-                unknown
-              >;
+                unknown>;
+
               const text = getChildText(
-                groupChildProps.children as React.ReactNode,
+                groupChildProps.children as React.ReactNode
               );
               return text.toLowerCase().includes(lowerCaseQuery);
             }
@@ -452,15 +454,15 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
           if (matchedItems.length > 0) {
             return React.cloneElement(child, {
               ...childProps,
-              children: matchedItems,
+              children: matchedItems
             } as React.Attributes);
           }
           return null;
         }
 
         if (
-          (child.type as { displayName?: string }).displayName === "SelectItem"
-        ) {
+        (child.type as {displayName?: string;}).displayName === "SelectItem")
+        {
           const text = getChildText(childProps.children as React.ReactNode);
           return text.toLowerCase().includes(lowerCaseQuery) ? child : null;
         }
@@ -469,63 +471,63 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
       });
     }, [children, searchQuery]);
 
-    // Check if there are any children to render after filtering
+
     const hasVisibleChildren = React.Children.count(filteredChildren) > 0;
 
     return createPortal(
       <AnimatePresence>
-        {open && (
-          <motion.div
-            ref={combinedRef}
-            style={calculatedStyle}
-            className={cn(
-              "z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
-              position === "popper" &&
-                "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
-              className,
-            )}
-            initial={{ opacity: 0, y: currentSide === "bottom" ? -10 : 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: currentSide === "bottom" ? -10 : 10 }}
-            transition={{ duration: 0.2 }}
-            {...props}
-          >
+        {open &&
+        <motion.div
+          ref={combinedRef}
+          style={calculatedStyle}
+          className={cn(
+            "z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md",
+            position === "popper" &&
+            "data-[side=bottom]:translate-y-1 data-[side=top]:-translate-y-1",
+            className
+          )}
+          initial={{ opacity: 0, y: currentSide === "bottom" ? -10 : 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: currentSide === "bottom" ? -10 : 10 }}
+          transition={{ duration: 0.2 }}
+          {...props}>
+          
             <SelectScrollUpButton />
             <div
-              className="p-1"
-              style={{
-                maxHeight: calculatedStyle.maxHeight,
-                overflowY: "auto",
-              }}
-            >
-              {hasVisibleChildren ? (
-                filteredChildren
-              ) : (
-                <div className="px-2 py-1.5 text-sm text-muted-foreground">
+            className="p-1"
+            style={{
+              maxHeight: calculatedStyle.maxHeight,
+              overflowY: "auto"
+            }}>
+            
+              {hasVisibleChildren ?
+            filteredChildren :
+
+            <div className="px-2 py-1.5 text-sm text-muted-foreground">
                   No results found.
                 </div>
-              )}
+            }
             </div>
             <SelectScrollDownButton />
           </motion.div>
-        )}
+        }
       </AnimatePresence>,
-      document.body,
+      document.body
     );
-  },
+  }
 );
 SelectContent.displayName = "SelectContent";
 
 const SelectLabel = React.forwardRef<
   HTMLSpanElement,
-  React.HTMLAttributes<HTMLSpanElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLSpanElement>>(
+  ({ className, ...props }, ref) =>
   <span
     ref={ref}
     className={cn("py-1.5 pl-8 pr-2 text-sm font-semibold", className)}
-    {...props}
-  />
-));
+    {...props} />
+
+);
 SelectLabel.displayName = "SelectLabel";
 
 interface SelectItemProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -548,7 +550,7 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
       e.preventDefault();
       e.stopPropagation();
       onValueChange(value);
-      setTimeout(() => setOpen(false), 50); // Small delay to show selection
+      setTimeout(() => setOpen(false), 50);
     };
 
     return (
@@ -556,11 +558,11 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         ref={ref}
         className={cn(
           "relative flex w-full select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground",
-          isSelected
-            ? "bg-accent text-accent-foreground"
-            : "hover:bg-accent hover:text-accent-foreground",
+          isSelected ?
+          "bg-accent text-accent-foreground" :
+          "hover:bg-accent hover:text-accent-foreground",
           disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer",
-          className,
+          className
         )}
         onClick={handleSelect}
         onKeyDown={(e) => {
@@ -572,28 +574,28 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         data-disabled={disabled}
         role="option"
         tabIndex={disabled ? -1 : 0}
-        {...props}
-      >
+        {...props}>
+        
         <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
           {isSelected && <Check className="h-4 w-4" />}
         </span>
         <span className="text-sm">{children}</span>
-      </div>
-    );
-  },
+      </div>);
+
+  }
 );
 SelectItem.displayName = "SelectItem";
 
 const SelectSeparator = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) =>
   <div
     ref={ref}
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
-    {...props}
-  />
-));
+    {...props} />
+
+);
 SelectSeparator.displayName = "SelectSeparator";
 
 export {
@@ -606,5 +608,4 @@ export {
   SelectItem,
   SelectSeparator,
   SelectScrollUpButton,
-  SelectScrollDownButton,
-};
+  SelectScrollDownButton };

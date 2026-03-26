@@ -4,9 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* ======================================================
-   THEME TOKENS (OKLCH SYSTEM)
-====================================================== */
+
 
 @theme inline {
   --color-background: var(--background);
@@ -42,14 +40,12 @@
   --color-sidebar: var(--sidebar);
 }
 
-/* ======================================================
-   ROOT THEME
-====================================================== */
+
 
 :root {
   --radius: 0.75rem;
 
-  /* Fonte pixel art para Tailwind */
+  
   --font-pixel: "Press Start 2P", cursive, monospace;
 
   --background: oklch(0.18 0.02 260);
@@ -61,22 +57,22 @@
   --popover: oklch(0.22 0.02 260);
   --popover-foreground: oklch(0.95 0.02 90);
 
-  /* XP Green */
+  
   --primary: oklch(0.65 0.18 145);
   --primary-foreground: oklch(0.15 0.02 260);
 
-  /* Magic Purple */
+  
   --secondary: oklch(0.6 0.2 290);
   --secondary-foreground: oklch(0.95 0.02 90);
 
   --muted: oklch(0.28 0.02 260);
   --muted-foreground: oklch(0.7 0.02 90);
 
-  /* Gold Accent */
+  
   --accent: oklch(0.75 0.18 70);
   --accent-foreground: oklch(0.15 0.02 260);
 
-  /* HP Red */
+  
   --destructive: oklch(0.6 0.22 30);
 
   --border: oklch(0.3 0.02 260);
@@ -92,9 +88,7 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
-/* ======================================================
-   DARK MODE
-====================================================== */
+
 
 .dark {
   --background: oklch(0.14 0.02 260);
@@ -122,9 +116,7 @@
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
 
-/* ======================================================
-   BASE STYLES
-====================================================== */
+
 
 @layer base {
   * {
@@ -143,9 +135,7 @@
   }
 }
 
-/* ======================================================
-   RPG COMPONENTS
-====================================================== */
+
 
 @layer components {
   .game-card {
@@ -189,9 +179,7 @@ html {
   scroll-behavior: smooth;
 }
 
-/* ======================================================
-   ANIMATIONS
-====================================================== */
+
 
 @keyframes pulse-hp {
   0%,
@@ -239,9 +227,9 @@ html {
   color: #888;
 }
 
-/* ===================================== */
-/*         LOGIN & REGISTER STYLES       */
-/* ===================================== */
+
+
+
 
 .rpg-card {
   @apply bg-card border-2 border-border rounded-lg p-6;
@@ -408,7 +396,7 @@ html {
     0 0 40px rgba(155, 109, 255, 0.15);
 }
 
-/* Class selector grid */
+
 
 .class-grid {
   display: grid;
@@ -470,7 +458,7 @@ html {
   color: #9b6dff;
 }
 
-/* Right panel preview */
+
 
 .preview-box {
   background: #0b0915;
@@ -505,7 +493,7 @@ html {
   min-height: 22px;
 }
 
-/* Stat bars */
+
 
 .stat-row {
   margin-bottom: 10px;

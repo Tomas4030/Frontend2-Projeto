@@ -18,12 +18,12 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       if (checked !== undefined) {
         setIsChecked(checked);
         setIsAnimating(true);
-        
-        // Reset animation state after transition completes
+
+
         const timer = setTimeout(() => {
           setIsAnimating(false);
         }, 300);
-        
+
         return () => clearTimeout(timer);
       }
     }, [checked]);
@@ -32,12 +32,12 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       const newChecked = event.target.checked;
       setIsChecked(newChecked);
       setIsAnimating(true);
-      
-      // Reset animation state after transition completes
+
+
       setTimeout(() => {
         setIsAnimating(false);
       }, 300);
-      
+
       onCheckedChange?.(newChecked);
       props.onChange?.(event);
     };
@@ -50,8 +50,8 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           ref={ref}
           checked={isChecked}
           onChange={handleChange}
-          {...props}
-        />
+          {...props} />
+        
         <div
           className={cn(
             "peer h-4 w-4 shrink-0 rounded-sm border   ring-offset-background",
@@ -61,19 +61,19 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
             isAnimating && "scale-110",
             isChecked ? "bg-primary" : "bg-transparent hover:bg-primary/10",
             className
-          )}
-        >
-          {isChecked && (
-            <div className={cn(
-              "flex items-center justify-center text-current",
-              "animate-in fade-in-0 zoom-in-0 duration-300"
-            )}>
+          )}>
+          
+          {isChecked &&
+          <div className={cn(
+            "flex items-center justify-center text-current",
+            "animate-in fade-in-0 zoom-in-0 duration-300"
+          )}>
               <Check className="h-4 w-4 text-white dark:text-black" />
             </div>
-          )}
+          }
         </div>
-      </div>
-    );
+      </div>);
+
   }
 );
 Checkbox.displayName = "Checkbox";

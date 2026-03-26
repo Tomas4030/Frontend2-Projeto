@@ -43,30 +43,30 @@ void main() {
 }
 `;
 
-/**
- * Valid blur sizes supported by Tailwind CSS.
- */
+
+
+
 export type BlurSize = "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl";
 
-/**
- * @typedef {Object} SmokeyBackgroundProps
- * @property {BlurSize} [backdropBlurAmount] - The size of the backdrop blur to apply.
- * Valid values are "none", "sm", "md", "lg", "xl", "2xl", "3xl".
- * Defaults to "sm" if not provided.
- * @property {string} [color] - The color of the shader's glow in hexadecimal format (e.g., "#RRGGBB").
- * Defaults to "#471CE2" (purple) if not provided.
- * @property {string} [className] - Additional CSS classes to apply to the container div.
- */
+
+
+
+
+
+
+
+
+
 interface SmokeyBackgroundProps {
-  backdropBlurAmount?: string; // Accept any string from UI (validated internally)
+  backdropBlurAmount?: string;
   color?: string;
   className?: string;
 }
 
-/**
- * A mapping from simplified blur size names to full Tailwind CSS backdrop-blur classes.
- * This ensures Tailwind's JIT mode can correctly detect and generate the CSS.
- */
+
+
+
+
 const blurClassMap: Record<BlurSize, string> = {
   none: "backdrop-blur-none",
   sm: "backdrop-blur-sm",
@@ -74,27 +74,27 @@ const blurClassMap: Record<BlurSize, string> = {
   lg: "backdrop-blur-lg",
   xl: "backdrop-blur-xl",
   "2xl": "backdrop-blur-2xl",
-  "3xl": "backdrop-blur-3xl",
+  "3xl": "backdrop-blur-3xl"
 };
 
-/**
- * A React component that renders an interactive WebGL shader background.
- * The background features a turbulent, glowing wave pattern that responds to mouse movement.
- * An optional backdrop blur can be applied over the shader.
- *
- * @param {SmokeyBackgroundProps} props - The component props.
- * @returns {JSX.Element} The rendered SmokeyBackground component.
- */
+
+
+
+
+
+
+
+
 function SmokeyBackground({
   backdropBlurAmount = "sm",
-  color = "#fff", // Default purple color
-  className = "",
+  color = "#fff",
+  className = ""
 }: SmokeyBackgroundProps): React.ReactElement {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
 
-  // Helper to convert hex color to RGB (0-1 range)
+
   const hexToRgb = (hex: string): [number, number, number] => {
     const r = parseInt(hex.substring(1, 3), 16) / 255;
     const g = parseInt(hex.substring(3, 5), 16) / 255;
@@ -113,9 +113,9 @@ function SmokeyBackground({
     }
 
     const compileShader = (
-      type: number,
-      source: string,
-    ): WebGLShader | null => {
+    type: number,
+    source: string)
+    : WebGLShader | null => {
       const shader = gl.createShader(type);
       if (!shader) return null;
       gl.shaderSource(shader, source);
@@ -131,7 +131,7 @@ function SmokeyBackground({
     const vertexShader = compileShader(gl.VERTEX_SHADER, vertexSmokeySource);
     const fragmentShader = compileShader(
       gl.FRAGMENT_SHADER,
-      fragmentSmokeySource,
+      fragmentSmokeySource
     );
     if (!vertexShader || !fragmentShader) return;
 
@@ -153,7 +153,7 @@ function SmokeyBackground({
     gl.bufferData(
       gl.ARRAY_BUFFER,
       new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
-      gl.STATIC_DRAW,
+      gl.STATIC_DRAW
     );
 
     const positionLocation = gl.getAttribLocation(program, "a_position");
@@ -163,11 +163,11 @@ function SmokeyBackground({
     const iResolutionLocation = gl.getUniformLocation(program, "iResolution");
     const iTimeLocation = gl.getUniformLocation(program, "iTime");
     const iMouseLocation = gl.getUniformLocation(program, "iMouse");
-    const uColorLocation = gl.getUniformLocation(program, "u_color"); // Get uniform location for custom color
+    const uColorLocation = gl.getUniformLocation(program, "u_color");
 
     let startTime = Date.now();
 
-    // Set the initial color
+
     const [r, g, b] = hexToRgb(color);
     gl.uniform3f(uColorLocation, r, g, b);
 
@@ -185,7 +185,7 @@ function SmokeyBackground({
       gl.uniform2f(
         iMouseLocation,
         isHovering ? mousePosition.x : 0,
-        isHovering ? height - mousePosition.y : 0,
+        isHovering ? height - mousePosition.y : 0
       );
 
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -196,7 +196,7 @@ function SmokeyBackground({
       const rect = canvas.getBoundingClientRect();
       setMousePosition({
         x: event.clientX - rect.left,
-        y: event.clientY - rect.top,
+        y: event.clientY - rect.top
       });
     };
 
@@ -220,23 +220,23 @@ function SmokeyBackground({
       canvas.removeEventListener("mouseenter", handleMouseEnter);
       canvas.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [isHovering, mousePosition, color]); // Add color to the dependency array
+  }, [isHovering, mousePosition, color]);
 
-  // Get the correct Tailwind CSS class from the map
+
   const finalBlurClass =
-    blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
+  blurClassMap[backdropBlurAmount as BlurSize] || blurClassMap["sm"];
 
   return (
     <div className={`w-full max-w-screen h-full overflow-hidden ${className}`}>
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full max-w-screen h-full overflow-hidden"
-        style={{ display: "block" }}
-      />
-      {/* Apply the mapped Tailwind CSS class for backdrop blur */}
+        style={{ display: "block" }} />
+      
+      {}
       <div className={`absolute inset-0 ${finalBlurClass}`}></div>
-    </div>
-  );
+    </div>);
+
 }
 
 export default SmokeyBackground;

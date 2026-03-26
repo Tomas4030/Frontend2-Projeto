@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Avatar as AvatarPrimitive } from "radix-ui"
+import * as React from "react";
+import { Avatar as AvatarPrimitive } from "radix-ui";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 function Avatar({
   className,
   size = "default",
   ...props
-}: React.ComponentProps<typeof AvatarPrimitive.Root> & {
-  size?: "default" | "sm" | "lg"
-}) {
+
+
+}: React.ComponentProps<typeof AvatarPrimitive.Root> & {size?: "default" | "sm" | "lg";}) {
   return (
     <AvatarPrimitive.Root
       data-slot="avatar"
@@ -20,9 +20,9 @@ function Avatar({
         "group/avatar relative flex size-8 shrink-0 overflow-hidden rounded-full select-none data-[size=lg]:size-10 data-[size=sm]:size-6",
         className
       )}
-      {...props}
-    />
-  )
+      {...props} />);
+
+
 }
 
 function AvatarImage({
@@ -33,9 +33,9 @@ function AvatarImage({
     <AvatarPrimitive.Image
       data-slot="avatar-image"
       className={cn("aspect-square size-full", className)}
-      {...props}
-    />
-  )
+      {...props} />);
+
+
 }
 
 function AvatarFallback({
@@ -49,9 +49,9 @@ function AvatarFallback({
         "bg-muted text-muted-foreground flex size-full items-center justify-center rounded-full text-sm group-data-[size=sm]/avatar:text-xs",
         className
       )}
-      {...props}
-    />
-  )
+      {...props} />);
+
+
 }
 
 function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
@@ -65,9 +65,9 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
         "group-data-[size=lg]/avatar:size-3 group-data-[size=lg]/avatar:[&>svg]:size-2",
         className
       )}
-      {...props}
-    />
-  )
+      {...props} />);
+
+
 }
 
 function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
@@ -78,9 +78,9 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
         "*:data-[slot=avatar]:ring-background group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2",
         className
       )}
-      {...props}
-    />
-  )
+      {...props} />);
+
+
 }
 
 function AvatarGroupCount({
@@ -94,9 +94,9 @@ function AvatarGroupCount({
         "bg-muted text-muted-foreground ring-background relative flex size-8 shrink-0 items-center justify-center rounded-full text-sm ring-2 group-has-data-[size=lg]/avatar-group:size-10 group-has-data-[size=sm]/avatar-group:size-6 [&>svg]:size-4 group-has-data-[size=lg]/avatar-group:[&>svg]:size-5 group-has-data-[size=sm]/avatar-group:[&>svg]:size-3",
         className
       )}
-      {...props}
-    />
-  )
+      {...props} />);
+
+
 }
 
 export {
@@ -105,5 +105,4 @@ export {
   AvatarFallback,
   AvatarBadge,
   AvatarGroup,
-  AvatarGroupCount,
-}
+  AvatarGroupCount };

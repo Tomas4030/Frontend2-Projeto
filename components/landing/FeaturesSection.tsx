@@ -6,8 +6,8 @@ import {
   CardTitle,
   CardDescription,
   CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+  CardHeader } from
+"@/components/ui/card";
 import { BorderBeam } from "@/components/lightswind/border-beam";
 
 type ElementType = "fire" | "ice" | "electric" | "water";
@@ -16,7 +16,7 @@ const elementStyles: Record<ElementType, string> = {
   fire: "from-orange-500 via-red-500 to-yellow-400",
   ice: "from-cyan-400 via-blue-300 to-white",
   electric: "from-purple-500 via-pink-500 to-cyan-400",
-  water: "from-blue-500 via-cyan-400 to-blue-300",
+  water: "from-blue-500 via-cyan-400 to-blue-300"
 };
 
 const features: {
@@ -26,35 +26,35 @@ const features: {
   element: ElementType;
   reverse?: boolean;
 }[] = [
-  {
-    icon: "⚔️",
-    title: "Missões",
-    desc: "As tuas tarefas diárias transformam-se em missões épicas com recompensas em XP e moedas.",
-    element: "fire",
-    reverse: true,
-  },
-  {
-    icon: "⭐",
-    title: "XP & Níveis",
-    desc: "Cada missão concluída dá-te XP. Acumula pontos, sobe de nível e desbloqueia novas habilidades.",
-    element: "ice",
-    reverse: false,
-  },
-  {
-    icon: "🧠",
-    title: "Atributos",
-    desc: "Desenvolve 5 atributos: Saúde, Mente, Carreira, Social e Criatividade. Torna-te um herói completo.",
-    element: "electric",
-    reverse: true,
-  },
-  {
-    icon: "📊",
-    title: "Progresso",
-    desc: "Visualiza a tua evolução com gráficos detalhados. Vê como cresceste ao longo do tempo.",
-    element: "water",
-    reverse: false,
-  },
-];
+{
+  icon: "⚔️",
+  title: "Missões",
+  desc: "As tuas tarefas diárias transformam-se em missões épicas com recompensas em XP e moedas.",
+  element: "fire",
+  reverse: true
+},
+{
+  icon: "⭐",
+  title: "XP & Níveis",
+  desc: "Cada missão concluída dá-te XP. Acumula pontos, sobe de nível e desbloqueia novas habilidades.",
+  element: "ice",
+  reverse: false
+},
+{
+  icon: "🧠",
+  title: "Atributos",
+  desc: "Desenvolve 5 atributos: Saúde, Mente, Carreira, Social e Criatividade. Torna-te um herói completo.",
+  element: "electric",
+  reverse: true
+},
+{
+  icon: "📊",
+  title: "Progresso",
+  desc: "Visualiza a tua evolução com gráficos detalhados. Vê como cresceste ao longo do tempo.",
+  element: "water",
+  reverse: false
+}];
+
 
 const FeaturesSection = () => {
   return (
@@ -64,8 +64,8 @@ const FeaturesSection = () => {
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
+          viewport={{ once: true }}>
+          
           <h2 className="font-rpg text-lg sm:text-xl text-foreground mb-4">
             Como Funciona?
           </h2>
@@ -75,28 +75,28 @@ const FeaturesSection = () => {
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((item, i) => (
-            <Card
-              key={i}
-              className="relative overflow-hidden rounded-xl border border-[#2d2d4e]/60 bg-[#0f0f18]/70 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.6)]"
-            >
-              {/* 🔥 Borda Animada */}
+          {features.map((item, i) =>
+          <Card
+            key={i}
+            className="relative overflow-hidden rounded-xl border border-[#2d2d4e]/60 bg-[#0f0f18]/70 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+            
+              {}
               <BorderBeam
-                size={250}
-                duration={6}
-                className={`absolute inset-0 rounded-xl ${elementStyles[item.element]}`}
-                reverse={item.reverse}
-              />
+              size={250}
+              duration={6}
+              className={`absolute inset-0 rounded-xl ${elementStyles[item.element]}`}
+              reverse={item.reverse} />
+            
 
-              {/* Conteúdo */}
+              {}
               <motion.div
-                className="p-6 text-center group relative z-10"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
-              >
+              className="p-6 text-center group relative z-10"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -4 }}>
+              
                 <CardHeader className="text-5xl mb-4 group-hover:scale-110 transition-transform">
                   {item.icon}
                 </CardHeader>
@@ -112,11 +112,11 @@ const FeaturesSection = () => {
                 </CardContent>
               </motion.div>
             </Card>
-          ))}
+          )}
         </div>
       </div>
-    </section>
-  );
+    </section>);
+
 };
 
 export default FeaturesSection;

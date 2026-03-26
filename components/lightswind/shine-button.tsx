@@ -5,16 +5,16 @@ interface ShineButtonProps {
   onClick?: () => void;
   className?: string;
   size?: "sm" | "md" | "lg";
-  bgColor?: string; // Can be hex or gradient
+  bgColor?: string;
 }
 
 const sizeStyles: Record<
   NonNullable<ShineButtonProps["size"]>,
-  { padding: string; fontSize: string }
-> = {
+  {padding: string;fontSize: string;}> =
+{
   sm: { padding: "0.5rem 1rem", fontSize: "0.875rem" },
   md: { padding: "0.6rem 1.4rem", fontSize: "1rem" },
-  lg: { padding: "0.8rem 1.8rem", fontSize: "1.125rem" },
+  lg: { padding: "0.8rem 1.8rem", fontSize: "1.125rem" }
 };
 
 export const ShineButton: React.FC<ShineButtonProps> = ({
@@ -22,14 +22,14 @@ export const ShineButton: React.FC<ShineButtonProps> = ({
   onClick,
   className = "",
   size = "md",
-  bgColor = "linear-gradient(325deg, hsl(217 100% 56%) 0%, hsl(194 100% 69%) 55%, hsl(217 100% 56%) 90%)",
+  bgColor = "linear-gradient(325deg, hsl(217 100% 56%) 0%, hsl(194 100% 69%) 55%, hsl(217 100% 56%) 90%)"
 }) => {
   const { padding, fontSize } = sizeStyles[size];
 
-  // Determine whether to use solid color or gradient
-  const backgroundImage = bgColor.startsWith("linear-gradient")
-    ? bgColor
-    : `linear-gradient(to right, ${bgColor}, ${bgColor})`;
+
+  const backgroundImage = bgColor.startsWith("linear-gradient") ?
+  bgColor :
+  `linear-gradient(to right, ${bgColor}, ${bgColor})`;
 
   return (
     <button
@@ -45,23 +45,25 @@ export const ShineButton: React.FC<ShineButtonProps> = ({
         color: "hsl(0 0% 100%)",
         fontSize,
         padding,
-        transition: "0.8s",
+        transition: "0.8s"
       }}
       onMouseEnter={(e) =>
-        ((e.target as HTMLButtonElement).style.backgroundPosition = "right top")
+      (e.target as HTMLButtonElement).style.backgroundPosition = "right top"
       }
       onMouseLeave={(e) =>
-        ((e.target as HTMLButtonElement).style.backgroundPosition = "initial")
-      }
-    >
+      (e.target as HTMLButtonElement).style.backgroundPosition = "initial"
+      }>
+      
       {label}
 
-      {/* Shine effect */}
+      {}
       <div
         className="absolute top-0 left-[-75%] w-[200%] 
       h-full bg-white/40 skew-x-[-20deg] opacity-0 
-      group-hover:opacity-100 animate-shine pointer-events-none z-20"
-      />
-    </button>
-  );
+      group-hover:opacity-100 animate-shine pointer-events-none z-20" />
+
+
+      
+    </button>);
+
 };

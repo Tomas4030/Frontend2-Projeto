@@ -27,7 +27,7 @@ const Register = () => {
 
     if (password !== confirmPassword) {
       toast.error("As senhas não coincidem!", {
-        description: "Verifica se digitaste a mesma senha nos dois campos.",
+        description: "Verifica se digitaste a mesma senha nos dois campos."
       });
       return;
     }
@@ -36,21 +36,21 @@ const Register = () => {
 
     const { data: userData, error: signUpError } = await supabase.auth.signUp({
       email,
-      password,
+      password
     });
 
     if (signUpError) {
       toast.error("Erro ao criar herói", {
-        description: signUpError.message,
+        description: signUpError.message
       });
       setLoading(false);
       return;
     }
 
     if (userData.user) {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .insert([{ id: userData.user.id, name, email }]);
+      const { error: profileError } = await supabase.
+      from("profiles").
+      insert([{ id: userData.user.id, name, email }]);
 
       if (profileError) {
         console.log("Erro ao criar perfil:", profileError.message);
@@ -58,7 +58,7 @@ const Register = () => {
     }
 
     toast.success("Personagem registrado!", {
-      description: "Bem-vindo ao reino, aventureiro.",
+      description: "Bem-vindo ao reino, aventureiro."
     });
 
     setLoading(false);
@@ -91,8 +91,8 @@ const Register = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="O teu nome de herói"
-                  required
-                />
+                  required />
+                
               </div>
 
               <div>
@@ -103,8 +103,8 @@ const Register = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="heroi@reino.com"
-                  required
-                />
+                  required />
+                
               </div>
 
               <div>
@@ -116,13 +116,13 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    required
-                  />
+                    required />
+                  
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() => setShowPassword((v) => !v)}
-                  >
+                    onClick={() => setShowPassword((v) => !v)}>
+                    
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
@@ -137,18 +137,18 @@ const Register = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    required
-                  />
+                    required />
+                  
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() => setShowConfirmPassword((v) => !v)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff size={15} />
-                    ) : (
-                      <Eye size={15} />
-                    )}
+                    onClick={() => setShowConfirmPassword((v) => !v)}>
+                    
+                    {showConfirmPassword ?
+                    <EyeOff size={15} /> :
+
+                    <Eye size={15} />
+                    }
                   </button>
                 </div>
               </div>
@@ -170,14 +170,14 @@ const Register = () => {
               src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772658391/mqpx4pcsz0xzkn2utesj.png"
               alt="Register"
               fill
-              className="h-full w-full object-cover object-right"
-            />
+              className="h-full w-full object-cover object-right" />
+            
             <div className="absolute inset-0 bg-linear-to-r from-[#13111e]/60 to-transparent" />
           </div>
         </div>
       </div>
-    </>
-  );
+    </>);
+
 };
 
 export default Register;

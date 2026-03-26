@@ -6,55 +6,55 @@ import {
   useAnimation,
   useMotionValue,
   animate,
-  Variants,
-} from "framer-motion";
+  Variants } from
+"framer-motion";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
 interface AngledSliderProps {
-  /**
-   * Array of image objects or URLs
-   */
+
+
+
   items: {
     id: string | number;
     url: string;
     alt?: string;
     title?: string;
   }[];
-  /**
-   * Speed of auto-scroll (seconds for full loop). Higher is slower.
-   * @default 20
-   */
+
+
+
+
   speed?: number;
-  /**
-   * Direction of scroll
-   * @default "left"
-   */
+
+
+
+
   direction?: "left" | "right";
-  /**
-   * Height of the slider container
-   * @default "400px"
-   */
+
+
+
+
   containerHeight?: string;
-  /**
-   * Width of each card
-   * @default "300px"
-   */
+
+
+
+
   cardWidth?: string;
-  /**
-   * Gap between cards
-   * @default "40px"
-   */
+
+
+
+
   gap?: string;
-  /**
-   * Angle of the 3D skew/rotation
-   * @default 20
-   */
+
+
+
+
   angle?: number;
-  /**
-   * Scale on hover
-   * @default 1.05
-   */
+
+
+
+
   hoverScale?: number;
   className?: string;
 }
@@ -62,20 +62,20 @@ interface AngledSliderProps {
 const cardVariants: Variants = {
   offHover: (angle: number) => ({
     rotateY: angle,
-    z: 60, // Ensure card is in front of container plane (which blocks -Z events)
+    z: 60,
     opacity: 0.9,
     scale: 1,
-    zIndex: 30, // Higher than potential overlays
+    zIndex: 30,
     transition: {
       type: "spring",
       mass: 3,
       stiffness: 400,
-      damping: 50,
-    },
+      damping: 50
+    }
   }),
   onHover: (hoverScale: number) => ({
     rotateY: 0,
-    z: 120, // Pop out further
+    z: 120,
     opacity: 1,
     scale: hoverScale,
     zIndex: 50,
@@ -83,22 +83,22 @@ const cardVariants: Variants = {
       type: "spring",
       mass: 3,
       stiffness: 400,
-      damping: 50,
-    },
-  }),
+      damping: 50
+    }
+  })
 };
 
 const AngledCard = ({
   item,
   angle,
   hoverScale,
-  cardWidth,
-}: {
-  item: any;
-  angle: number;
-  hoverScale: number;
-  cardWidth: string;
-}) => {
+  cardWidth
+
+
+
+
+
+}: {item: any;angle: number;hoverScale: number;cardWidth: string;}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -107,35 +107,36 @@ const AngledCard = ({
       style={{
         width: cardWidth,
         height: "100%",
-        transformStyle: "preserve-3d",
+        transformStyle: "preserve-3d"
       }}
       custom={isHovered ? hoverScale : angle}
       variants={cardVariants}
       initial="offHover"
       animate={isHovered ? "onHover" : "offHover"}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* The Image Card */}
+      onMouseLeave={() => setIsHovered(false)}>
+      
+      {}
       <div
         className="relative h-full w-full overflow-hidden border border-white/10 bg-muted 
-            min-h-[300px] shadow-2xl"
-      >
+            min-h-[300px] shadow-2xl">
+
+        
         <Image
           src={item.url}
           alt={item.alt || "Slider Image"}
           fill
-          className="object-cover transition-transform duration-500 group-hover:scale-110"
-        />
-        {/* Optional Overlay/Title */}
-        {item.title && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          className="object-cover transition-transform duration-500 group-hover:scale-110" />
+        
+        {}
+        {item.title &&
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             <h3 className="text-lg font-bold">{item.title}</h3>
           </div>
-        )}
+        }
       </div>
-    </motion.div>
-  );
+    </motion.div>);
+
 };
 
 export const AngledSlider = ({
@@ -147,7 +148,7 @@ export const AngledSlider = ({
   gap = "40px",
   angle = 20,
   hoverScale = 1.05,
-  className,
+  className
 }: AngledSliderProps) => {
   const [width, setWidth] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -155,16 +156,16 @@ export const AngledSlider = ({
   const x = useMotionValue(0);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Duplicate items for infinite loop effect
-  // We need enough duplicates to fill the screen + buffer
+
+
   const duplicatedItems = [...items, ...items, ...items];
 
   useEffect(() => {
     const calculateWidth = () => {
-      // Fallback to prop-based calculation if ref is not quite ready or layout is shifting
-      // This is generally safer for known fixed-width items
+
+
       const numWidth = parseInt(
-        cardWidth?.toString().replace("px", "") || "300",
+        cardWidth?.toString().replace("px", "") || "300"
       );
       const numGap = parseInt(gap?.toString().replace("px", "") || "40");
 
@@ -202,7 +203,7 @@ export const AngledSlider = ({
         onComplete: () => {
           x.set(startX);
           runAnimation();
-        },
+        }
       });
       return controls;
     };
@@ -218,30 +219,30 @@ export const AngledSlider = ({
     <div
       className={cn(
         "relative w-full overflow-hidden bg-background py-10 perspective-1000",
-        className,
+        className
       )}
       style={{
         height: containerHeight,
-        perspective: "1000px", // Essential for 3D effect
+        perspective: "1000px"
       }}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+      onMouseLeave={() => setIsHovered(false)}>
+      
       <motion.div
         ref={containerRef}
         className="flex items-center"
-        style={{ x, gap, transformStyle: "preserve-3d" }}
-      >
-        {duplicatedItems.map((item, index) => (
-          <AngledCard
-            key={`${item.id}-${index}`}
-            item={item}
-            angle={angle}
-            hoverScale={hoverScale}
-            cardWidth={cardWidth}
-          />
-        ))}
+        style={{ x, gap, transformStyle: "preserve-3d" }}>
+        
+        {duplicatedItems.map((item, index) =>
+        <AngledCard
+          key={`${item.id}-${index}`}
+          item={item}
+          angle={angle}
+          hoverScale={hoverScale}
+          cardWidth={cardWidth} />
+
+        )}
       </motion.div>
-    </div>
-  );
+    </div>);
+
 };

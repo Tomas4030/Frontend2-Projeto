@@ -6,8 +6,8 @@ import {
   ToastDescription,
   ToastProvider,
   ToastTitle,
-  ToastViewport,
-} from "./toast";
+  ToastViewport } from
+"./toast";
 import { X } from "lucide-react";
 
 export function Toaster() {
@@ -27,42 +27,42 @@ export function Toaster() {
             duration,
             ...props
           }) => {
-            // Map toast type to variant if variant is not provided
+
             const toastVariant =
-              variant ||
-              (type === "success"
-                ? "success"
-                : type === "warning"
-                  ? "warning"
-                  : type === "info"
-                    ? "info"
-                    : type === "destructive"
-                      ? "destructive"
-                      : "default");
+            variant || (
+            type === "success" ?
+            "success" :
+            type === "warning" ?
+            "warning" :
+            type === "info" ?
+            "info" :
+            type === "destructive" ?
+            "destructive" :
+            "default");
 
             return (
               <Toast
                 key={id}
                 {...props}
                 variant={toastVariant}
-                duration={duration}
-              >
+                duration={duration}>
+                
                 <div className="grid gap-1">
                   {title && <ToastTitle>{title}</ToastTitle>}
-                  {description && (
-                    <ToastDescription>{description}</ToastDescription>
-                  )}
+                  {description &&
+                  <ToastDescription>{description}</ToastDescription>
+                  }
                 </div>
                 {action}
                 <ToastClose>
                   <X className="h-4 w-4" />
                 </ToastClose>
-              </Toast>
-            );
-          },
+              </Toast>);
+
+          }
         )}
       </div>
       <ToastViewport />
-    </ToastProvider>
-  );
+    </ToastProvider>);
+
 }

@@ -34,22 +34,22 @@ export function DotPattern({
         "pointer-events-none absolute inset-0 h-full w-full fill-neutral-400/80 blur-[1px] animate-dotPatternMotion",
         className
       )}
-      {...props}
-    >
+      {...props}>
+      
       <defs>
         <pattern
           id={id}
           width={width}
           height={height}
           patternUnits="userSpaceOnUse"
-          patternTransform="translate(0,0)"
-        >
+          patternTransform="translate(0,0)">
+          
           <circle cx={cx} cy={cy} r={cr} />
         </pattern>
       </defs>
       <rect width="100%" height="100%" strokeWidth={0} fill={`url(#${id})`} />
-    </svg>
-  );
+    </svg>);
+
 }
 
 export default DotPattern;

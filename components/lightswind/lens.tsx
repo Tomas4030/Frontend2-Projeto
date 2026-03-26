@@ -52,7 +52,7 @@ export const Lens: React.FC<LensProps> = ({
   opacity = 1,
   blurEdge = false,
   smoothFollow = true,
-  disabled = false,
+  disabled = false
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [localIsHovering, setLocalIsHovering] = useState(false);
@@ -71,11 +71,11 @@ export const Lens: React.FC<LensProps> = ({
     if (smoothFollow) {
       setMousePosition({ x, y });
     } else {
-      // Snap to grid for less smooth following
+
       const gridSize = 20;
       setMousePosition({
         x: Math.round(x / gridSize) * gridSize,
-        y: Math.round(y / gridSize) * gridSize,
+        y: Math.round(y / gridSize) * gridSize
       });
     }
   };
@@ -84,20 +84,20 @@ export const Lens: React.FC<LensProps> = ({
     none: '',
     light: 'shadow-sm',
     medium: 'shadow-md',
-    heavy: 'shadow-xl',
+    heavy: 'shadow-xl'
   };
 
   const getMaskImage = (x: number, y: number) => {
     const radius = lensSize / 2;
-    // Using string concatenation for shape and gradient
-    const shape =
-      maskShape === 'circle'
-        ? "circle " + radius + "px at " + x + "px " + y + "px"
-        : "ellipse " + radius + "px " + radius + "px at " + x + "px " + y + "px";
 
-    const gradient = blurEdge
-      ? "radial-gradient(" + shape + ", black 60%, transparent 100%)"
-      : "radial-gradient(" + shape + ", black 100%, transparent 100%)";
+    const shape =
+    maskShape === 'circle' ?
+    "circle " + radius + "px at " + x + "px " + y + "px" :
+    "ellipse " + radius + "px " + radius + "px at " + x + "px " + y + "px";
+
+    const gradient = blurEdge ?
+    "radial-gradient(" + shape + ", black 60%, transparent 100%)" :
+    "radial-gradient(" + shape + ", black 100%, transparent 100%)";
 
     return gradient;
   };
@@ -105,42 +105,42 @@ export const Lens: React.FC<LensProps> = ({
   const currentX = isStatic ? position.x : mousePosition.x;
   const currentY = isStatic ? position.y : mousePosition.y;
 
-  const lensContent = (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.58 }}
-      animate={{ opacity: opacity, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ duration: animationDuration, ease: animationEasing }}
-      className={cn(
-        "absolute inset-0 overflow-hidden",
-        borderWidth > 0 && "border-" + borderWidth + " " + borderColor, // String concatenation
-        shadowClasses[shadowIntensity]
-      )}
-      style={{
-        maskImage: getMaskImage(currentX, currentY),
-        WebkitMaskImage: getMaskImage(currentX, currentY),
-        transformOrigin: currentX + "px " + currentY + "px", // String concatenation
-        zIndex: 50,
-      }}
-    >
+  const lensContent =
+  <motion.div
+    initial={{ opacity: 0, scale: 0.58 }}
+    animate={{ opacity: opacity, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.8 }}
+    transition={{ duration: animationDuration, ease: animationEasing }}
+    className={cn(
+      "absolute inset-0 overflow-hidden",
+      borderWidth > 0 && "border-" + borderWidth + " " + borderColor,
+      shadowClasses[shadowIntensity]
+    )}
+    style={{
+      maskImage: getMaskImage(currentX, currentY),
+      WebkitMaskImage: getMaskImage(currentX, currentY),
+      transformOrigin: currentX + "px " + currentY + "px",
+      zIndex: 50
+    }}>
+    
       <div
-        className="absolute inset-0"
-        style={{
-          transform: "scale(" + zoomFactor + ")", // String concatenation
-          transformOrigin: currentX + "px " + currentY + "px", // String concatenation
-        }}
-      >
+      className="absolute inset-0"
+      style={{
+        transform: "scale(" + zoomFactor + ")",
+        transformOrigin: currentX + "px " + currentY + "px"
+      }}>
+      
         {children}
       </div>
-    </motion.div>
-  );
+    </motion.div>;
+
 
   return (
     <div
       ref={containerRef}
       className={cn(
         "relative overflow-hidden z-20",
-        "rounded-" + borderRadius, // String concatenation
+        "rounded-" + borderRadius,
         disabled && "cursor-not-allowed opacity-50",
         className
       )}
@@ -150,19 +150,19 @@ export const Lens: React.FC<LensProps> = ({
       onMouseLeave={function () {
         return !disabled && setIsHovering(false);
       }}
-      onMouseMove={handleMouseMove}
-    >
+      onMouseMove={handleMouseMove}>
+      
       {children}
 
-      {isStatic ? (
+      {isStatic ?
+      <div>{lensContent}</div> :
+
+      <AnimatePresence>
+          {isHovering && !disabled &&
         <div>{lensContent}</div>
-      ) : (
-        <AnimatePresence>
-          {isHovering && !disabled && (
-            <div>{lensContent}</div>
-          )}
+        }
         </AnimatePresence>
-      )}
-    </div>
-  );
+      }
+    </div>);
+
 };

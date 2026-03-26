@@ -25,7 +25,7 @@ const TabsContext = React.createContext<TabsContextValue>({
   updateIndicator: () => {},
   indicatorStyle: {},
   registerTabTrigger: () => {},
-  registerTabsList: () => {},
+  registerTabsList: () => {}
 });
 
 const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
@@ -58,7 +58,7 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
           const listRect = tabsListRef.current.getBoundingClientRect();
           setIndicatorStyle({
             left: `${tabRect.left - listRect.left}px`,
-            width: `${tabRect.width}px`,
+            width: `${tabRect.width}px`
           });
         }
       }
@@ -86,14 +86,14 @@ const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
           updateIndicator,
           indicatorStyle,
           registerTabTrigger,
-          registerTabsList,
-        }}
-      >
+          registerTabsList
+        }}>
+        
         <div ref={ref} className={cn("w-full", className)} {...props}>
           {children}
         </div>
-      </TabsContext.Provider>
-    );
+      </TabsContext.Provider>);
+
   }
 );
 Tabs.displayName = "Tabs";
@@ -105,16 +105,16 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     return (
       <div
         ref={(el) => {
-          if (typeof ref === "function") ref(el);
-          else if (ref) ref.current = el;
+          if (typeof ref === "function") ref(el);else
+          if (ref) ref.current = el;
           registerTabsList(el);
         }}
         className={cn(
           `relative inline-flex h-8 items-center justify-center rounded-full bg-muted text-primary`,
           className
         )}
-        {...props}
-      >
+        {...props}>
+        
         <motion.div
           layout
           className="tabs-bg-indicator absolute top-0 left-0 h-full rounded-full bg-gradient-tabs"
@@ -124,92 +124,92 @@ const TabsList = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
             top: 0,
             borderRadius: "9999px",
             height: "100%",
-            zIndex: 0,
+            zIndex: 0
           }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        />
+          transition={{ type: "spring", stiffness: 300, damping: 30 }} />
+        
         {props.children}
-      </div>
-    );
+      </div>);
+
   }
 );
 TabsList.displayName = "TabsList";
 
 const TabsTrigger = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { value: string }
->(({ className, value, ...props }, ref) => {
-  const { value: selectedValue, onValueChange, registerTabTrigger, updateIndicator } =
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {value: string;}>(
+  ({ className, value, ...props }, ref) => {
+    const { value: selectedValue, onValueChange, registerTabTrigger, updateIndicator } =
     React.useContext(TabsContext);
-  const isActive = selectedValue === value;
-  const triggerRef = React.useRef<HTMLButtonElement | null>(null);
+    const isActive = selectedValue === value;
+    const triggerRef = React.useRef<HTMLButtonElement | null>(null);
 
-  React.useEffect(() => {
-    registerTabTrigger(value, triggerRef.current);
-    return () => registerTabTrigger(value, null);
-  }, [value, registerTabTrigger]);
+    React.useEffect(() => {
+      registerTabTrigger(value, triggerRef.current);
+      return () => registerTabTrigger(value, null);
+    }, [value, registerTabTrigger]);
 
-  React.useEffect(() => {
-    if (isActive) updateIndicator();
-  }, [isActive, updateIndicator]);
+    React.useEffect(() => {
+      if (isActive) updateIndicator();
+    }, [isActive, updateIndicator]);
 
-  return (
-    <button
-      ref={(el) => {
-        if (typeof ref === "function") ref(el);
-        else if (ref) ref.current = el;
-        triggerRef.current = el;
-      }}
-      type="button"
-      role="tab"
-      aria-selected={isActive}
-      data-state={isActive ? "active" : "inactive"}
-      data-value={value}
-      className={cn(
-        `relative z-10 inline-flex items-center justify-center whitespace-nowrap rounded-full
+    return (
+      <button
+        ref={(el) => {
+          if (typeof ref === "function") ref(el);else
+          if (ref) ref.current = el;
+          triggerRef.current = el;
+        }}
+        type="button"
+        role="tab"
+        aria-selected={isActive}
+        data-state={isActive ? "active" : "inactive"}
+        data-value={value}
+        className={cn(
+          `relative z-10 inline-flex items-center justify-center whitespace-nowrap rounded-full
          px-3 py-0.5 md:py-1.5 text-xs lg:text-sm font-medium transition-all 
          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
          focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50`,
-        isActive ? "text-white dark:text-black" : "",
-        className
-      )}
-      onClick={() => onValueChange(value)}
-      {...props}
-    />
-  );
-});
+          isActive ? "text-white dark:text-black" : "",
+          className
+        )}
+        onClick={() => onValueChange(value)}
+        {...props} />);
+
+
+  });
 TabsTrigger.displayName = "TabsTrigger";
 
 const TabsContent = React.forwardRef<
   HTMLDivElement,
-  { value: string } & React.ComponentPropsWithoutRef<"div">
->(({ className, value, ...props }, ref) => {
-  const { value: selectedValue, updateIndicator } = React.useContext(TabsContext);
-  const isActive = selectedValue === value;
-  const contentRef = React.useRef<HTMLDivElement | null>(null);
+  {value: string;} & React.ComponentPropsWithoutRef<"div">>(
+  ({ className, value, ...props }, ref) => {
+    const { value: selectedValue, updateIndicator } = React.useContext(TabsContext);
+    const isActive = selectedValue === value;
+    const contentRef = React.useRef<HTMLDivElement | null>(null);
 
-  // Trigger updateIndicator when content resizes
-  React.useEffect(() => {
-    if (!isActive || !contentRef.current) return;
 
-    const observer = new ResizeObserver(() => {
-      updateIndicator();
-    });
+    React.useEffect(() => {
+      if (!isActive || !contentRef.current) return;
 
-    observer.observe(contentRef.current);
+      const observer = new ResizeObserver(() => {
+        updateIndicator();
+      });
 
-    return () => observer.disconnect();
-  }, [isActive, updateIndicator]);
+      observer.observe(contentRef.current);
 
-  return (
-    <AnimatePresence mode="wait">
-      {isActive && (
+      return () => observer.disconnect();
+    }, [isActive, updateIndicator]);
+
+    return (
+      <AnimatePresence mode="wait">
+      {isActive &&
         <div
           key={value}
           ref={(el) => {
             contentRef.current = el;
-            if (typeof ref === "function") ref(el);
-            else if (ref) ref.current = el;
+            if (typeof ref === "function") ref(el);else
+            if (ref) ref.current = el;
           }}
           role="tabpanel"
           data-state="active"
@@ -222,14 +222,14 @@ const TabsContent = React.forwardRef<
           )}
           style={{
             scrollbarWidth: "none",
-            msOverflowStyle: "none",
+            msOverflowStyle: "none"
           }}
-          {...props}
-        />
-      )}
-    </AnimatePresence>
-  );
-});
+          {...props} />
+
+        }
+    </AnimatePresence>);
+
+  });
 TabsContent.displayName = "TabsContent";
 
 export { Tabs, TabsList, TabsTrigger, TabsContent };

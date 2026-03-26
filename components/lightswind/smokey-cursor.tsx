@@ -53,7 +53,7 @@ function pointerPrototype(): Pointer {
     deltaY: 0,
     down: false,
     moved: false,
-    color: { r: 0, g: 0, b: 0 },
+    color: { r: 0, g: 0, b: 0 }
   };
 }
 
@@ -76,19 +76,19 @@ export default function SmokeyCursor({
   disabled = false,
   intensity = 1,
   followMouse = true,
-  autoColors = true,
+  autoColors = true
 }: SmokeyCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return; // Guard canvas early
+    if (!canvas) return;
 
-    // Pointer and config setup
+
     let pointers: Pointer[] = [pointerPrototype()];
 
-    // All these are guaranteed numbers due to destructuring defaults
-    // So we cast them to remove TS warnings:
+
+
     let config = {
       SIM_RESOLUTION: simulationResolution,
       DYE_RESOLUTION: dyeResolution,
@@ -104,14 +104,14 @@ export default function SmokeyCursor({
       COLOR_UPDATE_SPEED: colorUpdateSpeed,
       PAUSED: false,
       BACK_COLOR: backgroundColor,
-      TRANSPARENT: transparent,
+      TRANSPARENT: transparent
     };
 
-    // Get WebGL context (WebGL1 or WebGL2)
+
     const { gl, ext } = getWebGLContext(canvas);
     if (!gl || !ext) return;
 
-    // If no linear filtering, reduce resolution
+
     if (!ext.supportLinearFiltering) {
       config.DYE_RESOLUTION = 256;
       config.SHADING = false;
@@ -123,7 +123,7 @@ export default function SmokeyCursor({
         depth: false,
         stencil: false,
         antialias: false,
-        preserveDrawingBuffer: false,
+        preserveDrawingBuffer: false
       };
 
       let gl = canvas.getContext(
@@ -133,10 +133,10 @@ export default function SmokeyCursor({
 
       if (!gl) {
         gl = (canvas.getContext("webgl", params) ||
-          canvas.getContext(
-            "experimental-webgl",
-            params
-          )) as WebGL2RenderingContext | null;
+        canvas.getContext(
+          "experimental-webgl",
+          params
+        )) as WebGL2RenderingContext | null;
       }
 
       if (!gl) {
@@ -162,9 +162,9 @@ export default function SmokeyCursor({
 
       gl.clearColor(0, 0, 0, 1);
 
-      const halfFloatTexType = isWebGL2
-        ? (gl as WebGL2RenderingContext).HALF_FLOAT
-        : (halfFloat && (halfFloat as any).HALF_FLOAT_OES) || 0;
+      const halfFloatTexType = isWebGL2 ?
+      (gl as WebGL2RenderingContext).HALF_FLOAT :
+      halfFloat && (halfFloat as any).HALF_FLOAT_OES || 0;
 
       let formatRGBA: any;
       let formatRG: any;
@@ -202,19 +202,19 @@ export default function SmokeyCursor({
           formatRG,
           formatR,
           halfFloatTexType,
-          supportLinearFiltering,
-        },
+          supportLinearFiltering
+        }
       };
     }
 
     function getSupportedFormat(
-      gl: WebGLRenderingContext | WebGL2RenderingContext,
-      internalFormat: number,
-      format: number,
-      type: number
-    ): { internalFormat: number; format: number } | null {
+    gl: WebGLRenderingContext | WebGL2RenderingContext,
+    internalFormat: number,
+    format: number,
+    type: number)
+    : {internalFormat: number;format: number;} | null {
       if (!supportRenderTextureFormat(gl, internalFormat, format, type)) {
-        // For WebGL2 fallback:
+
         if ("drawBuffers" in gl) {
           const gl2 = gl as WebGL2RenderingContext;
           switch (internalFormat) {
@@ -232,11 +232,11 @@ export default function SmokeyCursor({
     }
 
     function supportRenderTextureFormat(
-      gl: WebGLRenderingContext | WebGL2RenderingContext,
-      internalFormat: number,
-      format: number,
-      type: number
-    ) {
+    gl: WebGLRenderingContext | WebGL2RenderingContext,
+    internalFormat: number,
+    format: number,
+    type: number)
+    {
       const texture = gl.createTexture();
       if (!texture) return false;
 
@@ -292,10 +292,10 @@ export default function SmokeyCursor({
     }
 
     function compileShader(
-      type: number,
-      source: string,
-      keywords: string[] | null = null
-    ): WebGLShader | null {
+    type: number,
+    source: string,
+    keywords: string[] | null = null)
+    : WebGLShader | null {
       const shaderSource = addKeywords(source, keywords);
       const shader = gl.createShader(type);
       if (!shader) return null;
@@ -308,9 +308,9 @@ export default function SmokeyCursor({
     }
 
     function createProgram(
-      vertexShader: WebGLShader | null,
-      fragmentShader: WebGLShader | null
-    ): WebGLProgram | null {
+    vertexShader: WebGLShader | null,
+    fragmentShader: WebGLShader | null)
+    : WebGLProgram | null {
       if (!vertexShader || !fragmentShader) return null;
       const program = gl.createProgram();
       if (!program) return null;
@@ -343,9 +343,9 @@ export default function SmokeyCursor({
       uniforms: Record<string, WebGLUniformLocation | null>;
 
       constructor(
-        vertexShader: WebGLShader | null,
-        fragmentShader: WebGLShader | null
-      ) {
+      vertexShader: WebGLShader | null,
+      fragmentShader: WebGLShader | null)
+      {
         this.program = createProgram(vertexShader, fragmentShader);
         this.uniforms = this.program ? getUniforms(this.program) : {};
       }
@@ -363,9 +363,9 @@ export default function SmokeyCursor({
       uniforms: Record<string, WebGLUniformLocation | null>;
 
       constructor(
-        vertexShader: WebGLShader | null,
-        fragmentShaderSource: string
-      ) {
+      vertexShader: WebGLShader | null,
+      fragmentShaderSource: string)
+      {
         this.vertexShader = vertexShader;
         this.fragmentShaderSource = fragmentShaderSource;
         this.programs = {};
@@ -402,7 +402,7 @@ export default function SmokeyCursor({
       }
     }
 
-    // -------------------- Shaders --------------------
+
     const baseVertexShader = compileShader(
       gl.VERTEX_SHADER,
       `
@@ -698,7 +698,7 @@ export default function SmokeyCursor({
     `
     );
 
-    // -------------------- Fullscreen Triangles --------------------
+
     const blit = (() => {
       const buffer = gl.createBuffer()!;
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -734,7 +734,7 @@ export default function SmokeyCursor({
       };
     })();
 
-    // Types for Framebuffers
+
     interface FBO {
       texture: WebGLTexture;
       fbo: WebGLFramebuffer;
@@ -755,14 +755,14 @@ export default function SmokeyCursor({
       swap: () => void;
     }
 
-    // FBO variables
+
     let dye: DoubleFBO;
     let velocity: DoubleFBO;
     let divergence: FBO;
     let curlFBO: FBO;
     let pressureFBO: DoubleFBO;
 
-    // WebGL Programs
+
     const copyProgram = new Program(baseVertexShader, copyShader);
     const clearProgram = new Program(baseVertexShader, clearShader);
     const splatProgram = new Program(baseVertexShader, splatShader);
@@ -777,15 +777,15 @@ export default function SmokeyCursor({
     );
     const displayMaterial = new Material(baseVertexShader, displayShaderSource);
 
-    // -------------------- FBO creation --------------------
+
     function createFBO(
-      w: number,
-      h: number,
-      internalFormat: number,
-      format: number,
-      type: number,
-      param: number
-    ): FBO {
+    w: number,
+    h: number,
+    internalFormat: number,
+    format: number,
+    type: number,
+    param: number)
+    : FBO {
       gl.activeTexture(gl.TEXTURE0);
       const texture = gl.createTexture()!;
       gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -830,18 +830,18 @@ export default function SmokeyCursor({
           gl.activeTexture(gl.TEXTURE0 + id);
           gl.bindTexture(gl.TEXTURE_2D, texture);
           return id;
-        },
+        }
       };
     }
 
     function createDoubleFBO(
-      w: number,
-      h: number,
-      internalFormat: number,
-      format: number,
-      type: number,
-      param: number
-    ): DoubleFBO {
+    w: number,
+    h: number,
+    internalFormat: number,
+    format: number,
+    type: number,
+    param: number)
+    : DoubleFBO {
       const fbo1 = createFBO(w, h, internalFormat, format, type, param);
       const fbo2 = createFBO(w, h, internalFormat, format, type, param);
       return {
@@ -855,36 +855,36 @@ export default function SmokeyCursor({
           const tmp = this.read;
           this.read = this.write;
           this.write = tmp;
-        },
+        }
       };
     }
 
     function resizeFBO(
-      target: FBO,
-      w: number,
-      h: number,
-      internalFormat: number,
-      format: number,
-      type: number,
-      param: number
-    ) {
+    target: FBO,
+    w: number,
+    h: number,
+    internalFormat: number,
+    format: number,
+    type: number,
+    param: number)
+    {
       const newFBO = createFBO(w, h, internalFormat, format, type, param);
       copyProgram.bind();
       if (copyProgram.uniforms.uTexture)
-        gl.uniform1i(copyProgram.uniforms.uTexture, target.attach(0));
+      gl.uniform1i(copyProgram.uniforms.uTexture, target.attach(0));
       blit(newFBO, false);
       return newFBO;
     }
 
     function resizeDoubleFBO(
-      target: DoubleFBO,
-      w: number,
-      h: number,
-      internalFormat: number,
-      format: number,
-      type: number,
-      param: number
-    ) {
+    target: DoubleFBO,
+    w: number,
+    h: number,
+    internalFormat: number,
+    format: number,
+    type: number,
+    param: number)
+    {
       if (target.width === w && target.height === h) return target;
       target.read = resizeFBO(
         target.read,
@@ -1006,7 +1006,7 @@ export default function SmokeyCursor({
       return Math.floor(input * pixelRatio);
     }
 
-    // -------------------- Simulation Setup --------------------
+
     updateKeywords();
     initFramebuffers();
 
@@ -1064,7 +1064,7 @@ export default function SmokeyCursor({
     function step(dt: number) {
       gl.disable(gl.BLEND);
 
-      // Curl
+
       curlProgram.bind();
       if (curlProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1078,7 +1078,7 @@ export default function SmokeyCursor({
       }
       blit(curlFBO);
 
-      // Vorticity
+
       vorticityProgram.bind();
       if (vorticityProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1105,7 +1105,7 @@ export default function SmokeyCursor({
       blit(velocity.write);
       velocity.swap();
 
-      // Divergence
+
       divergenceProgram.bind();
       if (divergenceProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1122,7 +1122,7 @@ export default function SmokeyCursor({
       }
       blit(divergence);
 
-      // Clear pressure
+
       clearProgram.bind();
       if (clearProgram.uniforms.uTexture) {
         gl.uniform1i(
@@ -1136,7 +1136,7 @@ export default function SmokeyCursor({
       blit(pressureFBO.write);
       pressureFBO.swap();
 
-      // Pressure
+
       pressureProgram.bind();
       if (pressureProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1162,7 +1162,7 @@ export default function SmokeyCursor({
         pressureFBO.swap();
       }
 
-      // Gradient Subtract
+
       gradienSubtractProgram.bind();
       if (gradienSubtractProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1186,7 +1186,7 @@ export default function SmokeyCursor({
       blit(velocity.write);
       velocity.swap();
 
-      // Advection - velocity
+
       advectionProgram.bind();
       if (advectionProgram.uniforms.texelSize) {
         gl.uniform2f(
@@ -1196,9 +1196,9 @@ export default function SmokeyCursor({
         );
       }
       if (
-        !ext.supportLinearFiltering &&
-        advectionProgram.uniforms.dyeTexelSize
-      ) {
+      !ext.supportLinearFiltering &&
+      advectionProgram.uniforms.dyeTexelSize)
+      {
         gl.uniform2f(
           advectionProgram.uniforms.dyeTexelSize,
           velocity.texelSizeX,
@@ -1224,11 +1224,11 @@ export default function SmokeyCursor({
       blit(velocity.write);
       velocity.swap();
 
-      // Advection - dye
+
       if (
-        !ext.supportLinearFiltering &&
-        advectionProgram.uniforms.dyeTexelSize
-      ) {
+      !ext.supportLinearFiltering &&
+      advectionProgram.uniforms.dyeTexelSize)
+      {
         gl.uniform2f(
           advectionProgram.uniforms.dyeTexelSize,
           dye.texelSizeX,
@@ -1273,7 +1273,7 @@ export default function SmokeyCursor({
       blit(target, false);
     }
 
-    // -------------------- Interaction --------------------
+
     function splatPointer(pointer: Pointer) {
       const dx = pointer.deltaX * config.SPLAT_FORCE;
       const dy = pointer.deltaY * config.SPLAT_FORCE;
@@ -1291,12 +1291,12 @@ export default function SmokeyCursor({
     }
 
     function splat(
-      x: number,
-      y: number,
-      dx: number,
-      dy: number,
-      color: ColorRGB
-    ) {
+    x: number,
+    y: number,
+    dx: number,
+    dy: number,
+    color: ColorRGB)
+    {
       splatProgram.bind();
       if (splatProgram.uniforms.uTarget) {
         gl.uniform1i(splatProgram.uniforms.uTarget, velocity.read.attach(0));
@@ -1333,18 +1333,18 @@ export default function SmokeyCursor({
     }
 
     function correctRadius(radius: number) {
-      // Use non-null assertion (canvas can't be null here)
+
       const aspectRatio = canvas!.width / canvas!.height;
       if (aspectRatio > 1) radius *= aspectRatio;
       return radius;
     }
 
     function updatePointerDownData(
-      pointer: Pointer,
-      id: number,
-      posX: number,
-      posY: number
-    ) {
+    pointer: Pointer,
+    id: number,
+    posX: number,
+    posY: number)
+    {
       pointer.id = id;
       pointer.down = true;
       pointer.moved = false;
@@ -1358,11 +1358,11 @@ export default function SmokeyCursor({
     }
 
     function updatePointerMoveData(
-      pointer: Pointer,
-      posX: number,
-      posY: number,
-      color: ColorRGB
-    ) {
+    pointer: Pointer,
+    posX: number,
+    posY: number,
+    color: ColorRGB)
+    {
       pointer.prevTexcoordX = pointer.texcoordX;
       pointer.prevTexcoordY = pointer.texcoordY;
       pointer.texcoordX = posX / canvas!.width;
@@ -1374,7 +1374,7 @@ export default function SmokeyCursor({
         pointer.texcoordY - pointer.prevTexcoordY
       )!;
       pointer.moved =
-        Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
+      Math.abs(pointer.deltaX) > 0 || Math.abs(pointer.deltaY) > 0;
       pointer.color = color;
     }
 
@@ -1450,10 +1450,10 @@ export default function SmokeyCursor({
     function wrap(value: number, min: number, max: number) {
       const range = max - min;
       if (range === 0) return min;
-      return ((value - min) % range) + min;
+      return (value - min) % range + min;
     }
 
-    // -------------------- Event Listeners --------------------
+
     window.addEventListener("mousedown", (e) => {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
@@ -1462,7 +1462,7 @@ export default function SmokeyCursor({
       clickSplat(pointer);
     });
 
-    // Start rendering on first mouse move
+
     function handleFirstMouseMove(e: MouseEvent) {
       const pointer = pointers[0];
       const posX = scaleByPixelRatio(e.clientX);
@@ -1482,7 +1482,7 @@ export default function SmokeyCursor({
       updatePointerMoveData(pointer, posX, posY, color);
     });
 
-    // Start rendering on first touch
+
     function handleFirstTouchStart(e: TouchEvent) {
       const touches = e.targetTouches;
       const pointer = pointers[0];
@@ -1531,31 +1531,31 @@ export default function SmokeyCursor({
         updatePointerUpData(pointer);
       }
     });
-    // ------------------------------------------------------------
+
   }, [
-    simulationResolution,
-    dyeResolution,
-    captureResolution,
-    densityDissipation,
-    velocityDissipation,
-    pressure,
-    pressureIterations,
-    curl,
-    splatRadius,
-    splatForce,
-    enableShading,
-    colorUpdateSpeed,
-    backgroundColor,
-    transparent,
-  ]);
+  simulationResolution,
+  dyeResolution,
+  captureResolution,
+  densityDissipation,
+  velocityDissipation,
+  pressure,
+  pressureIterations,
+  curl,
+  splatRadius,
+  splatForce,
+  enableShading,
+  colorUpdateSpeed,
+  backgroundColor,
+  transparent]
+  );
 
   return (
     <div className="fixed top-0 left-0 z-50 pointer-events-none w-full h-full cursor-none">
       <canvas
         ref={canvasRef}
         id="fluid"
-        className="w-screen h-screen block"
-      ></canvas>
-    </div>
-  );
+        className="w-screen h-screen block">
+      </canvas>
+    </div>);
+
 }

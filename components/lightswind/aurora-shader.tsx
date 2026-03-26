@@ -100,7 +100,7 @@ export default function AuroraShader({
   colorStops = ["#5227FF", "#7cff67", "#5227FF"],
   amplitude = 1.0,
   blend = 0.5,
-  speed = 1.0,
+  speed = 1.0
 }: AuroraProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -130,10 +130,10 @@ export default function AuroraShader({
           value: colorStops.map((hex) => {
             const c = new Color(hex);
             return [c.r, c.g, c.b];
-          }),
+          })
         },
-        uMouse: { value: [0, 0] },
-      },
+        uMouse: { value: [0, 0] }
+      }
     });
 
     const mesh = new Mesh(gl, { geometry, program });
@@ -149,7 +149,7 @@ export default function AuroraShader({
     resize();
 
     const onMouseMove = (e: MouseEvent) => {
-      // Smooth lerp for mouse
+
       mouseRef.current.x += (e.clientX - mouseRef.current.x) * 0.05;
       mouseRef.current.y += (e.clientY - mouseRef.current.y) * 0.05;
     };
@@ -160,7 +160,7 @@ export default function AuroraShader({
     const animate = (t: number) => {
       animationId = requestAnimationFrame(animate);
 
-      // Smooth interpolation
+
       program.uniforms.uTime.value = t * 0.001 * speed;
       program.uniforms.uAmplitude.value = amplitude;
       program.uniforms.uBlend.value = blend;

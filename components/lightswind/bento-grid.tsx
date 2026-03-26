@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 interface BentoCardData {
   title: string;
   description: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{className?: string;}>;
   className?: string;
   background?: React.ReactNode;
 }
@@ -26,10 +26,10 @@ export const BentoGrid = ({
     <div
       className={cn(
         `grid w-full gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-${columns} bg-background`,
-        className,
+        className
       )}
-      {...props}
-    >
+      {...props}>
+      
       {cards.map((card, index) => {
         const Icon = card.icon;
         return (
@@ -43,22 +43,22 @@ export const BentoGrid = ({
               "shadow-inner shadow-black/10 dark:shadow-white/10",
               "text-black dark:text-white",
               "group transition-all duration-300 ease-in-out",
-              card.className,
-            )}
-          >
-            {card.background && (
-              <div className="absolute inset-0 z-0">{card.background}</div>
-            )}
+              card.className
+            )}>
+            
+            {card.background &&
+            <div className="absolute inset-0 z-0">{card.background}</div>
+            }
 
-            {/* Hover-revealed content */}
+            {}
             <div className="relative z-10 w-full">
               <div
                 className={cn(
                   "flex flex-col justify-end h-full",
                   "opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0",
-                  "transition-all duration-300 ease-out",
-                )}
-              >
+                  "transition-all duration-300 ease-out"
+                )}>
+                
                 <Icon className="h-5 w-5 text-current mb-2" />
                 <h3 className="text-base font-semibold">{card.title}</h3>
                 <p className="text-sm text-muted-foreground dark:text-white/60">
@@ -67,11 +67,11 @@ export const BentoGrid = ({
               </div>
             </div>
 
-            {/* Hover overlay effect */}
+            {}
             <div className="pointer-events-none absolute inset-0 transition-all duration-300 group-hover:bg-black/5 dark:group-hover:bg-white/5 rounded-2xl" />
-          </div>
-        );
+          </div>);
+
       })}
-    </div>
-  );
+    </div>);
+
 };
