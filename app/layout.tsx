@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Press_Start_2P } from "next/font/google";
@@ -81,7 +81,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         ) : null}
         <Providers>
           {GA_MEASUREMENT_ID ? (
-            <GoogleAnalyticsPageTracker measurementId={GA_MEASUREMENT_ID} />
+            <Suspense fallback={null}>
+              <GoogleAnalyticsPageTracker measurementId={GA_MEASUREMENT_ID} />
+            </Suspense>
           ) : null}
           <Navbar />
 
