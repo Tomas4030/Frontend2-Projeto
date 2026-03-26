@@ -7,7 +7,37 @@ import { Providers } from "./providers";
 import { Footer } from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Veydral",
+  title: "Veydral – Aventura RPG",
+  description:
+    "Veydral – Um RPG gamificado para completar quests, evoluir personagens e ganhar itens!",
+  keywords: ["RPG", "gamificação", "tarefas", "quest", "personagens"],
+  openGraph: {
+    title: "Veydral – Aventura RPG",
+    description:
+      "Completa missões, evolui o teu personagem e ganha recompensas!",
+    url: "https://veydral.vercel.app",
+    siteName: "Veydral",
+    images: [
+      {
+        url: "/static/hero.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "pt_PT",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Veydral – Aventura RPG",
+    description:
+      "Completa missões, evolui o teu personagem e ganha recompensas!",
+    images: ["/static/hero.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const pixel = Press_Start_2P({
@@ -28,7 +58,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Providers>
           <Navbar />
 
-          
           <main className="flex-1">{children}</main>
           <Footer />
         </Providers>

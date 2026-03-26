@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /dashboard/revive
+Disallow: /login
+Allow: /
+
+Sitemap: https://veydral.vercel.app/api/sitemap
