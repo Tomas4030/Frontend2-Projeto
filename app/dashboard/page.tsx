@@ -120,18 +120,43 @@ export default function DashboardPage() {
     const difficulty: Difficulty = task.difficulty ?? "easy";
     const manaCost = task.mana_cost ?? getManaCost(difficulty);
 
+    const xpBoostActive =
+      character.xp_boost_multiplier === 2 &&
+      !!character.xp_boost_expires_at &&
+      new Date(character.xp_boost_expires_at).getTime() > Date.now();
+
+    const xpBoostExpired =
+      character.xp_boost_multiplier === 2 &&
+      !!character.xp_boost_expires_at &&
+      new Date(character.xp_boost_expires_at).getTime() <= Date.now();
+
     let newHp = character.hp;
     let newXp = character.xp;
     let newLevel = character.level;
     const newMp = Math.max(0, character.mp - manaCost);
     let newGold = character.gold ?? 0;
 
+    let newForca = character.forca;
+    let newInteligencia = character.inteligencia;
+    let newAgilidade = character.agilidade;
+    let newFe = character.fe;
+
+    let newXpBoostMultiplier = character.xp_boost_multiplier ?? 1;
+    let newXpBoostExpiresAt = character.xp_boost_expires_at ?? null;
+
+    if (xpBoostExpired) {
+      newXpBoostMultiplier = 1;
+      newXpBoostExpiresAt = null;
+    }
+
     if (task.direction === "negativo") {
       const dmg = task.penalty_hp || 10;
       newHp = Math.max(0, character.hp - dmg);
+
       showToast(`-${dmg} HP • -${manaCost} MP`, "dmg");
     } else {
-      const gainedXp = task.xp_reward || 0;
+      const baseXp = task.xp_reward || 0;
+      const gainedXp = xpBoostActive ? baseXp * 2 : baseXp;
       const gainedGold = getRandomGoldReward(difficulty);
 
       const leveled = handleLevelUp(character.xp + gainedXp, character.level);
@@ -139,25 +164,32 @@ export default function DashboardPage() {
       newLevel = leveled.level;
       newGold += gainedGold;
 
+      newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
+
+      newForca += task.forca_reward || 0;
+      newInteligencia += task.inteligencia_reward || 0;
+      newAgilidade += task.agilidade_reward || 0;
+      newFe += task.fe_reward || 0;
+
       if (leveled.level > character.level) {
         showToast(`NÍVEL ACIMA! • +${gainedGold} GOLD`, "lvl");
       } else if (gainedXp > 0) {
         showToast(`+${gainedXp} XP • +${gainedGold} GOLD`, "xp");
       }
-
-      newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
     }
 
     const updatedAttrs = {
-      forca: character.forca + (task.forca_reward || 0),
-      inteligencia: character.inteligencia + (task.inteligencia_reward || 0),
-      agilidade: character.agilidade + (task.agilidade_reward || 0),
-      fe: character.fe + (task.fe_reward || 0),
+      forca: newForca,
+      inteligencia: newInteligencia,
+      agilidade: newAgilidade,
+      fe: newFe,
       xp: newXp,
       level: newLevel,
       hp: newHp,
       mp: newMp,
       gold: newGold,
+      xp_boost_multiplier: newXpBoostMultiplier,
+      xp_boost_expires_at: newXpBoostExpiresAt,
     };
 
     const { error } = await supabase
@@ -173,14 +205,19 @@ export default function DashboardPage() {
     setCharacter((prev) => (prev ? { ...prev, ...updatedAttrs } : prev));
 
     if (task.type !== "habito") {
-      await supabase
+      const { error: taskError } = await supabase
         .from("tasks")
         .update({ is_completed: true })
         .eq("id", task.id);
-      setTasks((prev) => prev.filter((t) => t.id !== task.id));
+
+      if (!taskError) {
+        setTasks((prev) => prev.filter((t) => t.id !== task.id));
+      }
     }
 
-    if (newHp <= 0) router.push("/dashboard/revive");
+    if (newHp <= 0) {
+      router.push("/dashboard/revive");
+    }
   };
 
   if (loading) {
@@ -299,7 +336,11 @@ export default function DashboardPage() {
 
             {/* Loja - altura fixa */}
             <aside className="xl:col-span-3 flex flex-col h-175">
-              <ItemShop gold={character?.gold ?? 0} />
+              <ItemShop
+                gold={character?.gold ?? 0}
+                characterId={character?.id ?? ""}
+                onPurchaseSuccess={fetchCharacter}
+              />
             </aside>
           </div>
         </div>
