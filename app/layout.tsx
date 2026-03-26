@@ -54,6 +54,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
+      <meta
+        name="google-site-verification"
+        content="ty-UBwr1OffHPpoc-j1OE99gu7ClzjdWCoR-CPww9RQ"
+      />
       <body className={`${pixel.variable} min-h-screen flex flex-col`}>
         <Providers>
           <Navbar />
