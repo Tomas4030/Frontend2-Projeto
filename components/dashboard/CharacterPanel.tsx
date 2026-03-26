@@ -1,36 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import StatBar from "./StatBar";
 import { Character, CLASS_AVATARS, CLASS_TITLE } from "./dashboardUtils";
 
 type Props = { character: Character | null };
 
 export default function CharacterPanel({ character }: Props) {
-  const [highlightedAttr, setHighlightedAttr] = useState<string | null>(null);
-  const [prevCharacter, setPrevCharacter] = useState<Character | null>(null);
-
-  useEffect(() => {
-    if (!character || !prevCharacter) {
-      setPrevCharacter(character);
-      return;
-    }
-
-    // Detecta qual atributo aumentou
-    if (character.forca > prevCharacter.forca) {
-      setHighlightedAttr("forca");
-    } else if (character.inteligencia > prevCharacter.inteligencia) {
-      setHighlightedAttr("inteligencia");
-    } else if (character.agilidade > prevCharacter.agilidade) {
-      setHighlightedAttr("agilidade");
-    } else if (character.fe > prevCharacter.fe) {
-      setHighlightedAttr("fe");
-    }
-
-    // Remove destaque após 1.5 segundos
-    setTimeout(() => setHighlightedAttr(null), 1500);
-    setPrevCharacter(character);
-  }, [character, prevCharacter]);
-
   if (!character) {
     return (
       <div className="text-center py-12">
@@ -45,12 +21,13 @@ export default function CharacterPanel({ character }: Props) {
     <div className="bg-[#13111e] border border-[#2a2540] p-6 shadow-xl">
       <div className="relative mb-6 flex flex-col items-center">
         <div className="w-24 h-24 bg-[#1a162e] border-2 border-[#3a3558] flex items-center justify-center mb-4 relative shadow-[0_0_20px_rgba(245,197,66,0.1)]">
-          <img
+          <Image
             src={CLASS_AVATARS[character.class]}
             alt={character.class}
+            width={80}
+            height={80}
             className="w-20 h-20 object-contain"
-            fetchPriority="high"
-            loading="eager"
+            priority
           />
           <span className="absolute -bottom-3 -right-3 bg-[#f5c542] text-black text-xs font-black px-2 py-1 uppercase tracking-tighter shadow-md">
             LVL {character.level}
@@ -61,6 +38,9 @@ export default function CharacterPanel({ character }: Props) {
         </h3>
         <p className="text-[#cbd5e1] text-xs tracking-[0.2em] uppercase mt-1">
           {CLASS_TITLE[character.class]}
+        </p>
+        <p className="text-yellow-400 text-xs tracking-[0.2em] uppercase mt-2">
+          Gold: {character.gold ?? 0}
         </p>
       </div>
 
@@ -104,22 +84,12 @@ export default function CharacterPanel({ character }: Props) {
         ].map((attr) => (
           <div
             key={attr.label}
-            className={`text-center border py-3 transition-all duration-300 ${
-              highlightedAttr === attr.key
-                ? "bg-[#f5c542]/20 border-[#f5c542] shadow-[0_0_10px_rgba(245,197,66,0.4)]"
-                : "bg-[#1a162e]/50 border-[#2a2540]"
-            }`}
+            className="text-center border py-3 transition-all duration-300 bg-[#1a162e]/50 border-[#2a2540]"
           >
             <div className="text-[10px] text-[#cbd5e1] uppercase mb-1">
               {attr.label}
             </div>
-            <div
-              className={`text-base font-bold transition-colors ${
-                highlightedAttr === attr.key
-                  ? "text-[#f5c542]"
-                  : "text-[#f5c542]"
-              }`}
-            >
+            <div className="text-base font-bold transition-colors text-[#f5c542]">
               {attr.val}
             </div>
           </div>

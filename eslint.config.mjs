@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Componentes de biblioteca externa/importada (não são core da app).
+    "components/lightswind/**",
   ]),
 ]);
 

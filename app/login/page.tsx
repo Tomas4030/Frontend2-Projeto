@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
@@ -131,9 +132,10 @@ const Auth = () => {
           </div>
 
           <div className="hidden md:block relative">
-            <img
+            <Image
               src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772657207/n5mdiixbggyimoadgzdq.png"
               alt="Login"
+              fill
               className="h-full w-full object-cover object-right"
               style={{ filter: "brightness(0.85) saturate(1.2)" }}
             />

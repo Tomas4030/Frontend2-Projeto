@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import PixelBackground from "@/components/PixelBackground";
 import { motion, AnimatePresence } from "framer-motion";
@@ -61,7 +62,6 @@ const CreateCharacter = () => {
     const chosen = CLASSES.find((c) => c.value === selectedClass);
     if (!chosen) return;
 
-    // Insert usando exatamente os nomes das colunas na database
     const { error } = await supabase.from("characters").insert([
       {
         user_id: user.id,
@@ -77,6 +77,7 @@ const CreateCharacter = () => {
         max_mp: 50,
         level: 1,
         xp: 0,
+        gold: 0,
       },
     ]);
 
@@ -137,9 +138,11 @@ const CreateCharacter = () => {
                       }`}
                       onClick={() => setSelectedClass(c.value)}
                     >
-                      <img
+                      <Image
                         src={c.img}
                         alt={c.label}
+                        width={40}
+                        height={40}
                         className="w-10 h-10 mb-1 object-contain"
                       />
                       <span className="text-xs uppercase tracking-tighter">
@@ -169,7 +172,7 @@ const CreateCharacter = () => {
           </div>
 
           <div className="hidden md:flex flex-col justify-center items-center p-8 bg-[#0f0d1a]">
-            <div className="flex flex-col items-center w-full max-w-[240px]">
+            <div className="flex flex-col items-center w-full max-w-60">
               <div className="relative h-48 w-48 flex items-center justify-center mb-4">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -181,8 +184,10 @@ const CreateCharacter = () => {
                       y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
                     }}
                   >
-                    <img
+                    <Image
                       src={chosen ? chosen.img : DEFAULT_IMG}
+                      width={200}
+                      height={200}
                       className={`w-50 h-50 object-contain ${
                         !chosen ? "opacity-10 grayscale invert" : ""
                       }`}

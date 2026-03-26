@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Sword } from "lucide-react";
+import type { User } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 
@@ -15,7 +16,7 @@ export default function Navbar() {
   const supabase = useMemo(() => createClient(), []);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
 
   const isLandingPage = pathname === "/";
@@ -33,11 +34,6 @@ export default function Navbar() {
     ],
     [],
   );
-
-  // Fecha menu mobile quando muda de rota
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
 
   // Sessão + listener
   useEffect(() => {
@@ -195,7 +191,7 @@ function AuthActions({
   onNavigate,
 }: {
   authReady: boolean;
-  user: any;
+  user: User | null;
   onSignOut: () => Promise<void>;
   mobile?: boolean;
   onNavigate?: () => void;

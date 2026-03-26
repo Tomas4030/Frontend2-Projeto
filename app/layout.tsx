@@ -11,6 +11,7 @@ import { Footer } from "@/components/Footer";
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://veydral.vercel.app"),
   title: "Veydral – Aventura RPG",
   description:
     "Veydral – Um RPG gamificado para completar quests, evoluir personagens e ganhar itens!",

@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -20,19 +21,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-import { Zap, ShieldAlert, Sword, Brain, ZapIcon, Cross } from "lucide-react";
+import { Sword, Brain, ZapIcon, Cross, ShieldAlert, Zap } from "lucide-react";
+import {
+  Difficulty,
+  QUEST_DIFFICULTY_CONFIG,
+} from "@/components/dashboard/dashboardUtils";
 
 type TaskType = "habito" | "diaria" | "afazer";
-type Difficulty = "easy" | "medium" | "hard";
 type Direction = "positivo" | "negativo";
 type SkillType = "forca" | "inteligencia" | "agilidade" | "fe";
-
-const difficultyConfig = {
-  easy: { xp: 10, hp: 5, attr: 1, label: "RANK E", sublabel: "Fácil" },
-  medium: { xp: 25, hp: 10, attr: 2, label: "RANK C", sublabel: "Médio" },
-  hard: { xp: 50, hp: 20, attr: 3, label: "RANK S", sublabel: "Difícil" },
-};
 
 const skillIcons: Record<SkillType, React.ReactNode> = {
   forca: <Sword size={14} />,
@@ -56,7 +53,7 @@ export function NewQuestSheet({
   const [direction, setDirection] = useState<Direction>("positivo");
   const [skillType, setSkillType] = useState<SkillType>("forca");
 
-  const config = difficultyConfig[difficulty];
+  const config = QUEST_DIFFICULTY_CONFIG[difficulty];
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -82,10 +79,12 @@ export function NewQuestSheet({
       title,
       type: taskType,
       skill_type: skillType,
+      difficulty,
       direction: taskType === "habito" ? direction : "positivo",
       xp_reward: direction === "negativo" ? 0 : config.xp,
       hp_reward: direction === "negativo" ? 0 : config.hp,
       penalty_hp: config.hp,
+      mana_cost: config.mana,
       is_completed: false,
       ...attrRewards,
     };
@@ -112,7 +111,7 @@ export function NewQuestSheet({
         </button>
       </SheetTrigger>
 
-      <SheetContent className="rpg-sheet-content border-0 sm:max-w-[440px] bg-[#0f0d1a] text-white font-mono p-0 flex flex-col overflow-hidden">
+      <SheetContent className="rpg-sheet-content border-0 sm:max-w-110 bg-[#0f0d1a] text-white font-mono p-0 flex flex-col overflow-hidden">
         {/* Ajustei o padding lateral e superior (p-6 pt-8) */}
         <div className="flex-1 overflow-y-auto p-6 pt-8 scrollbar-hide">
           {/* mb-6 em vez de mb-8 para ganhar espaço */}
@@ -206,7 +205,7 @@ export function NewQuestSheet({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rpg-select-content bg-[#13111e] text-white border-[#2a2540]">
-                  {Object.entries(difficultyConfig).map(([key, val]) => (
+                  {Object.entries(QUEST_DIFFICULTY_CONFIG).map(([key, val]) => (
                     <SelectItem key={key} value={key}>
                       {val.label} — {val.sublabel}
                     </SelectItem>
@@ -240,6 +239,9 @@ export function NewQuestSheet({
                       <span className="text-[10px] tracking-tighter">
                         +{config.attr} {skillType.toUpperCase()}
                       </span>
+                    </div>
+                    <div className="text-[10px] uppercase text-[#7dd3fc] mt-2">
+                      -{config.mana} MP
                     </div>
                   </div>
                 )}

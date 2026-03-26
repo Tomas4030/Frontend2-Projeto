@@ -13,6 +13,9 @@ import {
   handleLevelUp,
   Task,
   Character,
+  Difficulty,
+  getManaCost,
+  getRandomGoldReward,
 } from "@/components/dashboard/dashboardUtils";
 
 export default function DashboardPage() {
@@ -111,30 +114,36 @@ export default function DashboardPage() {
     fetchData();
   }, [router, supabase, fetchTasks]);
 
-  // Resetar página ao mudar filtro para evitar páginas inválidas
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [activeFilter]);
-
   const completeTask = async (task: Task) => {
     if (!character) return;
+
+    const difficulty: Difficulty = task.difficulty ?? "easy";
+    const manaCost = task.mana_cost ?? getManaCost(difficulty);
 
     let newHp = character.hp;
     let newXp = character.xp;
     let newLevel = character.level;
+    const newMp = Math.max(0, character.mp - manaCost);
+    let newGold = character.gold ?? 0;
 
     if (task.direction === "negativo") {
       const dmg = task.penalty_hp || 10;
       newHp = Math.max(0, character.hp - dmg);
-      showToast(`-${dmg} HP`, "dmg");
+      showToast(`-${dmg} HP • -${manaCost} MP`, "dmg");
     } else {
       const gainedXp = task.xp_reward || 0;
+      const gainedGold = getRandomGoldReward(difficulty);
+
       const leveled = handleLevelUp(character.xp + gainedXp, character.level);
       newXp = leveled.xp;
       newLevel = leveled.level;
+      newGold += gainedGold;
 
-      if (leveled.level > character.level) showToast("NÍVEL ACIMA! 🎉", "lvl");
-      else if (gainedXp > 0) showToast(`+${gainedXp} XP`, "xp");
+      if (leveled.level > character.level) {
+        showToast(`NÍVEL ACIMA! • +${gainedGold} GOLD`, "lvl");
+      } else if (gainedXp > 0) {
+        showToast(`+${gainedXp} XP • +${gainedGold} GOLD`, "xp");
+      }
 
       newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
     }
@@ -147,6 +156,8 @@ export default function DashboardPage() {
       xp: newXp,
       level: newLevel,
       hp: newHp,
+      mp: newMp,
+      gold: newGold,
     };
 
     const { error } = await supabase
@@ -166,7 +177,6 @@ export default function DashboardPage() {
         .from("tasks")
         .update({ is_completed: true })
         .eq("id", task.id);
-
       setTasks((prev) => prev.filter((t) => t.id !== task.id));
     }
 
@@ -194,17 +204,17 @@ export default function DashboardPage() {
         <div className="flex-1 flex items-center py-12">
           <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
             {/* Painel do personagem - altura fixa */}
-            <aside className="xl:col-span-3 flex flex-col h-[700px]">
+            <aside className="xl:col-span-3 flex flex-col h-175">
               <CharacterPanel character={character} />
             </aside>
 
             {/* Mural de Missões */}
-            <section className="xl:col-span-6 flex flex-col space-y-6 h-[700px]">
+            <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
               <div className="flex items-center justify-between">
                 <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
                   <span className="animate-pulse">⚔</span> Mural de Missões
                 </h2>
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <NewQuestSheet
                     onQuestCreated={() =>
                       character && fetchTasks(character.user_id)
@@ -215,11 +225,14 @@ export default function DashboardPage() {
 
               <TaskFilter
                 activeFilter={activeFilter}
-                setActiveFilter={setActiveFilter}
+                setActiveFilter={(f) => {
+                  setActiveFilter(f);
+                  setCurrentPage(1);
+                }}
               />
 
               <div
-                className={`flex-1 space-y-3 min-h-[400px] ${
+                className={`flex-1 space-y-3 min-h-100 ${
                   paginatedTasks.length > 0
                     ? "overflow-y-auto"
                     : "overflow-hidden"
@@ -235,7 +248,7 @@ export default function DashboardPage() {
                     />
                   ))
                 ) : (
-                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-[200px] flex items-center justify-center">
+                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-50 flex items-center justify-center">
                     <p className="text-[#cbd5e1] text-sm uppercase tracking-[0.3em]">
                       Mural Vazio
                     </p>
@@ -285,8 +298,8 @@ export default function DashboardPage() {
             </section>
 
             {/* Loja - altura fixa */}
-            <aside className="xl:col-span-3 flex flex-col h-[700px]">
-              <ItemShop />
+            <aside className="xl:col-span-3 flex flex-col h-175">
+              <ItemShop gold={character?.gold ?? 0} />
             </aside>
           </div>
         </div>

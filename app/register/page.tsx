@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 
 const Register = () => {
   const supabase = createClient();
@@ -50,7 +51,7 @@ const Register = () => {
       const { error: profileError } = await supabase
         .from("profiles")
         .insert([{ id: userData.user.id, name, email }]);
-      
+
       if (profileError) {
         console.log("Erro ao criar perfil:", profileError.message);
       }
@@ -59,7 +60,7 @@ const Register = () => {
     toast.success("Personagem registrado!", {
       description: "Bem-vindo ao reino, aventureiro.",
     });
-    
+
     setLoading(false);
     router.push("/create-character");
   };
@@ -143,7 +144,11 @@ const Register = () => {
                     className="eye-btn"
                     onClick={() => setShowConfirmPassword((v) => !v)}
                   >
-                    {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={15} />
+                    ) : (
+                      <Eye size={15} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -161,9 +166,10 @@ const Register = () => {
           </div>
 
           <div className="hidden md:block relative">
-            <img
+            <Image
               src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772658391/mqpx4pcsz0xzkn2utesj.png"
               alt="Register"
+              fill
               className="h-full w-full object-cover object-right"
             />
             <div className="absolute inset-0 bg-linear-to-r from-[#13111e]/60 to-transparent" />

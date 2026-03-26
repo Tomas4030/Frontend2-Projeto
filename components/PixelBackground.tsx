@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 type Star = {
   x: number;
   y: number;
@@ -9,20 +7,15 @@ type Star = {
   size: number;
 };
 
+const STARS: Star[] = Array.from({ length: 20 }, () => ({
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  delay: Math.random() * 3,
+  size: Math.random() > 0.7 ? 3 : 2,
+}));
+
 export default function PixelBackground() {
-  const [stars, setStars] = useState<Star[]>([]);
-
-  useEffect(() => {
-
-    const generatedStars = Array.from({ length: 20 }, () => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      delay: Math.random() * 3,
-      size: Math.random() > 0.7 ? 3 : 2,
-    }));
-
-    setStars(generatedStars);
-  }, []);
+  const stars = STARS;
 
   return (
     <>

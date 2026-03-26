@@ -4,10 +4,8 @@ import { motion } from "framer-motion";
 import { Star, User, Flame, Trophy, Coins, Shield } from "lucide-react";
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
