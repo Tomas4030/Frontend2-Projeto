@@ -16,37 +16,37 @@ type ShopItem = {
 };
 
 const items: ShopItem[] = [
-{
-  key: "health_potion",
-  name: "Poção de Vida",
-  cost: 25,
-  icon: "🧪",
-  type: "poção",
-  effectType: "heal_hp",
-  effectValue: 35,
-  dailyLimit: 3
-},
-{
-  key: "xp_scroll",
-  name: "Pergaminho XP",
-  cost: 60,
-  icon: "📜",
-  type: "pergaminho",
-  effectType: "xp_boost",
-  effectValue: 2,
-  dailyLimit: 2
-},
-{
-  key: "mana_elixir",
-  name: "Elixir de Mana",
-  cost: 40,
-  icon: "🔷",
-  type: "poção",
-  effectType: "restore_mp",
-  effectValue: 30,
-  dailyLimit: 3
-}];
-
+  {
+    key: "health_potion",
+    name: "Poção de Vida",
+    cost: 25,
+    icon: "🧪",
+    type: "poção",
+    effectType: "heal_hp",
+    effectValue: 35,
+    dailyLimit: 3,
+  },
+  {
+    key: "xp_scroll",
+    name: "Pergaminho XP",
+    cost: 60,
+    icon: "📜",
+    type: "pergaminho",
+    effectType: "xp_boost",
+    effectValue: 2,
+    dailyLimit: 2,
+  },
+  {
+    key: "mana_elixir",
+    name: "Elixir de Mana",
+    cost: 40,
+    icon: "🔷",
+    type: "poção",
+    effectType: "restore_mp",
+    effectValue: 30,
+    dailyLimit: 5,
+  },
+];
 
 type Props = {
   gold: number;
@@ -64,7 +64,7 @@ function getItemMeta(item: ShopItem) {
         description: "Restaura vida para manter o herói em combate.",
         effectColor: "text-rose-400",
         effectBg: "bg-rose-400/10",
-        effectBorder: "border-rose-400/20"
+        effectBorder: "border-rose-400/20",
       };
     case "mana_elixir":
       return {
@@ -72,7 +72,7 @@ function getItemMeta(item: ShopItem) {
         description: "Recupera mana para continuares a completar missões.",
         effectColor: "text-blue-400",
         effectBg: "bg-blue-400/10",
-        effectBorder: "border-blue-400/20"
+        effectBorder: "border-blue-400/20",
       };
     case "xp_scroll":
       return {
@@ -80,7 +80,7 @@ function getItemMeta(item: ShopItem) {
         description: "Duplica o XP durante 24 horas.",
         effectColor: "text-yellow-300",
         effectBg: "bg-yellow-400/10",
-        effectBorder: "border-yellow-400/20"
+        effectBorder: "border-yellow-400/20",
       };
     case "iron_sword":
       return {
@@ -88,7 +88,7 @@ function getItemMeta(item: ShopItem) {
         description: "Arma base para fortalecer o teu build.",
         effectColor: "text-orange-400",
         effectBg: "bg-orange-400/10",
-        effectBorder: "border-orange-400/20"
+        effectBorder: "border-orange-400/20",
       };
     case "bronze_shield":
       return {
@@ -96,7 +96,7 @@ function getItemMeta(item: ShopItem) {
         description: "Mais proteção e presença de tanque.",
         effectColor: "text-emerald-400",
         effectBg: "bg-emerald-400/10",
-        effectBorder: "border-emerald-400/20"
+        effectBorder: "border-emerald-400/20",
       };
     case "luck_potion":
       return {
@@ -104,7 +104,7 @@ function getItemMeta(item: ShopItem) {
         description: "Um pequeno empurrão místico para dias importantes.",
         effectColor: "text-purple-400",
         effectBg: "bg-purple-400/10",
-        effectBorder: "border-purple-400/20"
+        effectBorder: "border-purple-400/20",
       };
     default:
       return {
@@ -112,7 +112,7 @@ function getItemMeta(item: ShopItem) {
         description: "Item especial da loja.",
         effectColor: "text-yellow-300",
         effectBg: "bg-yellow-400/10",
-        effectBorder: "border-yellow-400/20"
+        effectBorder: "border-yellow-400/20",
       };
   }
 }
@@ -139,50 +139,50 @@ type ToastType = "success" | "error" | "warning";
 function Toast({
   message,
   type,
-  onClose
-
-
-
-
-}: {message: string;type: ToastType;onClose: () => void;}) {
+  onClose,
+}: {
+  message: string;
+  type: ToastType;
+  onClose: () => void;
+}) {
   const styles = {
     success: {
       border: "border-emerald-400/30",
       bg: "bg-emerald-400/10",
       text: "text-emerald-300",
-      Icon: CheckCircle2
+      Icon: CheckCircle2,
     },
     error: {
       border: "border-rose-400/30",
       bg: "bg-rose-400/10",
       text: "text-rose-300",
-      Icon: AlertCircle
+      Icon: AlertCircle,
     },
     warning: {
       border: "border-yellow-400/30",
       bg: "bg-yellow-400/10",
       text: "text-yellow-300",
-      Icon: AlertCircle
-    }
+      Icon: AlertCircle,
+    },
   }[type];
 
   return (
     <div
-      className={`mb-3 flex items-center gap-3 rounded-xl border ${styles.border} ${styles.bg} px-4 py-3`}>
-      
+      className={`mb-3 flex items-center gap-3 rounded-xl border ${styles.border} ${styles.bg} px-4 py-3`}
+    >
       <styles.Icon className={`h-4 w-4 shrink-0 ${styles.text}`} />
       <p className={`flex-1 text-sm font-medium ${styles.text}`}>{message}</p>
       <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300">
         <X className="h-3.5 w-3.5" />
       </button>
-    </div>);
-
+    </div>
+  );
 }
 
 export default function ItemShop({
   gold,
   characterId,
-  onPurchaseSuccess
+  onPurchaseSuccess,
 }: Props) {
   const supabase = useMemo(() => createClient(), []);
   const [purchaseCounts, setPurchaseCounts] = useState<PurchaseCountMap>({});
@@ -203,12 +203,12 @@ export default function ItemShop({
     const end = new Date();
     end.setHours(23, 59, 59, 999);
 
-    const { data, error } = await supabase.
-    from("shop_purchases").
-    select("item_key").
-    eq("character_id", characterId).
-    gte("purchased_at", start.toISOString()).
-    lte("purchased_at", end.toISOString());
+    const { data, error } = await supabase
+      .from("shop_purchases")
+      .select("item_key")
+      .eq("character_id", characterId)
+      .gte("purchased_at", start.toISOString())
+      .lte("purchased_at", end.toISOString());
 
     if (error) {
       console.error("Erro ao carregar compras do dia:", error.message);
@@ -217,7 +217,7 @@ export default function ItemShop({
 
     const counts: PurchaseCountMap = {};
     for (const row of data ?? [])
-    counts[row.item_key] = (counts[row.item_key] ?? 0) + 1;
+      counts[row.item_key] = (counts[row.item_key] ?? 0) + 1;
     setPurchaseCounts(counts);
   };
 
@@ -231,7 +231,7 @@ export default function ItemShop({
     try {
       const boughtToday = purchaseCounts[item.key] ?? 0;
       const reachedDailyLimit =
-      item.dailyLimit !== undefined && boughtToday >= item.dailyLimit;
+        item.dailyLimit !== undefined && boughtToday >= item.dailyLimit;
 
       if (reachedDailyLimit) {
         showToast(`Limite diário atingido para ${item.name}.`, "warning");
@@ -249,7 +249,7 @@ export default function ItemShop({
         p_cost: item.cost,
         p_effect_type: item.effectType,
         p_effect_value: item.effectValue ?? 0,
-        p_daily_limit: item.dailyLimit ?? null
+        p_daily_limit: item.dailyLimit ?? null,
       });
 
       if (error) {
@@ -260,7 +260,7 @@ export default function ItemShop({
       if (!data?.success) {
         showToast(
           data?.message ?? "Não foi possível concluir a compra.",
-          "error"
+          "error",
         );
         return;
       }
@@ -297,20 +297,20 @@ export default function ItemShop({
 
       {}
       <div className="p-3">
-        {toast &&
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)} />
-
-        }
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
 
         <div className="flex flex-col gap-2">
           {items.map((item) => {
             const meta = getItemMeta(item);
             const boughtToday = purchaseCounts[item.key] ?? 0;
             const reachedDailyLimit =
-            item.dailyLimit !== undefined && boughtToday >= item.dailyLimit;
+              item.dailyLimit !== undefined && boughtToday >= item.dailyLimit;
             const canBuy = gold >= item.cost && !reachedDailyLimit;
             const isLoading = loadingItem === item.key;
 
@@ -318,11 +318,11 @@ export default function ItemShop({
               <div
                 key={item.key}
                 className={`rounded-xl border p-3 transition-all duration-200 ${
-                canBuy ?
-                "border-white/10 bg-white/[0.03] hover:border-yellow-400/25 hover:bg-white/[0.05]" :
-                "border-white/5 bg-white/[0.02] opacity-50"}`
-                }>
-                
+                  canBuy
+                    ? "border-white/10 bg-white/[0.03] hover:border-yellow-400/25 hover:bg-white/[0.05]"
+                    : "border-white/5 bg-white/[0.02] opacity-50"
+                }`}
+              >
                 {}
                 <div className="flex items-center gap-3">
                   {}
@@ -355,52 +355,52 @@ export default function ItemShop({
                 <div className="mt-2.5 flex items-center justify-between gap-2">
                   <div className="flex flex-wrap gap-1.5">
                     <span
-                      className={`rounded-full border ${meta.effectBorder} ${meta.effectBg} px-2 py-0.5 text-[10px] font-semibold ${meta.effectColor}`}>
-                      
+                      className={`rounded-full border ${meta.effectBorder} ${meta.effectBg} px-2 py-0.5 text-[10px] font-semibold ${meta.effectColor}`}
+                    >
                       {getEffectLabel(item)}
                     </span>
 
-                    {item.dailyLimit !== undefined &&
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
-                      reachedDailyLimit ?
-                      "border-rose-400/20 bg-rose-400/10 text-rose-400" :
-                      "border-white/10 bg-white/5 text-zinc-400"}`
-                      }>
-                      
-                        {reachedDailyLimit ?
-                      "Esgotado" :
-                      `${boughtToday}/${item.dailyLimit} hoje`}
+                    {item.dailyLimit !== undefined && (
+                      <span
+                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                          reachedDailyLimit
+                            ? "border-rose-400/20 bg-rose-400/10 text-rose-400"
+                            : "border-white/10 bg-white/5 text-zinc-400"
+                        }`}
+                      >
+                        {reachedDailyLimit
+                          ? "Esgotado"
+                          : `${boughtToday}/${item.dailyLimit} hoje`}
                       </span>
-                    }
+                    )}
                   </div>
 
                   <button
                     onClick={() => handleBuy(item)}
                     disabled={!canBuy || isLoading}
                     className={`h-8 shrink-0 rounded-lg px-4 text-xs font-bold transition-all duration-150 ${
-                    canBuy && !isLoading ?
-                    "border border-yellow-400/40 bg-yellow-400 text-black hover:bg-yellow-300 active:scale-95" :
-                    "cursor-not-allowed border border-white/10 bg-white/5 text-zinc-600"}`
-                    }>
-                    
-                    {isLoading ?
-                    <span className="flex items-center gap-1.5">
+                      canBuy && !isLoading
+                        ? "border border-yellow-400/40 bg-yellow-400 text-black hover:bg-yellow-300 active:scale-95"
+                        : "cursor-not-allowed border border-white/10 bg-white/5 text-zinc-600"
+                    }`}
+                  >
+                    {isLoading ? (
+                      <span className="flex items-center gap-1.5">
                         <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-black/30 border-t-black" />
                         A comprar…
-                      </span> :
-                    canBuy ?
-                    "Comprar" :
-
-                    "Indisponível"
-                    }
+                      </span>
+                    ) : canBuy ? (
+                      "Comprar"
+                    ) : (
+                      "Indisponível"
+                    )}
                   </button>
                 </div>
-              </div>);
-
+              </div>
+            );
           })}
         </div>
       </div>
-    </section>);
-
+    </section>
+  );
 }
