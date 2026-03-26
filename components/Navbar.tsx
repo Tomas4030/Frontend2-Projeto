@@ -30,7 +30,10 @@ export default function Navbar() {
   const landingLinks: NavItem[] = useMemo(
     () => [
     { href: "#features", label: "Funcionalidades" },
-    { href: "#gamificacao", label: "Gamificação" }],
+    { href: "#gamificacao", label: "Gamificação" },
+      { href: "/dashboard", label: "Dashboard" },
+  ],
+    
 
     []
   );
