@@ -17,13 +17,16 @@ export type Task = {
   penalty_hp?: number;
   mana_cost?: number;
   notes?: string;
+  is_completed?: boolean;
 };
+
+export type CharacterClass = "guerreiro" | "mago" | "druida" | "arqueiro";
 
 export type Character = {
   id: string;
   user_id: string;
   name: string;
-  class: "guerreiro" | "mago" | "druida" | "arqueiro" | "ladrao";
+  class: CharacterClass;
   level: number;
   xp: number;
   hp: number;
@@ -37,27 +40,37 @@ export type Character = {
   gold?: number;
   streak_days?: number;
   tasks_completed?: number;
+  xp_boost_multiplier?: number;
+  xp_boost_expires_at?: string | null;
 };
 
-export const CLASS_AVATARS: Record<Character["class"], string> = {
-  guerreiro:
+function getAvatarUrl(url: string, size = 80) {
+  return url.replace(
+    "/upload/",
+    `/upload/f_auto,q_auto,w_${size},h_${size},c_fill/`,
+  );
+}
+
+export const CLASS_AVATARS: Record<CharacterClass, string> = {
+  guerreiro: getAvatarUrl(
     "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
-  mago: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
-  druida:
+  ),
+  mago: getAvatarUrl(
+    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
+  ),
+  druida: getAvatarUrl(
     "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
-  arqueiro:
+  ),
+  arqueiro: getAvatarUrl(
     "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
-  // Compatibilidade com dados antigos antes da mudanca para "arqueiro".
-  ladrao:
-    "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
+  ),
 };
 
-export const CLASS_TITLE: Record<Character["class"], string> = {
+export const CLASS_TITLE: Record<CharacterClass, string> = {
   guerreiro: "Guerreiro",
   mago: "Mago",
   druida: "Druida",
   arqueiro: "Arqueiro",
-  ladrao: "Ladrao",
 };
 
 export const QUEST_DIFFICULTY_CONFIG: Record<
@@ -78,7 +91,7 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     hp: 5,
     attr: 1,
     mana: 4,
-    gold: { min: 1, max: 2 },
+    gold: { min: 6, max: 12 },
     label: "RANK E",
     sublabel: "Fácil",
     color: "#4ade80",
@@ -88,7 +101,7 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     hp: 10,
     attr: 2,
     mana: 8,
-    gold: { min: 3, max: 5 },
+    gold: { min: 14, max: 24 },
     label: "RANK C",
     sublabel: "Médio",
     color: "#f5c542",
@@ -98,7 +111,7 @@ export const QUEST_DIFFICULTY_CONFIG: Record<
     hp: 20,
     attr: 3,
     mana: 14,
-    gold: { min: 6, max: 8 },
+    gold: { min: 28, max: 42 },
     label: "RANK S",
     sublabel: "Difícil",
     color: "#ef4444",

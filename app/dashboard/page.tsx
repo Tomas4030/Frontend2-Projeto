@@ -67,6 +67,35 @@ export default function DashboardPage() {
     [supabase],
   );
 
+  const fetchCharacter = useCallback(async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("characters")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
+
+    if (error) {
+      console.error("Erro ao atualizar personagem:", error.message);
+      return;
+    }
+
+    if (data) {
+      const { xp, level } = handleLevelUp(data.xp || 0, data.level || 1);
+
+      setCharacter({
+        ...data,
+        xp,
+        level,
+      } as Character);
+    }
+  }, [supabase]);
+
   const deleteTask = async (taskId: string) => {
     if (!character) return;
 
@@ -119,6 +148,11 @@ export default function DashboardPage() {
 
     const difficulty: Difficulty = task.difficulty ?? "easy";
     const manaCost = task.mana_cost ?? getManaCost(difficulty);
+
+    if (character.mp < manaCost) {
+      showToast("Mana insuficiente para concluir a missão.", "dmg");
+      return;
+    }
 
     const xpBoostActive =
       character.xp_boost_multiplier === 2 &&

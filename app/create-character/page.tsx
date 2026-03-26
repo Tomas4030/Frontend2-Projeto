@@ -75,9 +75,11 @@ const CreateCharacter = () => {
         max_hp: 100,
         mp: 50,
         max_mp: 50,
+        gold: 0,
         level: 1,
         xp: 0,
-        gold: 0,
+        xp_boost_multiplier: 1,
+        xp_boost_expires_at: null,
       },
     ]);
 
