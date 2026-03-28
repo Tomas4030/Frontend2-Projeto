@@ -91,6 +91,7 @@ export default function DashboardPage() {
     }
 
     if (data) {
+      console.log(`[Character] Mana atualizada: ${data.mp}/${data.max_mp}`);
       const { xp, level } = handleLevelUp(data.xp || 0, data.level || 1);
 
       setCharacter({
@@ -167,6 +168,11 @@ export default function DashboardPage() {
       return;
     }
 
+    // Log mana consumption for debugging
+    console.log(
+      `[Mana] Antes: ${character.mp}/${character.max_mp}, Custo: ${manaCost}`,
+    );
+
     const xpBoostActive =
       character.xp_boost_multiplier === 2 &&
       !!character.xp_boost_expires_at &&
@@ -181,6 +187,7 @@ export default function DashboardPage() {
     let newXp = character.xp;
     let newLevel = character.level;
     const newMp = Math.max(0, character.mp - manaCost);
+    console.log(`[Mana] Depois: ${newMp}/${character.max_mp}`);
     let newGold = character.gold ?? 0;
 
     let newForca = character.forca;
@@ -254,9 +261,13 @@ export default function DashboardPage() {
 
     if (error) {
       console.error("Erro ao atualizar personagem:", error.message);
+      showToast("Erro ao salvar progresso da missão.", "dmg");
       return;
     }
 
+    console.log(
+      `[Mana] Salvo no banco: ${updatedAttrs.mp}/${character.max_mp}`,
+    );
     setCharacter((prev) => (prev ? { ...prev, ...updatedAttrs } : prev));
 
     if (task.type !== "habito") {

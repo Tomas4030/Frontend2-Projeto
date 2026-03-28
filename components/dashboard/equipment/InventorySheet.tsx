@@ -232,21 +232,6 @@ export default function InventorySheet({
 
             {tab === "shop" && (
               <>
-                <div className="mb-2.5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
-                  <div>
-                    <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500">
-                      Loja
-                    </p>
-                    <p className="text-[11px] font-semibold text-zinc-200">
-                      Compra equipamento para melhorar o teu personagem
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-2 py-1 text-[10px] font-extrabold text-yellow-300">
-                    {character.gold ?? 0} G
-                  </div>
-                </div>
-
                 <div className="space-y-2.5">
                   {shopItems.map((item) => (
                     <ItemCard

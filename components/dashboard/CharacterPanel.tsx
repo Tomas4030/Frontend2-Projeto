@@ -55,10 +55,6 @@ export default function CharacterPanel({
         <p className="mt-1 text-xs uppercase tracking-[0.2em] text-[#cbd5e1]">
           {CLASS_TITLE[character.class]}
         </p>
-
-        <p className="mt-2 text-xs uppercase tracking-[0.2em] text-yellow-400">
-          Gold: {character.gold ?? 0}
-        </p>
       </div>
 
       <div className="mb-6 space-y-4">
