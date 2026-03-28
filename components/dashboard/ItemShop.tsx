@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Coins, CheckCircle2, AlertCircle, X } from "lucide-react";
 
@@ -197,7 +197,7 @@ export default function ItemShop({
     setTimeout(() => setToast(null), 3500);
   };
 
-  const loadTodayPurchases = async () => {
+  const loadTodayPurchases = useCallback(async () => {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
     const end = new Date();
@@ -219,12 +219,12 @@ export default function ItemShop({
     for (const row of data ?? [])
       counts[row.item_key] = (counts[row.item_key] ?? 0) + 1;
     setPurchaseCounts(counts);
-  };
+  }, [characterId, supabase]);
 
   useEffect(() => {
     if (!characterId) return;
     loadTodayPurchases();
-  }, [characterId]);
+  }, [characterId, loadTodayPurchases]);
 
   const handleBuy = async (item: ShopItem) => {
     setLoadingItem(item.key);
@@ -276,7 +276,7 @@ export default function ItemShop({
   return (
     <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       {}
-      <div className="border-b border-white/10 bg-gradient-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-4 py-3">
+      <div className="border-b border-white/10 bg-linear-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-4 py-3">
         <div className="flex items-center justify-between gap-2">
           <div>
             <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-500">
@@ -319,8 +319,8 @@ export default function ItemShop({
                 key={item.key}
                 className={`rounded-xl border p-3 transition-all duration-200 ${
                   canBuy
-                    ? "border-white/10 bg-white/[0.03] hover:border-yellow-400/25 hover:bg-white/[0.05]"
-                    : "border-white/5 bg-white/[0.02] opacity-50"
+                    ? "border-white/10 bg-white/3 hover:border-yellow-400/25 hover:bg-white/5"
+                    : "border-white/5 bg-white/2 opacity-50"
                 }`}
               >
                 {}

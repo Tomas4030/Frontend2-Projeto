@@ -30,7 +30,7 @@ interface ItemCardProps {
 
 function SlotIcon({ slot }: { slot: string }) {
   if (slot === "weapon") return <Sword className="w-3 h-3" />;
-  if (slot === "armor")  return <Shield className="w-3 h-3" />;
+  if (slot === "armor") return <Shield className="w-3 h-3" />;
   return <Gem className="w-3 h-3" />;
 }
 
@@ -55,9 +55,9 @@ export default function ItemCard({
   const buffs = getBuffLabels(item);
 
   // Estados
-  const isEquipped  = inventoryItem?.isEquipped ?? false;
-  const isLocked    = inventoryItem?.isLocked ?? false;
-  const canAfford   = playerGold >= item.price;
+  const isEquipped = inventoryItem?.isEquipped ?? false;
+  const isLocked = inventoryItem?.isLocked ?? false;
+  const canAfford = playerGold >= item.price;
 
   return (
     <div
@@ -88,11 +88,15 @@ export default function ItemCard({
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-bold text-zinc-100 truncate">{item.name}</p>
+          <p className="text-sm font-bold text-zinc-100 truncate">
+            {item.name}
+          </p>
 
           {/* Raridade + Slot */}
           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-            <span className={`text-[10px] font-semibold uppercase tracking-wider ${rarity.color}`}>
+            <span
+              className={`text-[10px] font-semibold uppercase tracking-wider ${rarity.color}`}
+            >
               {rarity.label}
             </span>
             <span className="text-zinc-600">·</span>
@@ -176,9 +180,13 @@ export default function ItemCard({
           {mode === "shop" && (
             <>
               {alreadyOwned ? (
-                <span className="text-[11px] text-emerald-400 font-semibold">✓ Possuis</span>
+                <span className="text-[11px] text-emerald-400 font-semibold">
+                  ✓ Possuis
+                </span>
               ) : isLocked ? (
-                <span className="text-[11px] text-zinc-500 font-semibold">🔒 Bloqueado</span>
+                <span className="text-[11px] text-zinc-500 font-semibold">
+                  🔒 Bloqueado
+                </span>
               ) : (
                 <button
                   onClick={() => onBuy?.(item)}
@@ -205,9 +213,10 @@ export default function ItemCard({
 function getLockReason(item: Item): string {
   const c = item.unlock_conditions;
   if (!c) return "Bloqueado";
-  if (c.min_level)         return `Requer nível ${c.min_level}`;
-  if (c.tasks_completed)   return `Requer ${c.tasks_completed} tarefas concluídas`;
-  if (c.min_streak)        return `Requer streak de ${c.min_streak} dias`;
-  if (c.boss_killed)       return "Requer matar um boss";
+  if (c.min_level) return `Requer nível ${c.min_level}`;
+  if (c.tasks_completed)
+    return `Requer ${c.tasks_completed} tarefas concluídas`;
+  if (c.min_streak) return `Requer streak de ${c.min_streak} dias`;
+  if (c.boss_killed) return "Requer matar um boss";
   return "Condição não cumprida";
 }

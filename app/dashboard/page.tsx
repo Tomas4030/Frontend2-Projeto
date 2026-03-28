@@ -14,6 +14,7 @@ import EquipmentPanel from "@/components/dashboard/equipment/EquipmentPanel";
 import InventorySheet from "@/components/dashboard/equipment/InventorySheet";
 import { useEquipment } from "@/hooks/useEquipment";
 import { applyGoldMultiplier, applyXpMultiplier } from "@/lib/equipment";
+import type { InventoryItem } from "@/types/equipment";
 import {
   handleLevelUp,
   Task,
@@ -58,6 +59,16 @@ export default function DashboardPage() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
+
+  const equippedInventoryItems: InventoryItem[] = Object.values(equipment)
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .map((item) => ({
+      id: `equipped-${item.id}`,
+      item,
+      acquired_at: new Date(0).toISOString(),
+      isEquipped: true,
+      isLocked: false,
+    }));
 
   const fetchTasks = useCallback(
     async (userId: string) => {
@@ -298,7 +309,10 @@ export default function DashboardPage() {
           <div className="flex-1 flex items-center py-12">
             <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
               <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
-                <CharacterPanel character={character} />
+                <CharacterPanel
+                  character={character}
+                  inventoryItems={equippedInventoryItems}
+                />
 
                 {character && finalStats && (
                   <EquipmentPanel
