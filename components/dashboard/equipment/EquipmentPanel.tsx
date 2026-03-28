@@ -17,8 +17,8 @@ import { RARITY_CONFIG } from "@/types/equipment";
 interface EquipmentPanelProps {
   character: Character;
   equipment: EquipmentSlots;
-  finalStats?: FinalStats;
   onSlotClick?: (slot: "weapon" | "armor" | "amulet") => void;
+  finalStats?: FinalStats; // só para set bonus
 }
 
 // ─── Sub-componente: Slot ─────────────────────────────────────────────────────
@@ -80,37 +80,6 @@ function EquipSlot({
         <p className="text-[10px] text-zinc-600 italic">vazio</p>
       )}
     </button>
-  );
-}
-
-// ─── Sub-componente: Stat row ─────────────────────────────────────────────────
-
-function StatRow({
-  label,
-  base,
-  final,
-  color = "text-yellow-300",
-}: {
-  label: string;
-  base: number;
-  final: number;
-  color?: string;
-}) {
-  const bonus = final - base;
-  return (
-    <div className="flex items-center justify-between text-xs">
-      <span className="text-zinc-400 uppercase tracking-wider text-[10px]">
-        {label}
-      </span>
-      <div className="flex items-center gap-1.5">
-        <span className={`font-bold ${color}`}>{final}</span>
-        {bonus > 0 && (
-          <span className="text-emerald-400 text-[10px] font-semibold">
-            +{bonus}
-          </span>
-        )}
-      </div>
-    </div>
   );
 }
 
@@ -194,14 +163,6 @@ export default function EquipmentPanel({
         <h4 className="text-yellow-300 text-xs font-bold uppercase tracking-[0.2em]">
           Equipamento
         </h4>
-        {finalStats?.has_streak_protection && (
-          <span
-            title="Streak Protection ativa"
-            className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-blue-500/20 border border-blue-500/30 text-blue-300 font-bold"
-          >
-            🛡 Streak Shield
-          </span>
-        )}
       </div>
 
       {/* Slots */}
@@ -211,86 +172,22 @@ export default function EquipmentPanel({
           icon={Sword}
           item={equipment.weapon}
           emptyEmoji="🗡️"
-          onClick={() => onSlotClick?.("weapon")}
         />
         <EquipSlot
           label="Armadura"
           icon={Shield}
           item={equipment.armor}
           emptyEmoji="🛡️"
-          onClick={() => onSlotClick?.("armor")}
         />
         <EquipSlot
           label="Amuleto"
           icon={Gem}
           item={equipment.amulet}
           emptyEmoji="📿"
-          onClick={() => onSlotClick?.("amulet")}
         />
       </div>
 
-      {/* Stats finais */}
-      <div className="border-t border-[#2a2540] pt-3 space-y-2">
-        <p className="text-[9px] uppercase tracking-widest text-zinc-500 mb-2">
-          Stats Finais
-        </p>
-        <StatRow
-          label="Força"
-          base={character.forca}
-          final={finalStats?.final_forca ?? 0}
-        />
-        <StatRow
-          label="Inteligência"
-          base={character.inteligencia}
-          final={finalStats?.final_inteligencia ?? 0}
-        />
-        <StatRow
-          label="HP Máx"
-          base={character.max_hp}
-          final={finalStats?.final_hp_max ?? 0}
-          color="text-rose-400"
-        />
-        <StatRow
-          label="MP Máx"
-          base={character.max_mp}
-          final={finalStats?.final_mp_max ?? 0}
-          color="text-blue-400"
-        />
-
-        {/* Multiplicadores */}
-        {(finalStats?.final_xp_multiplier ?? 1) > 1 && (
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-zinc-400 uppercase tracking-wider text-[10px]">
-              XP Bónus
-            </span>
-            <span className="text-emerald-400 font-bold text-[10px]">
-              ×{(finalStats?.final_xp_multiplier ?? 1).toFixed(2)}
-            </span>
-          </div>
-        )}
-        {(finalStats?.final_gold_multiplier ?? 1) > 1 && (
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-zinc-400 uppercase tracking-wider text-[10px]">
-              Gold Bónus
-            </span>
-            <span className="text-yellow-300 font-bold text-[10px]">
-              ×{(finalStats?.final_gold_multiplier ?? 1).toFixed(2)}
-            </span>
-          </div>
-        )}
-        {(finalStats?.final_boss_damage_bonus ?? 0) > 0 && (
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-zinc-400 uppercase tracking-wider text-[10px]">
-              Dano Boss
-            </span>
-            <span className="text-orange-400 font-bold text-[10px]">
-              +{finalStats?.final_boss_damage_bonus ?? 0}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Set Bonuses Ativos */}
+      {/* Set bonus (se quiseres manter) */}
       {(finalStats?.active_set_bonuses?.length ?? 0) > 0 && (
         <div className="space-y-2">
           {finalStats!.active_set_bonuses.map((sb) => (
