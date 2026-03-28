@@ -1,9 +1,7 @@
 "use client";
-// components/dashboard/equipment/InventorySheet.tsx
-// Sheet deslizante (Shadcn) com o inventário do jogador e a loja de equipamento
 
-import React, { useEffect, useState, useCallback } from "react";
-import { Backpack, Store, RefreshCw } from "lucide-react";
+import React, { useState, useCallback } from "react";
+import { Backpack, Store, Coins } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -14,7 +12,6 @@ import {
 import ItemCard from "./ItemCard";
 import {
   getPlayerInventory,
-  getPlayerEquipment,
   getEquipmentShopItems,
   equipItem,
   unequipItem,
@@ -28,18 +25,14 @@ import type {
 } from "@/types/equipment";
 import type { Character } from "@/components/dashboard/dashboardUtils";
 
-// ─── Props ────────────────────────────────────────────────────────────────────
-
 interface InventorySheetProps {
   character: Character;
   equipment: EquipmentSlots;
-  onEquipmentChange: () => void;  // callback para o pai re-fetch o equipamento
-  onGoldChange: () => void;       // callback para o pai re-fetch o character
+  onEquipmentChange: () => void;
+  onGoldChange: () => void;
 }
 
 type Tab = "inventory" | "shop";
-
-// ─── Componente ───────────────────────────────────────────────────────────────
 
 export default function InventorySheet({
   character,
@@ -59,39 +52,39 @@ export default function InventorySheet({
     setTimeout(() => setToast(null), 3000);
   };
 
-  // Fetch inventário
   const fetchInventory = useCallback(async () => {
     try {
       const inv = await getPlayerInventory(character.id, equipment, character);
       setInventory(inv);
-    } catch (e: any) {
-      console.error(e.message);
+    } catch (e: unknown) {
+      console.error(e);
     }
   }, [character, equipment]);
 
-  // Fetch loja
   const fetchShop = useCallback(async () => {
     try {
       const items = await getEquipmentShopItems();
       setShopItems(items);
-    } catch (e: any) {
-      console.error(e.message);
+    } catch (e: unknown) {
+      console.error(e);
     }
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    fetchInventory();
-    fetchShop();
-  }, [open, fetchInventory, fetchShop]);
-
-  // ─── Ações ───────────────────────────────────────────────────────────────
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) {
+      void fetchInventory();
+      void fetchShop();
+    }
+  };
 
   const handleEquip = async (item: Item) => {
     setLoadingId(item.id);
     const res = await equipItem(character.id, item.id);
     setLoadingId(null);
+
     showToast(res.message, res.success);
+
     if (res.success) {
       onEquipmentChange();
       fetchInventory();
@@ -102,7 +95,9 @@ export default function InventorySheet({
     setLoadingId(item.id);
     const res = await unequipItem(character.id, item.slot as Slot);
     setLoadingId(null);
+
     showToast(res.message, res.success);
+
     if (res.success) {
       onEquipmentChange();
       fetchInventory();
@@ -113,7 +108,9 @@ export default function InventorySheet({
     setLoadingId(item.id);
     const res = await buyEquipmentItem(character.id, item.id);
     setLoadingId(null);
+
     showToast(res.message, res.success);
+
     if (res.success) {
       onGoldChange();
       fetchInventory();
@@ -121,13 +118,10 @@ export default function InventorySheet({
     }
   };
 
-  // ─── IDs já no inventário (para a loja) ──────────────────────────────────
   const ownedIds = new Set(inventory.map((i) => i.item.id));
 
-  // ─── Render ───────────────────────────────────────────────────────────────
-
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#2a2540] bg-[#13111e] text-zinc-300 hover:border-yellow-400/30 hover:text-yellow-300 text-xs font-bold uppercase tracking-widest transition-all">
           <Backpack className="w-4 h-4" />
@@ -137,94 +131,139 @@ export default function InventorySheet({
 
       <SheetContent
         side="right"
-        className="w-full max-w-md bg-[#0b0714] border-l border-[#2a2540] overflow-y-auto"
+        className="w-full max-w-107.5 border-l border-white/10 bg-[#070312] p-0 text-white"
       >
-        <SheetHeader className="mb-4">
-          <SheetTitle className="text-yellow-300 font-['Press_Start_2P',monospace] text-sm">
-            ⚔ Mochila
-          </SheetTitle>
-        </SheetHeader>
-
-        {/* Toast */}
-        {toast && (
-          <div
-            className={`mb-4 px-4 py-3 rounded-xl border text-sm font-semibold ${
-              toast.ok
-                ? "bg-emerald-400/10 border-emerald-400/30 text-emerald-300"
-                : "bg-rose-400/10 border-rose-400/30 text-rose-300"
-            }`}
-          >
-            {toast.msg}
-          </div>
-        )}
-
-        {/* Tabs */}
-        <div className="flex gap-1 mb-4 bg-[#13111e] rounded-xl p-1 border border-[#2a2540]">
-          {(["inventory", "shop"] as Tab[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${
-                tab === t
-                  ? "bg-yellow-400 text-black"
-                  : "text-zinc-400 hover:text-zinc-200"
-              }`}
-            >
-              {t === "inventory" ? (
-                <><Backpack className="w-3.5 h-3.5" /> Inventário</>
-              ) : (
-                <><Store className="w-3.5 h-3.5" /> Loja</>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Conteúdo */}
-        {tab === "inventory" && (
-          <div>
-            {inventory.length === 0 ? (
-              <div className="text-center py-16 text-zinc-500 text-sm">
-                <p className="text-3xl mb-3">🎒</p>
-                <p>O teu inventário está vazio.</p>
-                <p className="text-xs mt-1 text-zinc-600">Vai à loja comprar equipamento!</p>
+        <div className="flex h-full flex-col">
+          <SheetHeader className="shrink-0 border-b border-white/10 px-4 sm:px-5 pb-2.5 pt-2.5 text-left">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <SheetTitle className="text-left text-lg font-black tracking-wide text-yellow-300">
+                  Mochila
+                </SheetTitle>
+                <p className="mt-1 text-[10px] text-zinc-400">
+                  Gere o teu inventário e compra novo equipamento.
+                </p>
               </div>
-            ) : (
-              <div className="space-y-2">
-                {inventory.map((inv) => (
-                  <ItemCard
-                    key={inv.id}
-                    inventoryItem={inv}
-                    mode="inventory"
-                    onEquip={handleEquip}
-                    onUnequip={handleUnequip}
-                    loading={loadingId === inv.item.id}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
-        {tab === "shop" && (
-          <div>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-widest mb-3">
-              Gold disponível: <span className="text-yellow-300 font-bold">{character.gold ?? 0} G</span>
-            </p>
-            <div className="space-y-2">
-              {shopItems.map((item) => (
-                <ItemCard
-                  key={item.id}
-                  shopItem={item}
-                  alreadyOwned={ownedIds.has(item.id)}
-                  mode="shop"
-                  onBuy={handleBuy}
-                  loading={loadingId === item.id}
-                  playerGold={character.gold ?? 0}
-                />
-              ))}
+              <div className="flex items-center gap-1 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-2 py-1">
+                <Coins className="h-3 w-3 text-yellow-300" />
+                <span className="text-[10px] font-extrabold text-yellow-300">
+                  {character.gold ?? 0} G
+                </span>
+              </div>
+            </div>
+          </SheetHeader>
+
+          {toast && (
+            <div className="px-4 sm:px-5 pt-2.5">
+              <div
+                className={`rounded-xl border px-2 py-1.5 text-[10px] font-bold shadow-lg ${
+                  toast.ok
+                    ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                    : "border-rose-400/30 bg-rose-400/10 text-rose-300"
+                }`}
+              >
+                {toast.msg}
+              </div>
+            </div>
+          )}
+
+          <div className="px-4 sm:px-5 pt-2.5">
+            <div className="grid grid-cols-2 gap-2 rounded-2xl border border-white/10 bg-white/5 p-1">
+              {(["inventory", "shop"] as Tab[]).map((t) => {
+                const active = tab === t;
+
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className={`flex items-center justify-center gap-1 rounded-xl px-2 py-2 text-[9px] font-bold uppercase tracking-[0.12em] transition-all ${
+                      active
+                        ? "bg-yellow-400 text-black shadow-[0_0_20px_rgba(250,204,21,0.2)]"
+                        : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100"
+                    }`}
+                  >
+                    {t === "inventory" ? (
+                      <>
+                        <Backpack className="h-3 w-3" />
+                        Inventário
+                      </>
+                    ) : (
+                      <>
+                        <Store className="h-3 w-3" />
+                        Loja
+                      </>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        )}
+
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 sm:px-5 pb-4 pt-2.5">
+            {tab === "inventory" && (
+              <>
+                {inventory.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-white/10 bg-white/5 px-5 py-7 text-center">
+                    <Backpack className="mx-auto mb-2 h-6 w-6 text-zinc-500" />
+                    <p className="text-xs font-bold text-zinc-200">
+                      O teu inventário está vazio.
+                    </p>
+                    <p className="mt-1 text-[10px] text-zinc-400">
+                      Vai à loja e compra o teu primeiro equipamento.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {inventory.map((inv) => (
+                      <ItemCard
+                        key={inv.item.id}
+                        inventoryItem={inv}
+                        mode="inventory"
+                        loading={loadingId === inv.item.id}
+                        onEquip={handleEquip}
+                        onUnequip={handleUnequip}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {tab === "shop" && (
+              <>
+                <div className="mb-2.5 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                  <div>
+                    <p className="text-[9px] uppercase tracking-[0.12em] text-zinc-500">
+                      Loja
+                    </p>
+                    <p className="text-[11px] font-semibold text-zinc-200">
+                      Compra equipamento para melhorar o teu personagem
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-2 py-1 text-[10px] font-extrabold text-yellow-300">
+                    {character.gold ?? 0} G
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  {shopItems.map((item) => (
+                    <ItemCard
+                      key={item.id}
+                      shopItem={item}
+                      alreadyOwned={ownedIds.has(item.id)}
+                      mode="shop"
+                      loading={loadingId === item.id}
+                      onBuy={handleBuy}
+                      playerGold={character.gold ?? 0}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -1,6 +1,5 @@
 "use client";
 // components/dashboard/equipment/EquipmentPanel.tsx
-// Painel visual dos slots de equipamento + buffs ativos + set bonuses
 
 import React from "react";
 import { Sword, Shield, Gem, Sparkles } from "lucide-react";
@@ -9,16 +8,14 @@ import type {
   FinalStats,
   ActiveSetBonus,
 } from "@/types/equipment";
-import type { Character } from "@/components/dashboard/dashboardUtils";
 import { RARITY_CONFIG } from "@/types/equipment";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface EquipmentPanelProps {
-  character: Character;
   equipment: EquipmentSlots;
   onSlotClick?: (slot: "weapon" | "armor" | "amulet") => void;
-  finalStats?: FinalStats; // só para set bonus
+  finalStats?: FinalStats;
 }
 
 // ─── Sub-componente: Slot ─────────────────────────────────────────────────────
@@ -42,29 +39,34 @@ function EquipSlot({
     <button
       onClick={onClick}
       className={`
-        group relative flex flex-col items-center gap-1.5
-        w-full rounded-xl border p-3 text-center transition-all duration-200
+        group relative flex flex-col items-center gap-3
+        w-full rounded-2xl border p-5 text-center
+        transition-all duration-200
         ${
           item
-            ? `${rarity!.border} ${rarity!.glow} bg-[#1a162e]/60 hover:brightness-110`
-            : "border-[#2a2540] bg-[#1a162e]/30 hover:border-[#3a3558]"
+            ? `${rarity!.border} ${rarity!.glow} bg-[#1a162e]/70 hover:brightness-110 hover:scale-[1.02]`
+            : "border-[#2a2540] bg-[#1a162e]/30 hover:border-[#3a3558] hover:bg-[#1a162e]/50"
         }
       `}
     >
-      {/* Ícone do item ou vazio */}
+      {/* Ícone */}
       <div
         className={`
-          w-10 h-10 flex items-center justify-center rounded-lg text-xl leading-none
-          ${item ? `${rarity!.bg} border ${rarity!.border}` : "bg-[#0f0d1a] border border-[#2a2540]"}
+          w-14 h-14 flex items-center justify-center rounded-xl text-3xl leading-none
+          ${
+            item
+              ? `${rarity!.bg} border ${rarity!.border}`
+              : "bg-[#0f0d1a] border border-[#2a2540]"
+          }
         `}
       >
         {item ? item.icon : <span className="text-zinc-600">{emptyEmoji}</span>}
       </div>
 
       {/* Label do slot */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <Icon className="w-3 h-3 text-zinc-500" />
-        <span className="text-[9px] uppercase tracking-widest text-zinc-500">
+        <span className="text-[9px] uppercase tracking-widest font-semibold text-zinc-500">
           {label}
         </span>
       </div>
@@ -72,7 +74,7 @@ function EquipSlot({
       {/* Nome do item */}
       {item ? (
         <p
-          className={`text-[10px] font-bold leading-tight ${rarity!.color} line-clamp-2`}
+          className={`text-[11px] font-bold leading-snug ${rarity!.color} line-clamp-2 px-1`}
         >
           {item.name}
         </p>
@@ -83,26 +85,33 @@ function EquipSlot({
   );
 }
 
-// ─── Sub-componente: Set Bonus Badge ─────────────────────────────────────────
+// ─── Sub-componente: Set Bonus ────────────────────────────────────────────────
 
 function SetBonusBadge({ activeSetBonus }: { activeSetBonus: ActiveSetBonus }) {
   return (
-    <div className="rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-2">
-      <div className="flex items-center gap-1.5 mb-1">
-        <Sparkles className="w-3 h-3 text-purple-400" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-purple-300">
-          Set Bonus Ativo
-        </span>
-        <span className="ml-auto text-[10px] text-purple-400 font-bold">
+    <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-4 space-y-3">
+      {/* Header */}
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
+          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+        </div>
+        <div className="flex-1">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-purple-300">
+            Set Bonus Ativo
+          </span>
+        </div>
+        <span className="text-[10px] text-purple-400 font-bold bg-purple-500/20 border border-purple-500/30 px-2 py-0.5 rounded-full">
           {activeSetBonus.pieces_equipped} peças
         </span>
       </div>
-      <div className="flex flex-wrap gap-1 mt-1">
+
+      {/* Bonus Tags */}
+      <div className="flex flex-wrap gap-1.5">
         {activeSetBonus.bonuses_active.flatMap((bonus, bi) =>
           Object.entries(bonus).map(([key, val]) => (
             <span
               key={`${bi}-${key}`}
-              className="text-[9px] px-1.5 py-0.5 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 font-semibold"
+              className="text-[9px] px-2.5 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 font-semibold"
             >
               {formatBonusKey(key, val)}
             </span>
@@ -140,15 +149,14 @@ function formatBonusKey(key: string, val: unknown): string {
 // ─── Componente Principal ─────────────────────────────────────────────────────
 
 export default function EquipmentPanel({
-  character,
   equipment,
   finalStats,
   onSlotClick,
 }: EquipmentPanelProps) {
   if (!finalStats) {
     return (
-      <div className="bg-[#13111e] border border-[#2a2540] rounded-xl p-4">
-        <p className="text-zinc-400 text-xs italic">
+      <div className="bg-[#13111e] border border-[#2a2540] rounded-2xl p-6">
+        <p className="text-zinc-500 text-xs italic text-center">
           Equipamento não carregado...
         </p>
       </div>
@@ -156,44 +164,54 @@ export default function EquipmentPanel({
   }
 
   return (
-    <div className="bg-[#13111e] border border-[#2a2540] rounded-xl p-4 space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-2 border-b border-[#2a2540] pb-3">
-        <span className="text-yellow-300 text-sm">⚔️</span>
+    <div className="bg-[#13111e] border border-[#2a2540] rounded-2xl p-6 space-y-6">
+      {/* ── Header ── */}
+      <div className="flex items-center gap-3 pb-4 border-b border-[#2a2540]">
+        <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+          <span className="text-sm">⚔️</span>
+        </div>
         <h4 className="text-yellow-300 text-xs font-bold uppercase tracking-[0.2em]">
           Equipamento
         </h4>
       </div>
 
-      {/* Slots */}
-      <div className="grid grid-cols-3 gap-2">
+      {/* ── Slots ── */}
+      <div className="grid grid-cols-3 gap-4">
         <EquipSlot
           label="Arma"
           icon={Sword}
           item={equipment.weapon}
           emptyEmoji="🗡️"
+          onClick={() => onSlotClick?.("weapon")}
         />
         <EquipSlot
           label="Armadura"
           icon={Shield}
           item={equipment.armor}
           emptyEmoji="🛡️"
+          onClick={() => onSlotClick?.("armor")}
         />
         <EquipSlot
           label="Amuleto"
           icon={Gem}
           item={equipment.amulet}
           emptyEmoji="📿"
+          onClick={() => onSlotClick?.("amulet")}
         />
       </div>
 
-      {/* Set bonus (se quiseres manter) */}
+      {/* ── Divider só aparece se tiver set bonuses ── */}
       {(finalStats?.active_set_bonuses?.length ?? 0) > 0 && (
-        <div className="space-y-2">
-          {finalStats!.active_set_bonuses.map((sb) => (
-            <SetBonusBadge key={sb.set_id} activeSetBonus={sb} />
-          ))}
-        </div>
+        <>
+          <div className="border-t border-[#2a2540]" />
+
+          {/* ── Set Bonuses ── */}
+          <div className="space-y-3">
+            {finalStats!.active_set_bonuses.map((sb) => (
+              <SetBonusBadge key={sb.set_id} activeSetBonus={sb} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

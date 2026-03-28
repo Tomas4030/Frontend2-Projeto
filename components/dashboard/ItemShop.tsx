@@ -276,8 +276,8 @@ export default function ItemShop({
   return (
     <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       {}
-      <div className="border-b border-white/10 bg-linear-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-4 py-3">
-        <div className="flex items-center justify-between gap-2">
+      <div className="border-b border-white/10 bg-linear-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-6 py-4">
+        <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-500">
               Merchant Zone
@@ -286,7 +286,7 @@ export default function ItemShop({
               ◆ Loja de Itens
             </h3>
           </div>
-          <div className="flex items-center whitespace-nowrap gap-2.5 rounded-xl border border-yellow-400/25 bg-yellow-400/10 px-6 py-1.5">
+          <div className="flex items-center whitespace-nowrap gap-2.5 rounded-xl border border-yellow-400/25 bg-yellow-400/10 px-6 py-2">
             <Coins className="h-4 w-4 text-yellow-400 shrink-0" />
             <span className="text-xs font-bold text-yellow-200 leading-none">
               {gold} G
@@ -296,7 +296,7 @@ export default function ItemShop({
       </div>
 
       {}
-      <div className="p-3">
+      <div className="p-5">
         {toast && (
           <Toast
             message={toast.message}
@@ -305,7 +305,7 @@ export default function ItemShop({
           />
         )}
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {items.map((item) => {
             const meta = getItemMeta(item);
             const boughtToday = purchaseCounts[item.key] ?? 0;
@@ -317,16 +317,16 @@ export default function ItemShop({
             return (
               <div
                 key={item.key}
-                className={`rounded-xl border p-3 transition-all duration-200 ${
+                className={`rounded-xl border p-4 transition-all duration-200 ${
                   canBuy
                     ? "border-white/10 bg-white/3 hover:border-yellow-400/25 hover:bg-white/5"
                     : "border-white/5 bg-white/2 opacity-50"
                 }`}
               >
                 {}
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   {}
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black/20 text-xl leading-none">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-black/20 text-2xl leading-none">
                     {item.icon}
                   </div>
 
@@ -335,34 +335,34 @@ export default function ItemShop({
                     <p className="truncate text-sm font-bold text-zinc-100">
                       {item.name}
                     </p>
-                    <p className="text-[10px] uppercase tracking-wider text-zinc-500">
+                    <p className="text-[10px] uppercase tracking-wider text-zinc-500 mt-1">
                       {meta.badge} · {item.type}
                     </p>
                   </div>
 
                   {}
-                  <div className="shrink-0 rounded-lg border border-yellow-400/20 bg-yellow-400/10 px-2 py-1 text-xs font-bold text-yellow-300">
+                  <div className="shrink-0 rounded-lg border border-yellow-400/20 bg-yellow-400/10 px-3 py-1.5 text-xs font-bold text-yellow-300">
                     {item.cost} G
                   </div>
                 </div>
 
                 {}
-                <p className="mt-2 text-[12px] leading-relaxed text-zinc-400">
+                <p className="mt-3 text-[12px] leading-relaxed text-zinc-400">
                   {meta.description}
                 </p>
 
                 {}
-                <div className="mt-2.5 flex items-center justify-between gap-2">
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="mt-3.5 flex items-center justify-between gap-3">
+                  <div className="flex flex-wrap gap-2">
                     <span
-                      className={`rounded-full border ${meta.effectBorder} ${meta.effectBg} px-2 py-0.5 text-[10px] font-semibold ${meta.effectColor}`}
+                      className={`rounded-full border ${meta.effectBorder} ${meta.effectBg} px-2 py-1 text-[10px] font-semibold ${meta.effectColor}`}
                     >
                       {getEffectLabel(item)}
                     </span>
 
                     {item.dailyLimit !== undefined && (
                       <span
-                        className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                        className={`rounded-full border px-2 py-1 text-[10px] font-semibold ${
                           reachedDailyLimit
                             ? "border-rose-400/20 bg-rose-400/10 text-rose-400"
                             : "border-white/10 bg-white/5 text-zinc-400"
@@ -378,7 +378,7 @@ export default function ItemShop({
                   <button
                     onClick={() => handleBuy(item)}
                     disabled={!canBuy || isLoading}
-                    className={`h-8 shrink-0 rounded-lg px-4 text-xs font-bold transition-all duration-150 ${
+                    className={`h-9 shrink-0 rounded-lg px-5 text-xs font-bold transition-all duration-150 ${
                       canBuy && !isLoading
                         ? "border border-yellow-400/40 bg-yellow-400 text-black hover:bg-yellow-300 active:scale-95"
                         : "cursor-not-allowed border border-white/10 bg-white/5 text-zinc-600"

@@ -1,7 +1,3 @@
-// hooks/useEquipment.ts
-// Hook centralizado para gerir todo o estado do sistema de equipamento
-// Usar no dashboard/page.tsx para ter acesso a equipment + finalStats
-
 import { useState, useEffect, useCallback } from "react";
 import {
   getPlayerEquipment,
