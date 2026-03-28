@@ -7,11 +7,23 @@ type Star = {
   size: number;
 };
 
+function createSeededRng(seed: number) {
+  let state = seed;
+  return () => {
+    state += 0x6d2b79f5;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const rng = createSeededRng(123456);
 const STARS: Star[] = Array.from({ length: 20 }, () => ({
-  x: Math.random() * 100,
-  y: Math.random() * 100,
-  delay: Math.random() * 3,
-  size: Math.random() > 0.7 ? 3 : 2
+  x: rng() * 100,
+  y: rng() * 100,
+  delay: rng() * 3,
+  size: rng() > 0.7 ? 3 : 2,
 }));
 
 export default function PixelBackground() {
@@ -95,20 +107,20 @@ export default function PixelBackground() {
       <div className="pixel-background">
         <div className="bg-grid" />
 
-        {stars.map((star, i) =>
-        <div
-          key={i}
-          className="pixel-star"
-          style={{
-            left: `${star.x}%`,
-            top: `${star.y}%`,
-            width: `${star.size}px`,
-            height: `${star.size}px`,
-            animationDelay: `${star.delay}s`
-          }} />
-
-        )}
+        {stars.map((star, i) => (
+          <div
+            key={i}
+            className="pixel-star"
+            style={{
+              left: `${star.x}%`,
+              top: `${star.y}%`,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              animationDelay: `${star.delay}s`,
+            }}
+          />
+        ))}
       </div>
-    </>);
-
+    </>
+  );
 }
