@@ -5,16 +5,13 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import PixelBackground from "@/components/PixelBackground";
 import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
-import CharacterPanel from "@/components/dashboard/CharacterPanel";
 import TaskFilter from "@/components/dashboard/TaskFilter";
 import TaskCard from "@/components/dashboard/TaskCard";
 import ItemShop from "@/components/dashboard/ItemShop";
 import ToastMessage from "@/components/dashboard/ToastMessage";
-import EquipmentPanel from "@/components/dashboard/equipment/EquipmentPanel";
 import InventorySheet from "@/components/dashboard/equipment/InventorySheet";
 import { useEquipment } from "@/hooks/useEquipment";
 import { applyGoldMultiplier, applyXpMultiplier } from "@/lib/equipment";
-import type { InventoryItem } from "@/types/equipment";
 import {
   handleLevelUp,
   Task,
@@ -23,6 +20,7 @@ import {
   getManaCost,
   getRandomGoldReward,
 } from "@/components/dashboard/dashboardUtils";
+import CharacterPanel from "@/components/dashboard/CharacterPanel";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -59,16 +57,6 @@ export default function DashboardPage() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
-
-  const equippedInventoryItems: InventoryItem[] = Object.values(equipment)
-    .filter((item): item is NonNullable<typeof item> => Boolean(item))
-    .map((item) => ({
-      id: `equipped-${item.id}`,
-      item,
-      acquired_at: new Date(0).toISOString(),
-      isEquipped: true,
-      isLocked: false,
-    }));
 
   const fetchTasks = useCallback(
     async (userId: string) => {
@@ -301,136 +289,133 @@ export default function DashboardPage() {
   }
 
   return (
-    <>
-      <div className="min-h-screen  text-white">
-        <PixelBackground />
-        {toast && <ToastMessage toast={toast} />}
-        <main className="min-h-screen relative z-10 font-mono flex flex-col">
-          <div className="flex-1 flex items-center py-12">
-            <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
-              <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
+    <div className="min-h-screen text-white">
+      <PixelBackground />
+      {toast && <ToastMessage toast={toast} />}
+
+      <main className="relative z-10 min-h-screen font-mono flex flex-col">
+        <div className="flex-1 flex items-center py-12">
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-4 md:px-6 xl:grid-cols-12">
+            <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
+              {character && finalStats && (
                 <CharacterPanel
                   character={character}
-                  inventoryItems={equippedInventoryItems}
-                />
-
-                {character && finalStats && (
-                  <EquipmentPanel
-                    character={character}
-                    equipment={equipment}
-                    finalStats={finalStats}
-                    onSlotClick={() => {}}
-                  />
-                )}
-              </aside>
-
-              <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
-                    <span className="animate-pulse">⚔</span> Mural de Missões
-                  </h2>
-                  <div className="shrink-0">
-                    <NewQuestSheet
-                      onQuestCreated={() =>
-                        character && fetchTasks(character.user_id)
-                      }
-                    />
-                  </div>
-                </div>
-
-                <TaskFilter
-                  activeFilter={activeFilter}
-                  setActiveFilter={(f) => {
-                    setActiveFilter(f);
-                    setCurrentPage(1);
+                  equipment={equipment}
+                  finalStats={finalStats}
+                  onSlotClick={(slot) => {
+                    console.log("slot clicked:", slot);
                   }}
                 />
+              )}
+            </aside>
 
-                <div
-                  className={`flex-1 space-y-3 min-h-100 ${
-                    paginatedTasks.length > 0
-                      ? "overflow-y-auto"
-                      : "overflow-hidden"
-                  }`}
-                >
-                  {paginatedTasks.length > 0 ? (
-                    paginatedTasks.map((task) => (
-                      <TaskCard
-                        key={task.id}
-                        task={task}
-                        onDelete={deleteTask}
-                        onComplete={completeTask}
-                      />
-                    ))
-                  ) : (
-                    <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-50 flex items-center justify-center">
-                      <p className="text-[#cbd5e1] text-sm uppercase tracking-[0.3em]">
-                        Mural Vazio
-                      </p>
-                    </div>
-                  )}
+            <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
+              <div className="flex items-center justify-between">
+                <h2 className="flex items-center gap-3 text-lg font-bold uppercase tracking-widest text-[#f5c542]">
+                  <span className="animate-pulse">⚔</span> Mural de Missões
+                </h2>
 
-                  {paginatedTasks.length < itemsPerPage &&
-                    Array(itemsPerPage - paginatedTasks.length)
-                      .fill(0)
-                      .map((_, idx) => <div key={idx} className="h-24" />)}
+                <div className="shrink-0">
+                  <NewQuestSheet
+                    onQuestCreated={() =>
+                      character && fetchTasks(character.user_id)
+                    }
+                  />
                 </div>
+              </div>
 
-                {totalPages > 1 && (
-                  <div className="flex justify-center items-center gap-4 mt-6">
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={currentPage === 1}
-                      className={`px-3 py-1 rounded font-bold ${
-                        currentPage === 1
-                          ? "bg-gray-700 cursor-not-allowed"
-                          : "bg-yellow-500 hover:bg-yellow-600"
-                      }`}
-                    >
-                      Anterior
-                    </button>
+              <TaskFilter
+                activeFilter={activeFilter}
+                setActiveFilter={(f) => {
+                  setActiveFilter(f);
+                  setCurrentPage(1);
+                }}
+              />
 
-                    <span className="text-yellow-400 font-bold">
-                      Página {currentPage} de {totalPages}
-                    </span>
-
-                    <button
-                      onClick={() =>
-                        setCurrentPage((p) => Math.min(totalPages, p + 1))
-                      }
-                      disabled={currentPage === totalPages}
-                      className={`px-3 py-1 rounded font-bold ${
-                        currentPage === totalPages
-                          ? "bg-gray-700 cursor-not-allowed"
-                          : "bg-yellow-500 hover:bg-yellow-600"
-                      }`}
-                    >
-                      Próxima
-                    </button>
+              <div
+                className={`min-h-100 flex-1 space-y-3 ${
+                  paginatedTasks.length > 0
+                    ? "overflow-y-auto"
+                    : "overflow-hidden"
+                }`}
+              >
+                {paginatedTasks.length > 0 ? (
+                  paginatedTasks.map((task) => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onDelete={deleteTask}
+                      onComplete={completeTask}
+                    />
+                  ))
+                ) : (
+                  <div className="min-h-50 flex items-center justify-center border-2 border-[#2a2540] border-dashed bg-[#13111e]/50 py-24 text-center">
+                    <p className="text-sm uppercase tracking-[0.3em] text-[#cbd5e1]">
+                      Mural Vazio
+                    </p>
                   </div>
                 )}
-              </section>
 
-              <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
-                {character && finalStats && (
-                  <InventorySheet
-                    character={character}
-                    equipment={equipment}
-                    onEquipmentChange={refreshEquipment}
-                    onGoldChange={fetchCharacter}
-                  />
-                )}
+                {paginatedTasks.length < itemsPerPage &&
+                  Array(itemsPerPage - paginatedTasks.length)
+                    .fill(0)
+                    .map((_, idx) => <div key={idx} className="h-24" />)}
+              </div>
 
-                <ItemShop
-                  gold={character?.gold ?? 0}
-                  characterId={character?.id ?? ""}
-                  onPurchaseSuccess={fetchCharacter}
+              {totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                    className={`rounded px-3 py-1 font-bold ${
+                      currentPage === 1
+                        ? "cursor-not-allowed bg-gray-700"
+                        : "bg-yellow-500 hover:bg-yellow-600"
+                    }`}
+                  >
+                    Anterior
+                  </button>
+
+                  <span className="font-bold text-yellow-400">
+                    Página {currentPage} de {totalPages}
+                  </span>
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    }
+                    disabled={currentPage === totalPages}
+                    className={`rounded px-3 py-1 font-bold ${
+                      currentPage === totalPages
+                        ? "cursor-not-allowed bg-gray-700"
+                        : "bg-yellow-500 hover:bg-yellow-600"
+                    }`}
+                  >
+                    Próxima
+                  </button>
+                </div>
+              )}
+            </section>
+
+            <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
+              {character && finalStats && (
+                <InventorySheet
+                  character={character}
+                  equipment={equipment}
+                  onEquipmentChange={refreshEquipment}
+                  onGoldChange={fetchCharacter}
                 />
-              </aside>
-            </div>
+              )}
+
+              <ItemShop
+                gold={character?.gold ?? 0}
+                characterId={character?.id ?? ""}
+                onPurchaseSuccess={fetchCharacter}
+              />
+            </aside>
           </div>
-        </main>
-      </div>
-    </>
+        </div>
+      </main>
+    </div>
   );
 }
