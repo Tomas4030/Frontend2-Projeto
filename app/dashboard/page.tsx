@@ -7,7 +7,7 @@ import PixelBackground from "@/components/PixelBackground";
 import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
 import TaskFilter from "@/components/dashboard/TaskFilter";
 import TaskCard from "@/components/dashboard/TaskCard";
-import ItemShop from "@/components/dashboard/ItemShop";
+import ItemShop from "@/components/dashboard/shop/ItemShop";
 import ToastMessage from "@/components/dashboard/ToastMessage";
 import InventorySheet from "@/components/dashboard/equipment/InventorySheet";
 import { useEquipment } from "@/hooks/useEquipment";
