@@ -201,7 +201,7 @@ export default function ItemShop({
   const visibleItems = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
     return items.slice(start, start + ITEMS_PER_PAGE);
-  }, [page, items.length]);
+  }, [page]);
 
   const showAlert = useCallback((message: string, type: ToastType) => {
     setAlert({ message, type });
@@ -349,7 +349,7 @@ export default function ItemShop({
   };
 
   return (
-    <section className="overflow-hidden rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+    <section className="rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
       <div className="border-b border-white/10 bg-linear-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-6 py-4">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
