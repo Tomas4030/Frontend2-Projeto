@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -9,14 +10,18 @@ import TaskFilter from "@/components/dashboard/TaskFilter";
 import TaskCard from "@/components/dashboard/TaskCard";
 import ItemShop from "@/components/dashboard/ItemShop";
 import ToastMessage from "@/components/dashboard/ToastMessage";
+import EquipmentPanel from "@/components/dashboard/equipment/EquipmentPanel";
+import InventorySheet from "@/components/dashboard/equipment/InventorySheet";
+import { useEquipment } from "@/hooks/useEquipment";
+import { applyGoldMultiplier, applyXpMultiplier } from "@/lib/equipment";
 import {
   handleLevelUp,
   Task,
   Character,
   Difficulty,
   getManaCost,
-  getRandomGoldReward } from
-"@/components/dashboard/dashboardUtils";
+  getRandomGoldReward,
+} from "@/components/dashboard/dashboardUtils";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -26,59 +31,60 @@ export default function DashboardPage() {
   const [character, setCharacter] = useState<Character | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeFilter, setActiveFilter] = useState<
-    "todos" | "habito" | "diaria" | "afazer">(
-    "todos");
+    "todos" | "habito" | "diaria" | "afazer"
+  >("todos");
   const [toast, setToast] = useState<{
     msg: string;
     type: "xp" | "hp" | "lvl" | "dmg";
   } | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
+
+  const { equipment, finalStats, refreshEquipment } = useEquipment(character);
 
   const showToast = (msg: string, type: "xp" | "hp" | "lvl" | "dmg") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 2800);
   };
 
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-
-
   const filteredTasks = tasks.filter(
-    (t) => activeFilter === "todos" || t.type === activeFilter
+    (t) => activeFilter === "todos" || t.type === activeFilter,
   );
 
   const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
 
   const paginatedTasks = filteredTasks.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
+    currentPage * itemsPerPage,
   );
 
   const fetchTasks = useCallback(
     async (userId: string) => {
-      const { data } = await supabase.
-      from("tasks").
-      select("*").
-      eq("user_id", userId).
-      or("is_completed.eq.false,type.eq.habito").
-      order("created_at", { ascending: false });
+      const { data } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("user_id", userId)
+        .or("is_completed.eq.false,type.eq.habito")
+        .order("created_at", { ascending: false });
+
       if (data) setTasks(data as Task[]);
     },
-    [supabase]
+    [supabase],
   );
 
   const fetchCharacter = useCallback(async () => {
     const {
-      data: { user }
+      data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) return;
 
-    const { data, error } = await supabase.
-    from("characters").
-    select("*").
-    eq("user_id", user.id).
-    single();
+    const { data, error } = await supabase
+      .from("characters")
+      .select("*")
+      .eq("user_id", user.id)
+      .single();
 
     if (error) {
       console.error("Erro ao atualizar personagem:", error.message);
@@ -91,7 +97,11 @@ export default function DashboardPage() {
       setCharacter({
         ...data,
         xp,
-        level
+        level,
+        forca: data.forca,
+        inteligencia: data.inteligencia,
+        agilidade: data.agilidade,
+        fe: data.fe,
       } as Character);
     }
   }, [supabase]);
@@ -113,19 +123,22 @@ export default function DashboardPage() {
     const fetchData = async () => {
       const {
         data: { user },
-        error: authError
+        error: authError,
       } = await supabase.auth.getUser();
+
       if (authError || !user) return router.push("/login");
 
-      const { data: char } = await supabase.
-      from("characters").
-      select("*").
-      eq("user_id", user.id).
-      maybeSingle();
+      const { data: char } = await supabase
+        .from("characters")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
       if (char) {
         if (char.hp <= 0) return router.push("/dashboard/revive");
+
         const { xp, level } = handleLevelUp(char.xp || 0, char.level || 1);
+
         setCharacter({
           ...char,
           xp,
@@ -133,13 +146,14 @@ export default function DashboardPage() {
           forca: char.forca,
           inteligencia: char.inteligencia,
           agilidade: char.agilidade,
-          fe: char.fe
-        });
+          fe: char.fe,
+        } as Character);
       }
 
       await fetchTasks(user.id);
       setLoading(false);
     };
+
     fetchData();
   }, [router, supabase, fetchTasks]);
 
@@ -155,14 +169,14 @@ export default function DashboardPage() {
     }
 
     const xpBoostActive =
-    character.xp_boost_multiplier === 2 &&
-    !!character.xp_boost_expires_at &&
-    new Date(character.xp_boost_expires_at).getTime() > Date.now();
+      character.xp_boost_multiplier === 2 &&
+      !!character.xp_boost_expires_at &&
+      new Date(character.xp_boost_expires_at).getTime() > Date.now();
 
     const xpBoostExpired =
-    character.xp_boost_multiplier === 2 &&
-    !!character.xp_boost_expires_at &&
-    new Date(character.xp_boost_expires_at).getTime() <= Date.now();
+      character.xp_boost_multiplier === 2 &&
+      !!character.xp_boost_expires_at &&
+      new Date(character.xp_boost_expires_at).getTime() <= Date.now();
 
     let newHp = character.hp;
     let newXp = character.xp;
@@ -190,8 +204,16 @@ export default function DashboardPage() {
       showToast(`-${dmg} HP • -${manaCost} MP`, "dmg");
     } else {
       const baseXp = task.xp_reward || 0;
-      const gainedXp = xpBoostActive ? baseXp * 2 : baseXp;
-      const gainedGold = getRandomGoldReward(difficulty);
+      let gainedXp = xpBoostActive ? baseXp * 2 : baseXp;
+
+      if (finalStats && finalStats.final_xp_multiplier > 1) {
+        gainedXp = applyXpMultiplier(gainedXp, finalStats);
+      }
+
+      const baseGold = getRandomGoldReward(difficulty);
+      const gainedGold = finalStats
+        ? applyGoldMultiplier(baseGold, finalStats)
+        : baseGold;
 
       const leveled = handleLevelUp(character.xp + gainedXp, character.level);
       newXp = leveled.xp;
@@ -223,26 +245,26 @@ export default function DashboardPage() {
       mp: newMp,
       gold: newGold,
       xp_boost_multiplier: newXpBoostMultiplier,
-      xp_boost_expires_at: newXpBoostExpiresAt
+      xp_boost_expires_at: newXpBoostExpiresAt,
     };
 
-    const { error } = await supabase.
-    from("characters").
-    update(updatedAttrs).
-    eq("id", character.id);
+    const { error } = await supabase
+      .from("characters")
+      .update(updatedAttrs)
+      .eq("id", character.id);
 
     if (error) {
       console.error("Erro ao atualizar personagem:", error.message);
       return;
     }
 
-    setCharacter((prev) => prev ? { ...prev, ...updatedAttrs } : prev);
+    setCharacter((prev) => (prev ? { ...prev, ...updatedAttrs } : prev));
 
     if (task.type !== "habito") {
-      const { error: taskError } = await supabase.
-      from("tasks").
-      update({ is_completed: true }).
-      eq("id", task.id);
+      const { error: taskError } = await supabase
+        .from("tasks")
+        .update({ is_completed: true })
+        .eq("id", task.id);
 
       if (!taskError) {
         setTasks((prev) => prev.filter((t) => t.id !== task.id));
@@ -263,24 +285,31 @@ export default function DashboardPage() {
             A CARREGAR REINO...
           </p>
         </div>
-      </div>);
-
+      </div>
+    );
   }
 
   return (
     <>
-      <div className="min-h-screen bg-[#0b0714] text-white">
+      <div className="min-h-screen  text-white">
         <PixelBackground />
         {toast && <ToastMessage toast={toast} />}
         <main className="min-h-screen relative z-10 font-mono flex flex-col">
           <div className="flex-1 flex items-center py-12">
             <div className="max-w-7xl mx-auto w-full px-4 md:px-6 grid grid-cols-1 xl:grid-cols-12 gap-8">
-              {}
-              <aside className="xl:col-span-3 flex flex-col h-175">
+              <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
                 <CharacterPanel character={character} />
+
+                {character && finalStats && (
+                  <EquipmentPanel
+                    character={character}
+                    equipment={equipment}
+                    finalStats={finalStats}
+                    onSlotClick={() => {}}
+                  />
+                )}
               </aside>
 
-              {}
               <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
                 <div className="flex items-center justify-between">
                   <h2 className="text-[#f5c542] text-lg uppercase tracking-widest font-bold flex items-center gap-3">
@@ -289,9 +318,9 @@ export default function DashboardPage() {
                   <div className="shrink-0">
                     <NewQuestSheet
                       onQuestCreated={() =>
-                      character && fetchTasks(character.user_id)
-                      } />
-                    
+                        character && fetchTasks(character.user_id)
+                      }
+                    />
                   </div>
                 </div>
 
@@ -300,51 +329,50 @@ export default function DashboardPage() {
                   setActiveFilter={(f) => {
                     setActiveFilter(f);
                     setCurrentPage(1);
-                  }} />
-                
+                  }}
+                />
 
                 <div
                   className={`flex-1 space-y-3 min-h-100 ${
-                  paginatedTasks.length > 0 ?
-                  "overflow-y-auto" :
-                  "overflow-hidden"}`
-                  }>
-                  
-                  {paginatedTasks.length > 0 ?
-                  paginatedTasks.map((task) =>
-                  <TaskCard
-                    key={task.id}
-                    task={task}
-                    onDelete={deleteTask}
-                    onComplete={completeTask} />
-
-                  ) :
-
-                  <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-50 flex items-center justify-center">
+                    paginatedTasks.length > 0
+                      ? "overflow-y-auto"
+                      : "overflow-hidden"
+                  }`}
+                >
+                  {paginatedTasks.length > 0 ? (
+                    paginatedTasks.map((task) => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onDelete={deleteTask}
+                        onComplete={completeTask}
+                      />
+                    ))
+                  ) : (
+                    <div className="bg-[#13111e]/50 border-2 border-[#2a2540] border-dashed py-24 text-center min-h-50 flex items-center justify-center">
                       <p className="text-[#cbd5e1] text-sm uppercase tracking-[0.3em]">
                         Mural Vazio
                       </p>
                     </div>
-                  }
+                  )}
 
                   {paginatedTasks.length < itemsPerPage &&
-                  Array(itemsPerPage - paginatedTasks.length).
-                  fill(0).
-                  map((_, idx) => <div key={idx} className="h-24" />)}
+                    Array(itemsPerPage - paginatedTasks.length)
+                      .fill(0)
+                      .map((_, idx) => <div key={idx} className="h-24" />)}
                 </div>
 
-                {}
-                {totalPages > 1 &&
-                <div className="flex justify-center items-center gap-4 mt-6">
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-4 mt-6">
                     <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className={`px-3 py-1 rounded font-bold ${
-                    currentPage === 1 ?
-                    "bg-gray-700 cursor-not-allowed" :
-                    "bg-yellow-500 hover:bg-yellow-600"}`
-                    }>
-                    
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className={`px-3 py-1 rounded font-bold ${
+                        currentPage === 1
+                          ? "bg-gray-700 cursor-not-allowed"
+                          : "bg-yellow-500 hover:bg-yellow-600"
+                      }`}
+                    >
                       Anterior
                     </button>
 
@@ -353,34 +381,42 @@ export default function DashboardPage() {
                     </span>
 
                     <button
-                    onClick={() =>
-                    setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    className={`px-3 py-1 rounded font-bold ${
-                    currentPage === totalPages ?
-                    "bg-gray-700 cursor-not-allowed" :
-                    "bg-yellow-500 hover:bg-yellow-600"}`
-                    }>
-                    
+                      onClick={() =>
+                        setCurrentPage((p) => Math.min(totalPages, p + 1))
+                      }
+                      disabled={currentPage === totalPages}
+                      className={`px-3 py-1 rounded font-bold ${
+                        currentPage === totalPages
+                          ? "bg-gray-700 cursor-not-allowed"
+                          : "bg-yellow-500 hover:bg-yellow-600"
+                      }`}
+                    >
                       Próxima
                     </button>
                   </div>
-                }
+                )}
               </section>
 
-              {}
-              <aside className="xl:col-span-3 flex flex-col h-175">
+              <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
+                {character && finalStats && (
+                  <InventorySheet
+                    character={character}
+                    equipment={equipment}
+                    onEquipmentChange={refreshEquipment}
+                    onGoldChange={fetchCharacter}
+                  />
+                )}
+
                 <ItemShop
                   gold={character?.gold ?? 0}
                   characterId={character?.id ?? ""}
-                  onPurchaseSuccess={fetchCharacter} />
-                
+                  onPurchaseSuccess={fetchCharacter}
+                />
               </aside>
             </div>
           </div>
         </main>
       </div>
-    </>);
-
+    </>
+  );
 }
