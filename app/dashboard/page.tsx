@@ -33,7 +33,7 @@ export default function DashboardPage() {
   const [activeFilter, setActiveFilter] = useState<
     "todos" | "habito" | "diaria" | "afazer"
   >("todos");
-  const [toast, setToast] = useState<{
+  const [battleToast, setBattleToast] = useState<{
     msg: string;
     type: "xp" | "hp" | "lvl" | "dmg";
   } | null>(null);
@@ -55,14 +55,14 @@ export default function DashboardPage() {
   );
 
   const showToast = (msg: string, type: "xp" | "hp" | "lvl" | "dmg") => {
-    setToast({ msg, type });
+    setBattleToast({ msg, type });
 
     if (toastTimeoutRef.current) {
       clearTimeout(toastTimeoutRef.current);
     }
 
     toastTimeoutRef.current = setTimeout(() => {
-      setToast(null);
+      setBattleToast(null);
     }, 2800);
   };
 
@@ -402,7 +402,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen  text-white">
       <PixelBackground />
-      <BattleRewardAnimation reward={toast} />
+      <BattleRewardAnimation reward={battleToast} />
       <AttributeGainAnimation gains={attributeGains} isDefeat={isDefeat} />
 
       <main className="relative z-10 min-h-screen font-mono flex items-center justify-center py-8">
