@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Task, DIFFICULTY_COLORS } from "./dashboardUtils";
+import { DIFFICULTY_COLORS } from "./dashboardUtils";
+import type { Task } from "@/types/dashboard";
 import { Trash2 } from "lucide-react";
 
 type Props = {

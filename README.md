@@ -24,12 +24,16 @@ Ajustar ícone de dinheiro no inventário ✅
 Aumentar ligeiramente o tamanho da box do gold ✅
 
 📜 Itens & Efeitos
-Corrigir bug onde o pergaminho não aplica x2 de XP 
-Validar aplicação correta de:
+
+Corrigir visualmente a Loja de Itens, mostrando um timer com o tempo restante do efeito de XP em dobro.
+Alterar a duração do item de XP x2 de 24 horas para 30 minutos.
+Adicionar mais itens à Loja de Itens.
+Corrigir o bug em que o Pergaminho de XP não aplica corretamente o multiplicador x2 de XP.
+Validar a aplicação correta de:
 Buffs
 Multiplicadores
 Efeitos temporários
-corrigir tbm os itens do inventario tem q aplicar os efeitos q fiz (como por ex forca, mais mana maxima, mais xp Streak Protection) ele supostamente esta equipado mas não aplicas os efeitos que diz no icon ✅
+Mostrar na Loja de Itens a quantidade de itens que ainda podem ser comprados, por exemplo: 1/5.
 
 🏆 Sistema de Prestígio
 Implementar sistema de prestígio

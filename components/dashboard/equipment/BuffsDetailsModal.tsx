@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import type { FinalStats } from "@/types/equipment";
-import type { Character } from "@/components/dashboard/dashboardUtils";
+import type { Character } from "@/types/dashboard";
 
 interface BuffsDetailsModalProps {
   character: Character;
@@ -52,7 +52,6 @@ export default function BuffsDetailsModal({
 }: BuffsDetailsModalProps) {
   const [open, setOpen] = useState(false);
 
-  // Calcular bônus aplicados
   const strengthBonus = finalStats.final_forca - character.forca;
   const intelligenceBonus =
     finalStats.final_inteligencia - character.inteligencia;

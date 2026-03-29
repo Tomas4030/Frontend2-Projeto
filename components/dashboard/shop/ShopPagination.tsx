@@ -13,25 +13,38 @@ export default function ShopPagination({
 }: Props) {
   if (totalPages <= 1) return null;
 
+  const safePage = Math.max(1, Math.min(page, totalPages));
+
+  let startPage = safePage;
+
+  if (safePage === totalPages) {
+    startPage = totalPages - 1;
+  }
+
+  if (startPage < 1) startPage = 1;
+
+  const visiblePages =
+    totalPages <= 2
+      ? Array.from({ length: totalPages }, (_, i) => i + 1)
+      : [startPage, startPage + 1];
+
   return (
     <div className="mt-5 flex items-center justify-center gap-2">
+      {/* ⬅ VOLTAR */}
       <button
-        type="button"
-        onClick={() => page > 1 && onPageChange(page - 1)}
-        disabled={page === 1}
-        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-zinc-300 transition hover:border-yellow-400/30 hover:text-yellow-300 disabled:cursor-not-allowed disabled:opacity-40"
+        onClick={() => onPageChange(safePage - 1)}
+        disabled={safePage === 1}
+        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 transition hover:border-yellow-400/30 hover:text-yellow-300 disabled:opacity-40"
       >
-        Anterior
+        ←
       </button>
 
-      {Array.from({ length: totalPages }).map((_, index) => {
-        const pageNumber = index + 1;
-        const isActive = pageNumber === page;
+      {visiblePages.map((pageNumber) => {
+        const isActive = pageNumber === safePage;
 
         return (
           <button
             key={pageNumber}
-            type="button"
             onClick={() => onPageChange(pageNumber)}
             className={`min-w-9 rounded-lg border px-3 py-2 text-xs font-bold transition ${
               isActive
@@ -44,13 +57,13 @@ export default function ShopPagination({
         );
       })}
 
+      {/* ➡ AVANÇAR */}
       <button
-        type="button"
-        onClick={() => page < totalPages && onPageChange(page + 1)}
-        disabled={page === totalPages}
-        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-bold text-zinc-300 transition hover:border-yellow-400/30 hover:text-yellow-300 disabled:cursor-not-allowed disabled:opacity-40"
+        onClick={() => onPageChange(safePage + 1)}
+        disabled={safePage === totalPages}
+        className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-zinc-300 transition hover:border-yellow-400/30 hover:text-yellow-300 disabled:opacity-40"
       >
-        Próxima
+        →
       </button>
     </div>
   );

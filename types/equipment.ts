@@ -1,29 +1,21 @@
 // types/equipment.ts
-// Tipos TypeScript para o sistema de equipamento RPG
-// Compatível com a estrutura de Character existente em dashboardUtils.ts
-
-// ─── Enums ────────────────────────────────────────────────────────────────────
 
 export type Slot = "weapon" | "armor" | "amulet";
 
 export type Rarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
 
-// ─── Buffs ────────────────────────────────────────────────────────────────────
-
 export interface ItemBuffs {
-  strength_bonus?: number; // forca
-  intelligence_bonus?: number; // inteligencia
-  agility_bonus?: number; // agilidade
-  faith_bonus?: number; // fé
+  strength_bonus?: number;
+  intelligence_bonus?: number;
+  agility_bonus?: number;
+  faith_bonus?: number;
   hp_bonus?: number;
   mp_bonus?: number;
-  xp_multiplier?: number; // 1.0 = sem bónus, 1.2 = +20%
+  xp_multiplier?: number;
   gold_multiplier?: number;
   boss_damage_bonus?: number;
   streak_protection?: boolean;
 }
-
-// ─── Unlock Conditions ────────────────────────────────────────────────────────
 
 export interface UnlockConditions {
   min_level?: number;
@@ -32,8 +24,6 @@ export interface UnlockConditions {
   boss_killed?: boolean;
   challenge_id?: string;
 }
-
-// ─── Item (do catálogo global) ────────────────────────────────────────────────
 
 export interface Item extends ItemBuffs {
   id: string;
@@ -48,25 +38,19 @@ export interface Item extends ItemBuffs {
   created_at?: string;
 }
 
-// ─── Inventário do Jogador ────────────────────────────────────────────────────
-
 export interface InventoryItem {
-  id: string; // player_inventory.id
+  id: string;
   item: Item;
   acquired_at: string;
-  isEquipped: boolean; // calculado no cliente
-  isLocked: boolean; // calculado com checkUnlock()
+  isEquipped: boolean;
+  isLocked: boolean;
 }
-
-// ─── Slots de Equipamento ─────────────────────────────────────────────────────
 
 export interface EquipmentSlots {
   weapon?: Item | null;
   armor?: Item | null;
   amulet?: Item | null;
 }
-
-// ─── Set Bonuses ─────────────────────────────────────────────────────────────
 
 export interface SetBonus {
   id: string;
@@ -80,9 +64,6 @@ export interface ActiveSetBonus {
   pieces_equipped: number;
   bonuses_active: Partial<ItemBuffs>[];
 }
-
-// ─── Stats Finais (base + equipamento + set bonuses) ─────────────────────────
-// Estende o Character existente com os stats calculados
 
 export interface FinalStats {
   final_forca: number;
@@ -98,24 +79,20 @@ export interface FinalStats {
   active_set_bonuses: ActiveSetBonus[];
 }
 
-// ─── Resposta das RPCs do Supabase ────────────────────────────────────────────
-
 export interface RpcResponse {
   success: boolean;
   message: string;
   slot?: Slot;
 }
 
-// ─── Cores e labels por raridade ─────────────────────────────────────────────
-
 export const RARITY_CONFIG: Record<
   Rarity,
   {
     label: string;
-    color: string; // text color
-    border: string; // border color
-    glow: string; // box-shadow glow
-    bg: string; // background tint
+    color: string;
+    border: string;
+    glow: string;
+    bg: string;
   }
 > = {
   common: {

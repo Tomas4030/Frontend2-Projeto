@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState, useRef } from "react";
-import type { Character } from "@/components/dashboard/dashboardUtils";
+import type { Character } from "@/types/dashboard";
 import { createClient } from "@/lib/supabase/client";
 import {
   shouldRegenerate,

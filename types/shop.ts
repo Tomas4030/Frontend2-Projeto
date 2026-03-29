@@ -9,7 +9,7 @@ export type ShopItem = {
   dailyLimit?: number;
 };
 
-export type Props = {
+export type ShopProps = {
   gold: number;
   characterId: string;
   onPurchaseSuccess?: () => Promise<void> | void;
@@ -17,9 +17,9 @@ export type Props = {
 
 export type PurchaseCountMap = Record<string, number>;
 
-export type ToastType = "success" | "error" | "warning";
+export type ShopToastType = "success" | "error" | "warning";
 
 export type ToastState = {
   message: string;
-  type: ToastType;
+  type: ShopToastType;
 } | null;

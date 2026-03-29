@@ -1,20 +1,16 @@
-// Mana regeneration system
-// Tracks and applies time-based mana restoration from shop items
-
-import type { Character } from "@/components/dashboard/dashboardUtils";
+import type { Character } from "@/types/dashboard";
 
 export type ManaBoost = {
   id: string;
   character_id: string;
   boost_type: "restore_mp" | "regeneration";
-  amount: number; // Mana to restore or regenerate per interval
-  duration_minutes: number; // How long the effect lasts
-  interval_minutes: number; // How often to apply (default 60 for hourly)
+  amount: number;
+  duration_minutes: number;
+  interval_minutes: number;
   created_at: string;
   expires_at: string;
 };
 
-// Calculate total mana restoration from all active boosts
 export function calculateActiveManaBoosts(boosts: ManaBoost[]): {
   totalRestoration: number;
   activeBoosts: ManaBoost[];
@@ -24,7 +20,6 @@ export function calculateActiveManaBoosts(boosts: ManaBoost[]): {
     (boost) => new Date(boost.expires_at) > now,
   );
 
-  // Sum up all restoration from active boosts
   const totalRestoration = activeBoosts.reduce((sum, boost) => {
     if (boost.boost_type === "restore_mp") {
       return sum + boost.amount;
@@ -35,7 +30,6 @@ export function calculateActiveManaBoosts(boosts: ManaBoost[]): {
   return { totalRestoration, activeBoosts };
 }
 
-// Apply mana restoration and return updated character
 export function applyManaRestoration(
   character: Character,
   amount: number,
@@ -47,7 +41,6 @@ export function applyManaRestoration(
   };
 }
 
-// Check if mana needs to be regenerated (hourly from boosts)
 export function shouldRegenerate(lastRegeneration: string | null): boolean {
   if (!lastRegeneration) return true;
 
@@ -55,10 +48,9 @@ export function shouldRegenerate(lastRegeneration: string | null): boolean {
   const now = new Date();
   const minutesPassed = (now.getTime() - lastRegen.getTime()) / (1000 * 60);
 
-  return minutesPassed >= 60; // Regenerate every hour
+  return minutesPassed >= 60;
 }
 
-// Format remaining time for a mana boost
 export function formatBoostDuration(expiresAt: string): string {
   const now = new Date();
   const expiration = new Date(expiresAt);

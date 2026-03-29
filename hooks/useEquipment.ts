@@ -5,7 +5,7 @@ import {
   calculateFinalStats,
 } from "@/lib/equipment";
 import type { EquipmentSlots, SetBonus, FinalStats } from "@/types/equipment";
-import type { Character } from "@/components/dashboard/dashboardUtils";
+import type { Character } from "@/types/dashboard";
 
 interface UseEquipmentReturn {
   equipment: EquipmentSlots;

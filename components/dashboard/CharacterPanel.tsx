@@ -3,7 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import StatBar from "./StatBar";
-import { Character, CLASS_AVATARS, CLASS_TITLE } from "./dashboardUtils";
+import { CLASS_AVATARS, CLASS_TITLE } from "./dashboardUtils";
+import type { Character } from "@/types/dashboard";
 import EquipmentPanel from "./equipment/EquipmentPanel";
 import type { EquipmentSlots, FinalStats } from "@/types/equipment";
 

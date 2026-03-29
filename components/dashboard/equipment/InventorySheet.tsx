@@ -23,7 +23,7 @@ import type {
   Item,
   Slot,
 } from "@/types/equipment";
-import type { Character } from "@/components/dashboard/dashboardUtils";
+import type { Character } from "@/types/dashboard";
 
 interface InventorySheetProps {
   character: Character;

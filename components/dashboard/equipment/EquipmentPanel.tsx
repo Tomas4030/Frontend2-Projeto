@@ -4,7 +4,7 @@ import React from "react";
 import { Sword, Shield, Gem, LucideIcon } from "lucide-react";
 import type { EquipmentSlots, FinalStats, Item } from "@/types/equipment";
 import { RARITY_CONFIG } from "@/types/equipment";
-import type { Character } from "@/components/dashboard/dashboardUtils";
+import type { Character } from "@/types/dashboard";
 import BuffsDetailsModal from "./BuffsDetailsModal";
 
 type SlotKey = "weapon" | "armor" | "amulet";

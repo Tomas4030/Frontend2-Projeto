@@ -15,12 +15,10 @@ import { useEquipment } from "@/hooks/useEquipment";
 import { applyGoldMultiplier, applyXpMultiplier } from "@/lib/equipment";
 import {
   handleLevelUp,
-  Task,
-  Character,
-  Difficulty,
   getManaCost,
   getRandomGoldReward,
 } from "@/components/dashboard/dashboardUtils";
+import type { Task, Character, Difficulty } from "@/types/dashboard";
 import CharacterPanel from "@/components/dashboard/CharacterPanel";
 
 export default function DashboardPage() {
@@ -195,7 +193,6 @@ export default function DashboardPage() {
       return;
     }
 
-    // Log mana consumption for debugging
     console.log(
       `[Mana] Antes: ${character.mp}/${character.max_mp}, Custo: ${manaCost}`,
     );
@@ -247,7 +244,6 @@ export default function DashboardPage() {
       newAgilidade = Math.max(0, character.agilidade - agilidadePenalty);
       newFe = Math.max(0, character.fe - fePenalty);
 
-      // Trigger animation for attribute loss
       setAttributeGains({
         forca: -forcaPenalty,
         inteligencia: -inteligenciaPenalty,
@@ -259,14 +255,11 @@ export default function DashboardPage() {
       showToast(`-${dmg} HP • -${manaCost} MP`, "dmg");
     } else {
       const baseXp = task.xp_reward || 0;
-      // Apply both multiplicadores: pergaminho (xp_boost) and equipment (xp_multiplier)
-      // Calculate cumulative multiplier: pergaminho × equipment
       const shoppingBoostMultiplier = xpBoostActive ? newXpBoostMultiplier : 1;
       const equipmentMultiplier = finalStats?.final_xp_multiplier ?? 1;
       const totalMultiplier = shoppingBoostMultiplier * equipmentMultiplier;
       let gainedXp = Math.round(baseXp * totalMultiplier);
 
-      // Debug logging
       console.log(`[XP Calculation]`, {
         baseXp,
         xpBoostActive,
@@ -301,7 +294,6 @@ export default function DashboardPage() {
       newAgilidade += gainedAgilidade;
       newFe += gainedFe;
 
-      // Trigger animation for attribute gains
       if (
         gainedForca !== 0 ||
         gainedInteligencia !== 0 ||
