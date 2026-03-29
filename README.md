@@ -14,17 +14,9 @@ Validar comportamento geral da shop: ✅
 -Estados (disponível / comprado / cooldown)
 
 📈 Sistema de Progressão
-Definir nível máximo (999x)
-Implementar animação ao ganhar atributos
-Corrigir bug onde atributos não são perdidos em missões de derrota (loss)
-
-🏆 Sistema de Prestígio
-Implementar sistema de prestígio
-Garantir transição correta ao atingir o nível máximo
-Definir comportamento ao fazer prestígio:
-Reset de atributos
-Reset de stats
-Manter/atribuir bónus de prestígio (se aplicável)
+Definir nível máximo (999x) ✅
+Implementar animação ao ganhar atributos ✅
+Corrigir bug onde atributos não são perdidos em missões de derrota (loss) ✅
 
 🎒 Inventário & Equipamentos
 Corrigir layout dos equipamentos
@@ -37,6 +29,14 @@ Validar aplicação correta de:
 Buffs
 Multiplicadores
 Efeitos temporários
+
+🏆 Sistema de Prestígio
+Implementar sistema de prestígio
+Garantir transição correta ao atingir o nível máximo
+Definir comportamento ao fazer prestígio:
+Reset de atributos
+Reset de stats
+Manter/atribuir bónus de prestígio (se aplicável)
 
 🎨 UI / UX
 Remover scrollbar default
