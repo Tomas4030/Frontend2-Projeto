@@ -180,7 +180,7 @@ const Auth = () => {
               style={{ filter: "brightness(0.85) saturate(1.2)" }}
             />
 
-            <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-r from-[#13111e]/60 to-transparent" />
           </div>
         </div>
       </div>

@@ -87,14 +87,14 @@ export default function BuffsDetailsModal({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl border-purple-500/20 bg-gradient-to-br from-[#1a1625] via-[#13111e] to-[#0f0d18] text-white shadow-2xl">
+      <DialogContent className="max-w-xl border-purple-500/20 bg-linear-to-br from-[#1a1625] via-[#13111e] to-[#0f0d18] text-white shadow-2xl">
         <DialogHeader className="border-b border-purple-500/10 pb-4">
-          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
+          <DialogTitle className="text-xl font-bold bg-linear-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">
             ✨ Buffs e Bônus Equipados
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+        <div className="space-y-3 max-h-125 overflow-y-auto pr-2">
           {/* Buffs de Stats */}
           {(strengthBonus > 0 ||
             intelligenceBonus > 0 ||
@@ -102,7 +102,7 @@ export default function BuffsDetailsModal({
             faithBonus > 0 ||
             hpBonus > 0 ||
             mpBonus > 0) && (
-            <div className="group rounded-xl bg-gradient-to-br from-cyan-500/20 via-blue-500/10 to-cyan-500/5 p-4 border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/20">
+            <div className="group rounded-xl bg-linear-to-br from-cyan-500/20 via-blue-500/10 to-cyan-500/5 p-4 border border-cyan-400/30 hover:border-cyan-400/50 transition-all duration-200 hover:shadow-lg hover:shadow-cyan-500/20">
               <h4 className="mb-3 text-xs font-bold uppercase tracking-widest text-cyan-300 flex items-center gap-2">
                 <TrendingUp className="h-3.5 w-3.5" />
                 Atributos
@@ -161,7 +161,7 @@ export default function BuffsDetailsModal({
             goldMultiplierActive ||
             finalStats.final_boss_damage_bonus > 0 ||
             finalStats.has_streak_protection) && (
-            <div className="group rounded-xl bg-gradient-to-br from-yellow-500/20 via-amber-500/10 to-yellow-500/5 p-4 border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-200 hover:shadow-lg hover:shadow-yellow-500/20">
+            <div className="group rounded-xl bg-linear-to-br from-yellow-500/20 via-amber-500/10 to-yellow-500/5 p-4 border border-yellow-400/30 hover:border-yellow-400/50 transition-all duration-200 hover:shadow-lg hover:shadow-yellow-500/20">
               <h4 className="mb-3 text-xs font-bold uppercase tracking-widest text-yellow-300 flex items-center gap-2">
                 <Zap className="h-3.5 w-3.5" />
                 Efeitos Especiais
@@ -215,7 +215,7 @@ export default function BuffsDetailsModal({
               {finalStats.active_set_bonuses?.map((sb, idx) => (
                 <div
                   key={sb.set_id}
-                  className="group rounded-xl bg-gradient-to-br from-purple-500/20 via-pink-500/10 to-purple-500/5 p-4 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/20"
+                  className="group rounded-xl bg-linear-to-br from-purple-500/20 via-pink-500/10 to-purple-500/5 p-4 border border-purple-400/30 hover:border-purple-400/50 transition-all duration-200 hover:shadow-lg hover:shadow-purple-500/20"
                 >
                   <div className="mb-3 flex items-center justify-between">
                     <span className="text-xs font-bold text-purple-300 bg-purple-500/20 px-2.5 py-1 rounded-full inline-block">
@@ -248,7 +248,7 @@ export default function BuffsDetailsModal({
           )}
 
           {!hasAnyBonus && (
-            <div className="rounded-xl bg-gradient-to-br from-zinc-500/10 to-zinc-500/5 p-8 border border-zinc-500/20 text-center">
+            <div className="rounded-xl bg-linear-to-br from-zinc-500/10 to-zinc-500/5 p-8 border border-zinc-500/20 text-center">
               <div className="text-3xl mb-2">😴</div>
               <p className="text-sm text-zinc-400">
                 Nenhum buff ativo no momento
