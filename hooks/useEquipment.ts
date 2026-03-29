@@ -19,6 +19,8 @@ interface UseEquipmentReturn {
 const DEFAULT_FINAL_STATS = (character: Character): FinalStats => ({
   final_forca: character.forca,
   final_inteligencia: character.inteligencia,
+  final_agilidade: character.agilidade,
+  final_fe: character.fe,
   final_hp_max: character.max_hp,
   final_mp_max: character.max_mp,
   final_xp_multiplier: 1.0,
@@ -61,12 +63,25 @@ export function useEquipment(character: Character | null): UseEquipmentReturn {
     if (character) refreshEquipment();
   }, [character?.id]); // só re-fetch quando muda de character
 
-  // Recalcula stats quando o character muda (level up, etc.) sem re-fetch
+  // Recalcula stats quando o character muda (level up, etc.) ou quando equipamento muda
   useEffect(() => {
     if (character && setBonus.length >= 0) {
       setFinalStats(calculateFinalStats(character, equipment, setBonus));
     }
-  }, [character?.forca, character?.inteligencia, character?.max_hp, character?.max_mp]);
+  }, [
+    character?.forca,
+    character?.inteligencia,
+    character?.max_hp,
+    character?.max_mp,
+    equipment,
+    setBonus,
+  ]);
 
-  return { equipment, setBonus, finalStats, loadingEquipment, refreshEquipment };
+  return {
+    equipment,
+    setBonus,
+    finalStats,
+    loadingEquipment,
+    refreshEquipment,
+  };
 }

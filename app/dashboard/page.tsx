@@ -259,11 +259,25 @@ export default function DashboardPage() {
       showToast(`-${dmg} HP • -${manaCost} MP`, "dmg");
     } else {
       const baseXp = task.xp_reward || 0;
-      let gainedXp = xpBoostActive ? baseXp * 2 : baseXp;
+      // Apply both multiplicadores: pergaminho (xp_boost) and equipment (xp_multiplier)
+      // Calculate cumulative multiplier: pergaminho × equipment
+      const shoppingBoostMultiplier = xpBoostActive ? newXpBoostMultiplier : 1;
+      const equipmentMultiplier = finalStats?.final_xp_multiplier ?? 1;
+      const totalMultiplier = shoppingBoostMultiplier * equipmentMultiplier;
+      let gainedXp = Math.round(baseXp * totalMultiplier);
 
-      if (finalStats && finalStats.final_xp_multiplier > 1) {
-        gainedXp = applyXpMultiplier(gainedXp, finalStats);
-      }
+      // Debug logging
+      console.log(`[XP Calculation]`, {
+        baseXp,
+        xpBoostActive,
+        newXpBoostMultiplier,
+        shoppingBoostMultiplier,
+        equipmentMultiplier,
+        totalMultiplier,
+        gainedXp,
+        expiredAt: character.xp_boost_expires_at,
+        nowTime: new Date().toISOString(),
+      });
 
       const baseGold = getRandomGoldReward(difficulty);
       const gainedGold = finalStats
@@ -370,15 +384,15 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen text-white">
+    <div className="min-h-screen  text-white">
       <PixelBackground />
       <BattleRewardAnimation reward={toast} />
       <AttributeGainAnimation gains={attributeGains} isDefeat={isDefeat} />
 
-      <main className="relative z-10 min-h-screen font-mono flex flex-col">
-        <div className="flex flex-col pt-6">
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-4 md:px-6 xl:grid-cols-12">
-            <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
+      <main className="relative z-10 min-h-screen font-mono flex items-center justify-center py-8">
+        <div className="w-full max-w-7xl px-4 md:px-6">
+          <div className="grid grid-cols-1 gap-8 xl:grid-cols-12 items-start">
+            <aside className="xl:col-span-3 flex flex-col gap-4">
               {character && finalStats && (
                 <CharacterPanel
                   character={character}
@@ -391,7 +405,7 @@ export default function DashboardPage() {
               )}
             </aside>
 
-            <section className="xl:col-span-6 flex flex-col space-y-6 h-175">
+            <section className="xl:col-span-6 flex flex-col space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="flex items-center gap-3 text-lg font-bold uppercase tracking-widest text-[#f5c542]">
                   <span className="animate-pulse">⚔</span> Mural de Missões
@@ -479,7 +493,7 @@ export default function DashboardPage() {
               )}
             </section>
 
-            <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
+            <aside className="xl:col-span-3 flex flex-col gap-4">
               {character && finalStats && (
                 <InventorySheet
                   character={character}

@@ -283,6 +283,16 @@ export function calculateFinalStats(
       (itemBonuses.intelligence_bonus ?? 0) +
       (setBonusTotal.intelligence_bonus ?? 0),
 
+    final_agilidade:
+      character.agilidade +
+      (itemBonuses.agility_bonus ?? 0) +
+      (setBonusTotal.agility_bonus ?? 0),
+
+    final_fe:
+      character.fe +
+      (itemBonuses.faith_bonus ?? 0) +
+      (setBonusTotal.faith_bonus ?? 0),
+
     final_hp_max:
       character.max_hp +
       (itemBonuses.hp_bonus ?? 0) +
@@ -318,6 +328,8 @@ function sumItemBonuses(items: Item[]): Partial<ItemBuffs> {
       strength_bonus: (acc.strength_bonus ?? 0) + (item.strength_bonus ?? 0),
       intelligence_bonus:
         (acc.intelligence_bonus ?? 0) + (item.intelligence_bonus ?? 0),
+      agility_bonus: (acc.agility_bonus ?? 0) + (item.agility_bonus ?? 0),
+      faith_bonus: (acc.faith_bonus ?? 0) + (item.faith_bonus ?? 0),
       hp_bonus: (acc.hp_bonus ?? 0) + (item.hp_bonus ?? 0),
       mp_bonus: (acc.mp_bonus ?? 0) + (item.mp_bonus ?? 0),
       xp_multiplier: (acc.xp_multiplier ?? 1.0) * (item.xp_multiplier ?? 1.0),
@@ -371,6 +383,8 @@ function sumSetBonuses(activeSetBonuses: ActiveSetBonus[]): Partial<ItemBuffs> {
         strength_bonus: (acc.strength_bonus ?? 0) + (bonus.strength_bonus ?? 0),
         intelligence_bonus:
           (acc.intelligence_bonus ?? 0) + (bonus.intelligence_bonus ?? 0),
+        agility_bonus: (acc.agility_bonus ?? 0) + (bonus.agility_bonus ?? 0),
+        faith_bonus: (acc.faith_bonus ?? 0) + (bonus.faith_bonus ?? 0),
         hp_bonus: (acc.hp_bonus ?? 0) + (bonus.hp_bonus ?? 0),
         mp_bonus: (acc.mp_bonus ?? 0) + (bonus.mp_bonus ?? 0),
         xp_multiplier:

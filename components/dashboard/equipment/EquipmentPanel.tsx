@@ -1,18 +1,16 @@
 "use client";
 
 import React from "react";
-import { Sword, Shield, Gem, Sparkles, LucideIcon } from "lucide-react";
-import type {
-  EquipmentSlots,
-  FinalStats,
-  ActiveSetBonus,
-  EquipmentItem,
-} from "@/types/equipment";
+import { Sword, Shield, Gem, LucideIcon } from "lucide-react";
+import type { EquipmentSlots, FinalStats, Item } from "@/types/equipment";
 import { RARITY_CONFIG } from "@/types/equipment";
+import type { Character } from "@/components/dashboard/dashboardUtils";
+import BuffsDetailsModal from "./BuffsDetailsModal";
 
 type SlotKey = "weapon" | "armor" | "amulet";
 
 interface EquipmentPanelProps {
+  character: Character;
   equipment: EquipmentSlots;
   onSlotClick?: (slot: SlotKey) => void;
   finalStats?: FinalStats;
@@ -35,6 +33,10 @@ function formatBonusKey(key: string, val: unknown): string {
       return `+${n} Força`;
     case "intelligence_bonus":
       return `+${n} Inteligência`;
+    case "agility_bonus":
+      return `+${n} Agilidade`;
+    case "faith_bonus":
+      return `+${n} Fé`;
     case "hp_bonus":
       return `+${n} HP`;
     case "mp_bonus":
@@ -58,7 +60,7 @@ function EquipSlot({
   onClick,
 }: {
   slotKey: SlotKey;
-  item?: EquipmentItem | null;
+  item?: Item | null;
   onClick?: () => void;
 }) {
   const config = SLOT_MAP[slotKey];
@@ -114,39 +116,8 @@ function EquipSlot({
   );
 }
 
-function SetBonusCard({ bonus }: { bonus: ActiveSetBonus }) {
-  return (
-    <div className="mt-2 rounded-xl bg-purple-500/5 p-3">
-      <div className="mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-1.5 text-purple-400">
-          <Sparkles className="h-3 w-3" />
-          <span className="text-[9px] font-black uppercase tracking-wider">
-            Set Bonus
-          </span>
-        </div>
-
-        <span className="text-[9px] font-bold uppercase text-purple-300/50">
-          {bonus.pieces_equipped} Peças
-        </span>
-      </div>
-
-      <div className="flex flex-wrap gap-x-2 gap-y-1">
-        {bonus.bonuses_active.flatMap((entry, i) =>
-          Object.entries(entry).map(([key, value]) => (
-            <span
-              key={`${i}-${key}`}
-              className="text-[10px] font-medium text-purple-200/75"
-            >
-              • {formatBonusKey(key, value)}
-            </span>
-          )),
-        )}
-      </div>
-    </div>
-  );
-}
-
 export default function EquipmentPanel({
+  character,
   equipment,
   finalStats,
   onSlotClick,
@@ -155,14 +126,16 @@ export default function EquipmentPanel({
 
   return (
     <div className="w-full space-y-6">
-      <div className="flex items-center gap-3 px-1">
+      <div className="flex items-center gap-2 px-1">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ea9b08]/10 text-[#ea9b08]">
           <Sword className="h-4 w-4" />
         </div>
 
-        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#ea9b08]">
+        <h4 className="flex-1 text-[10px] font-black uppercase tracking-[0.25em] text-[#ea9b08]">
           Arsenal de Combate
         </h4>
+
+        <BuffsDetailsModal character={character} finalStats={finalStats} />
       </div>
 
       <div className="grid grid-cols-3 gap-3">
@@ -175,10 +148,6 @@ export default function EquipmentPanel({
           />
         ))}
       </div>
-
-      {finalStats.active_set_bonuses?.map((sb) => (
-        <SetBonusCard key={sb.set_id} bonus={sb} />
-      ))}
     </div>
   );
 }

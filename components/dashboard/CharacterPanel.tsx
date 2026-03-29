@@ -88,10 +88,10 @@ export default function CharacterPanel({
 
       <div className="grid grid-cols-2 gap-2 border-t border-[#2a2540] pt-5">
         {[
-          { label: "FORÇA", val: character.forca },
-          { label: "INTELIGÊNCIA", val: character.inteligencia },
-          { label: "AGILIDADE", val: character.agilidade },
-          { label: "FÉ", val: character.fe },
+          { label: "FORÇA", val: finalStats.final_forca },
+          { label: "INTELIGÊNCIA", val: finalStats.final_inteligencia },
+          { label: "AGILIDADE", val: finalStats.final_agilidade },
+          { label: "FÉ", val: finalStats.final_fe },
         ].map((attr) => (
           <div
             key={attr.label}

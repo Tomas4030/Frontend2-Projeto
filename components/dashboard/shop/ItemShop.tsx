@@ -1,17 +1,8 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import {
-  Coins,
-  RefreshCw,
-  Clock,
-} from "lucide-react";
+import { Coins, RefreshCw, Clock } from "lucide-react";
 import ShopPagination from "./ShopPagination";
 import { toast } from "sonner";
 
@@ -321,6 +312,7 @@ export default function ItemShop({
       }
 
       if (!data?.success) {
+        console.error("RPC returned success=false:", data);
         showAlert(
           data?.message ?? "Não foi possível concluir a compra.",
           "error",
@@ -328,10 +320,18 @@ export default function ItemShop({
         return;
       }
 
+      console.log(`[Shop] Item comprado com sucesso:`, {
+        itemKey: item.key,
+        itemName: item.name,
+        effectType: item.effectType,
+        effectValue: item.effectValue,
+      });
+
       showAlert(data.message ?? "Compra realizada com sucesso!", "success");
       await loadTodayPurchases();
 
       if (onPurchaseSuccess) {
+        console.log(`[Shop] Calling onPurchaseSuccess to refresh character...`);
         await onPurchaseSuccess();
       }
     } finally {
