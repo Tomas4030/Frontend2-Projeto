@@ -12,16 +12,6 @@ export const items: ShopItem[] = [
     dailyLimit: 3,
   },
   {
-    key: "xp_scroll",
-    name: "Pergaminho XP",
-    cost: 60,
-    icon: "📜",
-    type: "pergaminho",
-    effectType: "xp_boost",
-    effectValue: 2,
-    dailyLimit: 2,
-  },
-  {
     key: "mana_elixir",
     name: "Elixir de Mana",
     cost: 40,

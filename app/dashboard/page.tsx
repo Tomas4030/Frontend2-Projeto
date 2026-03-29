@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 import PixelBackground from "@/components/PixelBackground";
 import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
 import TaskFilter from "@/components/dashboard/TaskFilter";
@@ -11,6 +12,7 @@ import ItemShop from "@/components/dashboard/shop/ItemShop";
 import BattleRewardAnimation from "@/components/dashboard/animatepopup/BattleRewardAnimation";
 import InventorySheet from "@/components/dashboard/equipment/InventorySheet";
 import AttributeGainAnimation from "@/components/dashboard/animatepopup/AttributeGainAnimation";
+import CharacterPanel from "@/components/dashboard/CharacterPanel";
 import { useEquipment } from "@/hooks/useEquipment";
 import { applyGoldMultiplier, applyXpMultiplier } from "@/lib/equipment";
 import {
@@ -18,8 +20,8 @@ import {
   getManaCost,
   getRandomGoldReward,
 } from "@/components/dashboard/dashboardUtils";
+import { rpgMessages } from "@/lib/auth";
 import type { Task, Character, Difficulty } from "@/types/dashboard";
-import CharacterPanel from "@/components/dashboard/CharacterPanel";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -151,29 +153,51 @@ export default function DashboardPage() {
         error: authError,
       } = await supabase.auth.getUser();
 
-      if (authError || !user) return router.push("/login");
+      if (authError || !user) {
+        router.push("/login");
+        return;
+      }
 
-      const { data: char } = await supabase
+      const { data: char, error: charError } = await supabase
         .from("characters")
         .select("*")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (char) {
-        if (char.hp <= 0) return router.push("/dashboard/revive");
-
-        const { xp, level } = handleLevelUp(char.xp || 0, char.level || 1);
-
-        setCharacter({
-          ...char,
-          xp,
-          level,
-          forca: char.forca,
-          inteligencia: char.inteligencia,
-          agilidade: char.agilidade,
-          fe: char.fe,
-        } as Character);
+      // Se não encontrou personagem, redirecionar para criar
+      if (!char) {
+        toast.info("Nenhuma personagem encontrada", {
+          description: rpgMessages.warning.noCharacterFound,
+        });
+        router.push("/create-character");
+        return;
       }
+
+      if (charError) {
+        console.error("Erro ao buscar personagem:", charError.message);
+        toast.error("Erro ao carregar personagem", {
+          description: rpgMessages.error.serverError,
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (char.hp <= 0) {
+        router.push("/dashboard/revive");
+        return;
+      }
+
+      const { xp, level } = handleLevelUp(char.xp || 0, char.level || 1);
+
+      setCharacter({
+        ...char,
+        xp,
+        level,
+        forca: char.forca,
+        inteligencia: char.inteligencia,
+        agilidade: char.agilidade,
+        fe: char.fe,
+      } as Character);
 
       await fetchTasks(user.id);
       setLoading(false);

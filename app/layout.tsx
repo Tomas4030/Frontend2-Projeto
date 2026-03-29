@@ -64,7 +64,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           content="ty-UBwr1OffHPpoc-j1OE99gu7ClzjdWCoR-CPww9RQ"
         />
       </head>
-      <body className={`${pixel.variable} min-h-screen flex flex-col`}>
+      <body className={`${pixel.variable} min-h-screen flex flex-col`} suppressHydrationWarning>
         {GA_MEASUREMENT_ID ? (
           <>
             <Script

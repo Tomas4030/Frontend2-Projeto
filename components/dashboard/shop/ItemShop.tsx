@@ -224,7 +224,7 @@ export default function ItemShop({
   };
 
   return (
-    <section className="rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
+    <section className="rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl flex flex-col min-h-[600px]">
       <ItemShopHeader
         gold={gold}
         resetTime={resetTime}
@@ -233,21 +233,33 @@ export default function ItemShop({
         onRefresh={handleRefresh}
       />
 
-      <div className="p-5">
-        <div className="flex flex-col gap-3">
-          {visibleItems.map((item) => {
+      <div className="p-5 flex flex-col flex-1">
+        <div className="grid grid-rows-2 gap-3 flex-1">
+          {Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => {
+            const item = visibleItems[index];
+
+            if (!item) {
+              return (
+                <div
+                  key={`empty-slot-${index}`}
+                  className="h-[220px] rounded-2xl opacity-0 pointer-events-none"
+                />
+              );
+            }
+
             const boughtToday = purchaseCounts[item.key] ?? 0;
             const isLoading = loadingItem === item.key;
 
             return (
-              <ShopItemCard
-                key={item.key}
-                item={item}
-                gold={gold}
-                boughtToday={boughtToday}
-                isLoading={isLoading}
-                onBuy={handleBuy}
-              />
+              <div key={item.key} className="h-[220px]">
+                <ShopItemCard
+                  item={item}
+                  gold={gold}
+                  boughtToday={boughtToday}
+                  isLoading={isLoading}
+                  onBuy={handleBuy}
+                />
+              </div>
             );
           })}
         </div>

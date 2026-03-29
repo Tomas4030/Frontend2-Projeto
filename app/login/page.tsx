@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
 import { toast } from "sonner";
+import { rpgMessages } from "@/lib/auth";
 
 const Auth = () => {
   const supabase = createClient();
@@ -23,44 +24,82 @@ const Auth = () => {
 
     if (!email || !password) {
       toast.error("Campos incompletos", {
-        description: "Precisas de preencher todos os pergaminhos!"
+        description: rpgMessages.error.incompleteForm,
       });
       return;
     }
 
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) {
-      if (error.status === 400 || error.message.includes("credentials")) {
-        toast.error("Acesso Negado!", {
-          description:
-          "Este herói não existe ou a chave (senha) está incorreta."
-        });
-      } else {
-        toast.error("Erro no Portal", {
-          description: error.message
-        });
-      }
-      setLoading(false);
-      return;
-    }
-
-    if (data?.session) {
-      localStorage.setItem("token", data.session.access_token);
-
-      toast.success("Bem-vindo de volta!", {
-        description: "As portas do reino abriram-se para ti."
+    try {
+      // 1. Fazer login
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      router.push("/dashboard");
-    }
+      if (error) {
+        if (error.status === 400 || error.message.includes("credentials")) {
+          toast.error("Acesso Negado!", {
+            description: rpgMessages.error.invalidCredentials,
+          });
+        } else {
+          toast.error("Erro no Portal", {
+            description: error.message,
+          });
+        }
+        setLoading(false);
+        return;
+      }
 
-    setLoading(false);
+      if (!data?.user || !data?.session) {
+        toast.error("Erro na autenticação", {
+          description: rpgMessages.error.noSession,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 2. Verificar se existe personagem
+      const { data: character, error: charError } = await supabase
+        .from("characters")
+        .select("id")
+        .eq("user_id", data.user.id)
+        .maybeSingle();
+
+      if (charError) {
+        console.error("Erro ao verificar personagem:", charError.message);
+        toast.error("Erro no Portal", {
+          description: rpgMessages.error.serverError,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // 3. Guardar token localmente
+      localStorage.setItem("token", data.session.access_token);
+
+      // 4. Redirecionar para o destino correto
+      if (!character) {
+        // Sem personagem, criar uma
+        toast.success("Login bem-sucedido! 🎉", {
+          description: rpgMessages.warning.noCharacterFound,
+        });
+        router.push("/create-character");
+      } else {
+        // Com personagem, ir para o dashboard
+        toast.success("Bem-vindo de volta!", {
+          description: rpgMessages.success.login,
+        });
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      console.error("Erro inesperado no login:", err);
+      toast.error("Erro no Portal Arcano", {
+        description: rpgMessages.error.serverError,
+      });
+      setLoading(false);
+    }
   };
 
   return (
@@ -89,8 +128,8 @@ const Auth = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="heroi@reino.com"
-                  required />
-                
+                  required
+                />
               </div>
 
               <div>
@@ -103,13 +142,14 @@ const Auth = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     style={{ paddingRight: 44 }}
-                    required />
-                  
+                    required
+                  />
+
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() => setShowPassword((v) => !v)}>
-                    
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
@@ -119,8 +159,8 @@ const Auth = () => {
                 <button
                   type="submit"
                   className={`rpg-btn ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={loading}>
-                  
+                  disabled={loading}
+                >
                   {loading ? "A VERIFICAR..." : "⚔  ENTRAR NO REINO"}
                 </button>
               </div>
@@ -137,14 +177,15 @@ const Auth = () => {
               alt="Login"
               fill
               className="h-full w-full object-cover object-right"
-              style={{ filter: "brightness(0.85) saturate(1.2)" }} />
-            
+              style={{ filter: "brightness(0.85) saturate(1.2)" }}
+            />
+
             <div className="absolute inset-0 bg-gradient-to-r from-[#13111e]/60 to-transparent" />
           </div>
         </div>
       </div>
-    </>);
-
+    </>
+  );
 };
 
 export default function Page() {

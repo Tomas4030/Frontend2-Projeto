@@ -1,45 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import PixelBackground from "@/components/PixelBackground";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { rpgMessages } from "@/lib/auth";
 
 const CLASSES = [
-{
-  value: "guerreiro",
-  label: "Guerreiro",
-  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
-  desc: "Força e resistência",
-  stats: { str: 90, int: 20, agi: 45, fth: 30 }
-},
-{
-  value: "mago",
-  label: "Mago",
-  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
-  desc: "Poder arcano",
-  stats: { str: 15, int: 95, agi: 35, fth: 55 }
-},
-{
-  value: "druida",
-  label: "Druida",
-  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
-  desc: "Poder da natureza",
-  stats: { str: 45, int: 70, agi: 40, fth: 85 }
-},
-{
-  value: "arqueiro",
-  label: "Arqueiro",
-  img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
-  desc: "Precisão e distância",
-  stats: { str: 40, int: 30, agi: 95, fth: 20 }
-}];
-
+  {
+    value: "guerreiro",
+    label: "Guerreiro",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png",
+    desc: "Força e resistência",
+    stats: { str: 90, int: 20, agi: 45, fth: 30 },
+  },
+  {
+    value: "mago",
+    label: "Mago",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266025/zmxcwbnzlcjuyinlql8y.png",
+    desc: "Poder arcano",
+    stats: { str: 15, int: 95, agi: 35, fth: 55 },
+  },
+  {
+    value: "druida",
+    label: "Druida",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266352/wlv51tbtkw6orieaf6v3.png",
+    desc: "Poder da natureza",
+    stats: { str: 45, int: 70, agi: 40, fth: 85 },
+  },
+  {
+    value: "arqueiro",
+    label: "Arqueiro",
+    img: "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266354/tnsbow0hjps23y8bgt1h.png",
+    desc: "Precisão e distância",
+    stats: { str: 40, int: 30, agi: 95, fth: 20 },
+  },
+];
 
 const DEFAULT_IMG =
-"https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png";
+  "https://res.cloudinary.com/dbxwiln0a/image/upload/v1773266348/rnanhvyyxswz97muunjb.png";
 
 const CreateCharacter = () => {
   const supabase = createClient();
@@ -47,49 +49,144 @@ const CreateCharacter = () => {
 
   const [name, setName] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  // Verificar autenticação ao montar
+  useEffect(() => {
+    const validateAuth = async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error || !user) {
+        toast.error("Acesso negado", {
+          description: rpgMessages.error.noUser,
+        });
+        router.push("/login");
+        return;
+      }
+
+      setLoading(false);
+    };
+
+    validateAuth();
+  }, [router, supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedClass) return;
-    setLoading(true);
 
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const chosen = CLASSES.find((c) => c.value === selectedClass);
-    if (!chosen) return;
-
-    const { error } = await supabase.from("characters").insert([
-    {
-      user_id: user.id,
-      name: name.trim(),
-      class: selectedClass,
-      forca: chosen.stats.str,
-      inteligencia: chosen.stats.int,
-      agilidade: chosen.stats.agi,
-      fe: chosen.stats.fth,
-      hp: 100,
-      max_hp: 100,
-      mp: 50,
-      max_mp: 50,
-      gold: 0,
-      level: 1,
-      xp: 0,
-      xp_boost_multiplier: 1,
-      xp_boost_expires_at: null
-    }]
-    );
-
-    if (error) {
-      console.error("Erro:", error.message);
-      setLoading(false);
+    // Validações básicas
+    if (!name.trim()) {
+      toast.error("Nome incompleto", {
+        description: "O teu herói precisa de um nome!",
+      });
       return;
     }
 
-    router.push("/dashboard");
+    if (name.trim().length > 16) {
+      toast.error("Nome muito longo", {
+        description: "O nome do herói pode ter no máximo 16 caracteres",
+      });
+      return;
+    }
+
+    if (!selectedClass) {
+      toast.error("Classe não escolhida", {
+        description: "Escolhe uma classe para o teu herói!",
+      });
+      return;
+    }
+
+    setIsAuthenticating(true);
+
+    try {
+      // 1. Verificar autenticação
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        toast.error("Sessão expirada", {
+          description: rpgMessages.warning.expiredSession,
+        });
+        router.push("/login");
+        return;
+      }
+
+      // 2. Procurar a classe escolhida
+      const chosen = CLASSES.find((c) => c.value === selectedClass);
+      if (!chosen) {
+        toast.error("Classe inválida", {
+          description: rpgMessages.error.invalidCharacter,
+        });
+        setIsAuthenticating(false);
+        return;
+      }
+
+      // 3. Criar personagem na base de dados
+      const { data: characterData, error: insertError } = await supabase
+        .from("characters")
+        .insert([
+          {
+            user_id: user.id,
+            name: name.trim(),
+            class: selectedClass,
+            forca: chosen.stats.str,
+            inteligencia: chosen.stats.int,
+            agilidade: chosen.stats.agi,
+            fe: chosen.stats.fth,
+            hp: 100,
+            max_hp: 100,
+            mp: 50,
+            max_mp: 50,
+            gold: 0,
+            level: 1,
+            xp: 0,
+            xp_boost_multiplier: 1,
+            xp_boost_expires_at: null,
+          },
+        ])
+        .select()
+        .single();
+
+      if (insertError) {
+        console.error("Erro ao inserir personagem:", insertError.message);
+        toast.error("Erro ao criar personagem", {
+          description:
+            insertError.message || rpgMessages.error.invalidCharacter,
+        });
+        setIsAuthenticating(false);
+        return;
+      }
+
+      if (!characterData) {
+        toast.error("Erro ao criar personagem", {
+          description: rpgMessages.error.invalidCharacter,
+        });
+        setIsAuthenticating(false);
+        return;
+      }
+
+      // 4. Sucesso!
+      toast.success("Herói nascido! ⚔️", {
+        description: rpgMessages.success.character,
+      });
+
+      setIsAuthenticating(false);
+      // Aguardar um pouco para o toast aparecer
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 500);
+    } catch (err) {
+      console.error("Erro inesperado ao criar personagem:", err);
+      toast.error("Erro no Portal Arcano", {
+        description: rpgMessages.error.serverError,
+      });
+      setIsAuthenticating(false);
+    }
   };
 
   const chosen = CLASSES.find((c) => c.value === selectedClass);
@@ -120,8 +217,8 @@ const CreateCharacter = () => {
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nome do herói..."
                   maxLength={16}
-                  required />
-                
+                  required
+                />
               </div>
 
               <div>
@@ -129,29 +226,30 @@ const CreateCharacter = () => {
                   ✦ Classe
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  {CLASSES.map((c) =>
-                  <button
-                    key={c.value}
-                    type="button"
-                    className={`flex flex-col items-center p-3 border-2 transition-all ${
-                    selectedClass === c.value ?
-                    "bg-[#2a2540] border-[#f5c542]" :
-                    "bg-[#0f0d1a] border-[#2a2540] hover:border-[#6b6480]"}`
-                    }
-                    onClick={() => setSelectedClass(c.value)}>
-                    
+                  {CLASSES.map((c) => (
+                    <button
+                      key={c.value}
+                      type="button"
+                      className={`flex flex-col items-center p-3 border-2 transition-all ${
+                        selectedClass === c.value
+                          ? "bg-[#2a2540] border-[#f5c542]"
+                          : "bg-[#0f0d1a] border-[#2a2540] hover:border-[#6b6480]"
+                      }`}
+                      onClick={() => setSelectedClass(c.value)}
+                    >
                       <Image
-                      src={c.img}
-                      alt={c.label}
-                      width={40}
-                      height={40}
-                      className="w-10 h-10 mb-1 object-contain" />
-                    
+                        src={c.img}
+                        alt={c.label}
+                        width={40}
+                        height={40}
+                        className="w-10 h-10 mb-1 object-contain"
+                      />
+
                       <span className="text-xs uppercase tracking-tighter">
                         {c.label}
                       </span>
                     </button>
-                  )}
+                  ))}
                 </div>
               </div>
 
@@ -161,13 +259,22 @@ const CreateCharacter = () => {
                   className="rpg-btn w-full py-3 text-xl tracking-[2px] transition-all cursor-pointer"
                   style={{
                     backgroundColor:
-                    loading || !selectedClass ? "#2a2540" : "#f5c542",
-                    color: loading || !selectedClass ? "#6b6480" : "black",
-                    border: "none"
+                      isAuthenticating || !selectedClass || loading
+                        ? "#2a2540"
+                        : "#f5c542",
+                    color:
+                      isAuthenticating || !selectedClass || loading
+                        ? "#6b6480"
+                        : "black",
+                    border: "none",
                   }}
-                  disabled={loading || !selectedClass}>
-                  
-                  {loading ? "A CRIAR..." : "COMEÇAR AVENTURA"}
+                  disabled={isAuthenticating || !selectedClass || loading}
+                >
+                  {isAuthenticating
+                    ? "A CRIAR..."
+                    : loading
+                      ? "A VALIDAR..."
+                      : "COMEÇAR AVENTURA"}
                 </button>
               </div>
             </form>
@@ -183,18 +290,18 @@ const CreateCharacter = () => {
                     animate={{ opacity: 1, y: [0, -8, 0] }}
                     exit={{ opacity: 0, scale: 0.8 }}
                     transition={{
-                      y: { repeat: Infinity, duration: 3, ease: "easeInOut" }
-                    }}>
-                    
+                      y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+                    }}
+                  >
                     <Image
                       src={chosen ? chosen.img : DEFAULT_IMG}
                       width={200}
                       height={200}
                       className={`w-50 h-50 object-contain ${
-                      !chosen ? "opacity-10 grayscale invert" : ""}`
-                      }
-                      alt="Preview" />
-                    
+                        !chosen ? "opacity-10 grayscale invert" : ""
+                      }`}
+                      alt="Preview"
+                    />
                   </motion.div>
                 </AnimatePresence>
                 <div className="absolute bottom-2 w-24 h-4 bg-black/40 blur-lg rounded-full" />
@@ -211,14 +318,14 @@ const CreateCharacter = () => {
 
               <div className="w-full space-y-3">
                 {[
-                { key: "str", label: "FORÇA", color: "#ef4444" },
-                { key: "int", label: "INTELIGÊNCIA", color: "#3b82f6" },
-                { key: "agi", label: "AGILIDADE", color: "#eab308" },
-                { key: "fth", label: "FÉ", color: "#22c55e" }].
-                map((stat) => {
-                  const val = chosen ?
-                  chosen.stats[stat.key as keyof typeof chosen.stats] :
-                  0;
+                  { key: "str", label: "FORÇA", color: "#ef4444" },
+                  { key: "int", label: "INTELIGÊNCIA", color: "#3b82f6" },
+                  { key: "agi", label: "AGILIDADE", color: "#eab308" },
+                  { key: "fth", label: "FÉ", color: "#22c55e" },
+                ].map((stat) => {
+                  const val = chosen
+                    ? chosen.stats[stat.key as keyof typeof chosen.stats]
+                    : 0;
                   return (
                     <div key={stat.key}>
                       <div className="flex justify-between text-[10px] text-[#cbd5e1] mb-1 tracking-wider">
@@ -230,11 +337,11 @@ const CreateCharacter = () => {
                           initial={{ width: 0 }}
                           animate={{ width: `${val}%` }}
                           className="h-full"
-                          style={{ backgroundColor: stat.color }} />
-                        
+                          style={{ backgroundColor: stat.color }}
+                        />
                       </div>
-                    </div>);
-
+                    </div>
+                  );
                 })}
               </div>
             </div>
@@ -258,8 +365,8 @@ const CreateCharacter = () => {
           border-bottom: 2px solid rgba(0, 0, 0, 0.3) !important;
         }
       `}</style>
-    </>);
-
+    </>
+  );
 };
 
 export default CreateCharacter;

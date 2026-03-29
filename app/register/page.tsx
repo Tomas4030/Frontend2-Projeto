@@ -8,6 +8,13 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import PixelBackground from "@/components/PixelBackground";
 import { toast } from "sonner";
+import {
+  validatePassword,
+  formatPasswordErrors,
+  validateEmail,
+  rpgMessages,
+} from "@/lib/auth";
+import PasswordRequirements from "@/components/PasswordRequirements";
 
 const Register = () => {
   const supabase = createClient();
@@ -17,7 +24,6 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -25,44 +31,106 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validar email
+    if (!email.trim()) {
+      toast.error("Campo incompleto", {
+        description: "Precisas de um email para entrar no reino!",
+      });
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      toast.error("Email inválido", {
+        description: "O email não parece ser válido. Verifica a formatação.",
+      });
+      return;
+    }
+
+    // Validar password
+    if (!password) {
+      toast.error("Campo incompleto", {
+        description: rpgMessages.error.incompleteForm,
+      });
+      return;
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      toast.error("Password fraca para um herói!", {
+        description: formatPasswordErrors(passwordValidation.errors),
+      });
+      return;
+    }
+
+    // Validar confirmação de password
     if (password !== confirmPassword) {
       toast.error("As senhas não coincidem!", {
-        description: "Verifica se digitaste a mesma senha nos dois campos."
+        description: "Verifica se digitaste a mesma senha nos dois campos.",
       });
       return;
     }
 
     setLoading(true);
 
-    const { data: userData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password
-    });
+    try {
+      const { data: userData, error: signUpError } = await supabase.auth.signUp(
+        {
+          email,
+          password,
+        },
+      );
 
-    if (signUpError) {
-      toast.error("Erro ao criar herói", {
-        description: signUpError.message
-      });
-      setLoading(false);
-      return;
-    }
+      if (signUpError) {
+        // Verificar se email já existe
+        if (
+          signUpError.message.includes("User already registered") ||
+          signUpError.status === 422
+        ) {
+          toast.error("Este herói já existe!", {
+            description: rpgMessages.error.emailExists,
+          });
+        } else {
+          toast.error("Erro ao criar herói", {
+            description: signUpError.message,
+          });
+        }
+        setLoading(false);
+        return;
+      }
 
-    if (userData.user) {
-      const { error: profileError } = await supabase.
-      from("profiles").
-      insert([{ id: userData.user.id, name, email }]);
+      if (!userData.user) {
+        toast.error("Erro no Portal", {
+          description: rpgMessages.error.serverError,
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Tentar criar perfil (opcional, para compatibilidade)
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([{ id: userData.user.id, email }])
+        .select()
+        .single();
 
       if (profileError) {
-        console.log("Erro ao criar perfil:", profileError.message);
+        console.warn("Aviso ao criar perfil:", profileError.message);
+        // Não falhar o registo se o perfil não for criado
       }
+
+      toast.success("Herói registado com sucesso!", {
+        description: rpgMessages.success.register,
+      });
+
+      setLoading(false);
+      router.push("/create-character");
+    } catch (err) {
+      console.error("Erro inesperado:", err);
+      toast.error("Erro no Portal Arcano", {
+        description: rpgMessages.error.serverError,
+      });
+      setLoading(false);
     }
-
-    toast.success("Personagem registrado!", {
-      description: "Bem-vindo ao reino, aventureiro."
-    });
-
-    setLoading(false);
-    router.push("/create-character");
   };
 
   return (
@@ -84,18 +152,6 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="rpg-label">⚔ NOME</label>
-                <input
-                  type="text"
-                  className="rpg-input"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="O teu nome de herói"
-                  required />
-                
-              </div>
-
-              <div>
                 <label className="rpg-label">📜 EMAIL</label>
                 <input
                   type="email"
@@ -103,8 +159,8 @@ const Register = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="heroi@reino.com"
-                  required />
-                
+                  required
+                />
               </div>
 
               <div>
@@ -116,16 +172,18 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    required />
-                  
+                    required
+                  />
+
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() => setShowPassword((v) => !v)}>
-                    
+                    onClick={() => setShowPassword((v) => !v)}
+                  >
                     {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 </div>
+                <PasswordRequirements password={password} />
               </div>
 
               <div>
@@ -137,18 +195,19 @@ const Register = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    required />
-                  
+                    required
+                  />
+
                   <button
                     type="button"
                     className="eye-btn"
-                    onClick={() => setShowConfirmPassword((v) => !v)}>
-                    
-                    {showConfirmPassword ?
-                    <EyeOff size={15} /> :
-
-                    <Eye size={15} />
-                    }
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={15} />
+                    ) : (
+                      <Eye size={15} />
+                    )}
                   </button>
                 </div>
               </div>
@@ -170,14 +229,15 @@ const Register = () => {
               src="https://res.cloudinary.com/dgwn9kjrb/image/upload/v1772658391/mqpx4pcsz0xzkn2utesj.png"
               alt="Register"
               fill
-              className="h-full w-full object-cover object-right" />
-            
+              className="h-full w-full object-cover object-right"
+            />
+
             <div className="absolute inset-0 bg-linear-to-r from-[#13111e]/60 to-transparent" />
           </div>
         </div>
       </div>
-    </>);
-
+    </>
+  );
 };
 
 export default Register;
