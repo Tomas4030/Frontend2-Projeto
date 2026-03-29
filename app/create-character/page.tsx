@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -51,9 +51,12 @@ const CreateCharacter = () => {
   const [selectedClass, setSelectedClass] = useState("");
   const [loading, setLoading] = useState(true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const hasCheckedRef = useRef(false);
 
-  // Verificar autenticação ao montar
   useEffect(() => {
+    if (hasCheckedRef.current) return;
+    hasCheckedRef.current = true;
+
     const validateAuth = async () => {
       const {
         data: { user },
@@ -62,9 +65,32 @@ const CreateCharacter = () => {
 
       if (error || !user) {
         toast.error("Acesso negado", {
-          description: rpgMessages.error.noUser,
+          description: "Não tens permissão para entrar neste local.",
         });
-        router.push("/login");
+        router.replace("/login");
+        return;
+      }
+
+      const { data: character, error: charError } = await supabase
+        .from("characters")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (charError) {
+        console.error("Erro ao verificar personagem:", charError.message);
+        toast.error("Erro ao validar os registos", {
+          description: rpgMessages.error.serverError,
+        });
+        setLoading(false);
+        return;
+      }
+
+      if (character) {
+        toast.info("O teu herói já caminha neste reino!", {
+          description: "O portal leva-te de volta ao teu destino.",
+        });
+        router.push("/dashboard");
         return;
       }
 
@@ -77,24 +103,24 @@ const CreateCharacter = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validações básicas
     if (!name.trim()) {
-      toast.error("Nome incompleto", {
-        description: "O teu herói precisa de um nome!",
+      toast.error("Nome em falta", {
+        description: "O teu herói precisa de um nome para entrar no reino.",
       });
       return;
     }
 
     if (name.trim().length > 16) {
-      toast.error("Nome muito longo", {
-        description: "O nome do herói pode ter no máximo 16 caracteres",
+      toast.error("Nome demasiado longo", {
+        description: "O nome do herói pode ter, no máximo, 16 caracteres.",
       });
       return;
     }
 
     if (!selectedClass) {
-      toast.error("Classe não escolhida", {
-        description: "Escolhe uma classe para o teu herói!",
+      toast.error("Classe por escolher", {
+        description:
+          "Escolhe a classe do teu herói antes de começares a aventura.",
       });
       return;
     }
@@ -102,7 +128,6 @@ const CreateCharacter = () => {
     setIsAuthenticating(true);
 
     try {
-      // 1. Verificar autenticação
       const {
         data: { user },
         error: authError,
@@ -112,21 +137,48 @@ const CreateCharacter = () => {
         toast.error("Sessão expirada", {
           description: rpgMessages.warning.expiredSession,
         });
-        router.push("/login");
+        router.replace("/login");
         return;
       }
 
-      // 2. Procurar a classe escolhida
-      const chosen = CLASSES.find((c) => c.value === selectedClass);
-      if (!chosen) {
-        toast.error("Classe inválida", {
-          description: rpgMessages.error.invalidCharacter,
+      const { data: existingCharacter, error: existingCharacterError } =
+        await supabase
+          .from("characters")
+          .select("id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+      if (existingCharacterError) {
+        console.error(
+          "Erro ao verificar personagem existente:",
+          existingCharacterError.message,
+        );
+        toast.error("Erro ao validar os registos", {
+          description: rpgMessages.error.serverError,
         });
         setIsAuthenticating(false);
         return;
       }
 
-      // 3. Criar personagem na base de dados
+      if (existingCharacter) {
+        toast.info("Já tens um herói neste reino.", {
+          description: "Serás conduzido para o teu painel de aventuras.",
+        });
+        setIsAuthenticating(false);
+        router.replace("/dashboard");
+        return;
+      }
+
+      const chosen = CLASSES.find((c) => c.value === selectedClass);
+
+      if (!chosen) {
+        toast.error("Classe inválida", {
+          description: "A classe escolhida não foi reconhecida pelo reino.",
+        });
+        setIsAuthenticating(false);
+        return;
+      }
+
       const { data: characterData, error: insertError } = await supabase
         .from("characters")
         .insert([
@@ -154,31 +206,42 @@ const CreateCharacter = () => {
 
       if (insertError) {
         console.error("Erro ao inserir personagem:", insertError.message);
-        toast.error("Erro ao criar personagem", {
-          description:
-            insertError.message || rpgMessages.error.invalidCharacter,
+
+        if (
+          insertError.message.toLowerCase().includes("duplicate") ||
+          insertError.message.toLowerCase().includes("unique")
+        ) {
+          toast.info("Já existe um herói ligado à tua conta.", {
+            description: "Serás encaminhado para o teu painel de aventuras.",
+          });
+          setIsAuthenticating(false);
+          router.replace("/dashboard");
+          return;
+        }
+
+        toast.error("Falha ao invocar o herói", {
+          description: "Não foi possível criar a tua personagem.",
         });
         setIsAuthenticating(false);
         return;
       }
 
       if (!characterData) {
-        toast.error("Erro ao criar personagem", {
-          description: rpgMessages.error.invalidCharacter,
+        toast.error("Falha ao invocar o herói", {
+          description: "Não foi possível criar a tua personagem.",
         });
         setIsAuthenticating(false);
         return;
       }
 
-      // 4. Sucesso!
-      toast.success("Herói nascido! ⚔️", {
-        description: rpgMessages.success.character,
+      toast.success("O teu herói despertou! ⚔️", {
+        description: `${name.trim()} inicia agora a sua jornada como ${chosen.label}.`,
       });
 
       setIsAuthenticating(false);
-      // Aguardar um pouco para o toast aparecer
+
       setTimeout(() => {
-        router.push("/dashboard");
+        router.replace("/dashboard");
       }, 500);
     } catch (err) {
       console.error("Erro inesperado ao criar personagem:", err);
@@ -195,24 +258,24 @@ const CreateCharacter = () => {
     <>
       <PixelBackground />
 
-      <div className="min-h-screen flex items-center justify-center p-6 relative z-10 font-['VT323']">
-        <div className="rpg-card rpg-border w-full max-w-4xl grid md:grid-cols-2 overflow-hidden bg-[#13111e] shadow-2xl">
-          <div className="p-8 flex flex-col justify-center border-r border-[#2a2540]">
+      <div className="relative z-10 flex min-h-screen items-center justify-center p-6 font-['VT323']">
+        <div className="rpg-card rpg-border grid w-full max-w-4xl overflow-hidden bg-[#13111e] shadow-2xl md:grid-cols-2">
+          <div className="flex flex-col justify-center border-r border-[#2a2540] p-8">
             <div className="mb-6">
               <h1 className="rpg-title text-3xl tracking-[4px]">CRIAR HERÓI</h1>
-              <p className="text-[#cbd5e1] text-base mt-1 tracking-widest">
+              <p className="mt-1 text-base tracking-widest text-[#cbd5e1]">
                 &gt; escolhe o teu destino
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="text-[#f5c542] block mb-1 tracking-widest text-xs uppercase">
+                <label className="mb-1 block text-xs uppercase tracking-widest text-[#f5c542]">
                   ⚔ Nome
                 </label>
                 <input
                   type="text"
-                  className="rpg-input w-full bg-[#0f0d1a] border-2 border-[#2a2540] p-3 text-white rounded outline-none focus:border-[#f5c542] transition-all text-lg"
+                  className="rpg-input w-full rounded border-2 border-[#2a2540] bg-[#0f0d1a] p-3 text-lg text-white outline-none transition-all focus:border-[#f5c542]"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nome do herói..."
@@ -222,7 +285,7 @@ const CreateCharacter = () => {
               </div>
 
               <div>
-                <label className="text-[#f5c542] block mb-3 tracking-widest text-xs uppercase">
+                <label className="mb-3 block text-xs uppercase tracking-widest text-[#f5c542]">
                   ✦ Classe
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -230,10 +293,10 @@ const CreateCharacter = () => {
                     <button
                       key={c.value}
                       type="button"
-                      className={`flex flex-col items-center p-3 border-2 transition-all ${
+                      className={`flex flex-col items-center border-2 p-3 transition-all ${
                         selectedClass === c.value
-                          ? "bg-[#2a2540] border-[#f5c542]"
-                          : "bg-[#0f0d1a] border-[#2a2540] hover:border-[#6b6480]"
+                          ? "border-[#f5c542] bg-[#2a2540]"
+                          : "border-[#2a2540] bg-[#0f0d1a] hover:border-[#6b6480]"
                       }`}
                       onClick={() => setSelectedClass(c.value)}
                     >
@@ -242,9 +305,8 @@ const CreateCharacter = () => {
                         alt={c.label}
                         width={40}
                         height={40}
-                        className="w-10 h-10 mb-1 object-contain"
+                        className="mb-1 h-10 w-10 object-contain"
                       />
-
                       <span className="text-xs uppercase tracking-tighter">
                         {c.label}
                       </span>
@@ -256,7 +318,7 @@ const CreateCharacter = () => {
               <div className="pt-2">
                 <button
                   type="submit"
-                  className="rpg-btn w-full py-3 text-xl tracking-[2px] transition-all cursor-pointer"
+                  className="rpg-btn w-full cursor-pointer py-3 text-xl tracking-[2px] transition-all"
                   style={{
                     backgroundColor:
                       isAuthenticating || !selectedClass || loading
@@ -280,9 +342,9 @@ const CreateCharacter = () => {
             </form>
           </div>
 
-          <div className="hidden md:flex flex-col justify-center items-center p-8 bg-[#0f0d1a]">
-            <div className="flex flex-col items-center w-full max-w-60">
-              <div className="relative h-48 w-48 flex items-center justify-center mb-4">
+          <div className="hidden flex-col items-center justify-center bg-[#0f0d1a] p-8 md:flex">
+            <div className="flex w-full max-w-60 flex-col items-center">
+              <div className="relative mb-4 flex h-48 w-48 items-center justify-center">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={selectedClass || "empty"}
@@ -297,21 +359,21 @@ const CreateCharacter = () => {
                       src={chosen ? chosen.img : DEFAULT_IMG}
                       width={200}
                       height={200}
-                      className={`w-50 h-50 object-contain ${
-                        !chosen ? "opacity-10 grayscale invert" : ""
+                      className={`h-50 w-50 object-contain ${
+                        !chosen ? "invert grayscale opacity-10" : ""
                       }`}
                       alt="Preview"
                     />
                   </motion.div>
                 </AnimatePresence>
-                <div className="absolute bottom-2 w-24 h-4 bg-black/40 blur-lg rounded-full" />
+                <div className="absolute bottom-2 h-4 w-24 rounded-full bg-black/40 blur-lg" />
               </div>
 
-              <div className="text-center mb-6">
-                <h2 className="text-2xl text-white tracking-widest uppercase mb-1">
+              <div className="mb-6 text-center">
+                <h2 className="mb-1 text-2xl uppercase tracking-widest text-white">
                   {name || "???"}
                 </h2>
-                <p className="text-[#f5c542] text-sm uppercase tracking-[3px]">
+                <p className="text-sm uppercase tracking-[3px] text-[#f5c542]">
                   {chosen ? chosen.label : "Sem Classe"}
                 </p>
               </div>
@@ -326,13 +388,14 @@ const CreateCharacter = () => {
                   const val = chosen
                     ? chosen.stats[stat.key as keyof typeof chosen.stats]
                     : 0;
+
                   return (
                     <div key={stat.key}>
-                      <div className="flex justify-between text-[10px] text-[#cbd5e1] mb-1 tracking-wider">
+                      <div className="mb-1 flex justify-between text-[10px] tracking-wider text-[#cbd5e1]">
                         <span>{stat.label}</span>
                         <span>{val}</span>
                       </div>
-                      <div className="h-1.5 bg-[#1d1b2e] rounded-full overflow-hidden border border-[#2a2540]">
+                      <div className="h-1.5 overflow-hidden rounded-full border border-[#2a2540] bg-[#1d1b2e]">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${val}%` }}

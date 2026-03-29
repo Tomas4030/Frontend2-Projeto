@@ -1,15 +1,8 @@
-/**
- * Validação e helpers para autenticação
- */
-
 export interface PasswordValidation {
   isValid: boolean;
   errors: string[];
 }
 
-/**
- * Valida a password com regras fortes
- */
 export function validatePassword(password: string): PasswordValidation {
   const errors: string[] = [];
 
@@ -18,19 +11,19 @@ export function validatePassword(password: string): PasswordValidation {
   }
 
   if (!/[A-Z]/.test(password)) {
-    errors.push("1 letra maiúscula");
+    errors.push("uma letra maiúscula");
   }
 
   if (!/[a-z]/.test(password)) {
-    errors.push("1 letra minúscula");
+    errors.push("uma letra minúscula");
   }
 
   if (!/[0-9]/.test(password)) {
-    errors.push("1 número");
+    errors.push("um número");
   }
 
   if (!/[^A-Za-z0-9]/.test(password)) {
-    errors.push("1 carácter especial");
+    errors.push("um carácter especial");
   }
 
   return {
@@ -39,9 +32,6 @@ export function validatePassword(password: string): PasswordValidation {
   };
 }
 
-/**
- * Toast curto e amigável
- */
 export function formatPasswordErrors(errors: string[]): string {
   if (errors.length === 0) return "";
 
@@ -59,40 +49,34 @@ export function formatPasswordErrors(errors: string[]): string {
   return `Faltam ${firstErrors} e ${lastError}.`;
 }
 
-/**
- * Valida email
- */
 export function validateEmail(email: string): boolean {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email.trim());
 }
 
-/**
- * Mensagens temáticas de RPG
- */
 export const rpgMessages = {
   success: {
     login: "Bem-vindo de volta! As portas do reino abriram-se para ti.",
     register: "Novo herói criado! Escolhe agora o teu destino.",
-    character: "Que comece a tua aventura, guerreiro! ⚔️",
-    profileCreated: "O teu perfil foi inscrito nos registos do reino.",
+    profileCreated: "O teu perfil foi registado nos arquivos do reino.",
   },
   error: {
-    invalidCredentials: "Este herói não existe ou a password está incorreta.",
+    invalidCredentials:
+      "Este herói não existe ou a palavra-passe está incorreta.",
     emailExists:
-      "Este email de herói já existe no reino. Tenta entrar ou usa outro.",
-    weakPassword: "Password fraca. Revê os requisitos abaixo.",
-    passwordMismatch: "As passwords não coincidem.",
-    noSession: "A sessão perdeu-se. Tenta fazer login novamente.",
+      "Este email já está registado no reino. Tenta iniciar sessão ou usa outro.",
+    weakPassword: "Palavra-passe fraca.",
+    passwordMismatch: "As palavras-passe não coincidem.",
+    noSession: "A sessão expirou. Inicia sessão novamente.",
     noUser: "Utilizador não encontrado nos registos.",
     noCharacter: "Tens de criar uma personagem para entrar no reino.",
     invalidCharacter: "Erro ao criar a personagem.",
-    serverError: "Erro no Portal Arcano. Tenta mais tarde.",
-    incompleteForm: "Preenche todos os campos.",
+    serverError: "Erro no Portal Arcano. Tenta novamente mais tarde.",
+    incompleteForm: "Preenche todos os campos obrigatórios.",
   },
   warning: {
-    expiredSession: "A tua sessão expirou. Faz login novamente.",
+    expiredSession: "A tua sessão expirou. Inicia sessão novamente.",
     noCharacterFound:
-      "Nenhuma personagem encontrada. Vais para a criação de herói.",
+      "Nenhuma personagem encontrada. Vais ser redirecionado para a criação de herói.",
   },
 };
