@@ -57,3 +57,5 @@ Garantir consistência entre estados:
 Reload
 Timers
 Resets
+
+fix para meter na vercel
