@@ -164,21 +164,21 @@ export default function DashboardPage() {
         .eq("user_id", user.id)
         .maybeSingle();
 
-      // Se não encontrou personagem, redirecionar para criar
-      if (!char) {
-        toast.info("Nenhuma personagem encontrada", {
-          description: rpgMessages.warning.noCharacterFound,
-        });
-        router.push("/create-character");
-        return;
-      }
-
       if (charError) {
         console.error("Erro ao buscar personagem:", charError.message);
-        toast.error("Erro ao carregar personagem", {
+        toast?.error("Erro ao carregar personagem", {
           description: rpgMessages.error.serverError,
         });
         setLoading(false);
+        return;
+      }
+
+      // Se não encontrou personagem, redirecionar para criar
+      if (!char) {
+        toast?.info("Nenhuma personagem encontrada", {
+          description: rpgMessages.warning.noCharacterFound,
+        });
+        router.push("/create-character");
         return;
       }
 
