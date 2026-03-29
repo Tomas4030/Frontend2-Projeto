@@ -4,19 +4,16 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   Coins,
-  CheckCircle2,
-  AlertCircle,
   RefreshCw,
   Clock,
 } from "lucide-react";
 import ShopPagination from "./ShopPagination";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 type ShopItem = {
   key: string;
@@ -71,11 +68,6 @@ type Props = {
 type PurchaseCountMap = Record<string, number>;
 type ToastType = "success" | "error" | "warning";
 type ItemState = "available" | "sold_out" | "insufficient_gold";
-
-type AlertState = {
-  message: string;
-  type: ToastType;
-} | null;
 
 const ITEMS_PER_PAGE = 2;
 
@@ -187,14 +179,12 @@ export default function ItemShop({
   onPurchaseSuccess,
 }: Props) {
   const supabase = useMemo(() => createClient(), []);
+
   const [purchaseCounts, setPurchaseCounts] = useState<PurchaseCountMap>({});
   const [loadingItem, setLoadingItem] = useState<string | null>(null);
-  const [alert, setAlert] = useState<AlertState>(null);
   const [page, setPage] = useState(1);
   const [resetTime, setResetTime] = useState<string>("--:--:--");
   const [isRefreshing, setIsRefreshing] = useState(false);
-
-  const alertTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
 
@@ -204,15 +194,23 @@ export default function ItemShop({
   }, [page]);
 
   const showAlert = useCallback((message: string, type: ToastType) => {
-    setAlert({ message, type });
-
-    if (alertTimeoutRef.current) {
-      clearTimeout(alertTimeoutRef.current);
+    if (type === "success") {
+      toast.success("Sucesso", {
+        description: message,
+      });
+      return;
     }
 
-    alertTimeoutRef.current = setTimeout(() => {
-      setAlert(null);
-    }, 3500);
+    if (type === "warning") {
+      toast.warning("Aviso", {
+        description: message,
+      });
+      return;
+    }
+
+    toast.error("Erro", {
+      description: message,
+    });
   }, []);
 
   const loadTodayPurchases = useCallback(async () => {
@@ -276,18 +274,11 @@ export default function ItemShop({
     }
   }, [page, totalPages]);
 
-  useEffect(() => {
-    return () => {
-      if (alertTimeoutRef.current) {
-        clearTimeout(alertTimeoutRef.current);
-      }
-    };
-  }, []);
-
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
       await loadTodayPurchases();
+      showAlert("Loja atualizada com sucesso.", "success");
     } finally {
       setIsRefreshing(false);
     }
@@ -350,19 +341,16 @@ export default function ItemShop({
 
   return (
     <section className="rounded-2xl border border-white/10 bg-[#120c1f]/95 shadow-[0_14px_45px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-      <div className="border-b border-white/10 bg-linear-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-6 py-4">
+      <div className="border-b border-white/10 bg-linear-to-r from-yellow-400/8 via-transparent to-violet-400/8 px-6 py-4 justify-center items-center gap-4 flex">
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-between gap-4">
+          <div className="grid items-center justify-between gap-4">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-zinc-500">
-                Merchant Zone
-              </p>
               <h3 className="mt-0.5 font-['Press_Start_2P',monospace] text-sm leading-snug text-yellow-300">
                 ◆ Loja de Itens
               </h3>
             </div>
 
-            <div className="flex flex-col gap-2 shrink-0">
+            <div className="flex flex-row gap-2 shrink-0">
               <div className="flex items-center whitespace-nowrap gap-2.5 rounded-xl border border-yellow-400/25 bg-yellow-400/10 px-6 py-2">
                 <Coins className="h-4 w-4 shrink-0 text-yellow-400" />
                 <span className="text-xs font-bold leading-none text-yellow-200">
@@ -382,54 +370,19 @@ export default function ItemShop({
                 Atualizar
               </button>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
-            <Clock className="h-3 w-3 shrink-0 text-zinc-500" />
-            <span className="text-[10px] uppercase tracking-widest text-zinc-500">
-              Reset em:{" "}
-              <span className="font-bold text-yellow-300">{resetTime}</span>
-            </span>
+            <div className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+              <Clock className="h-3 w-3 shrink-0 text-zinc-500" />
+              <span className="text-[10px] uppercase tracking-widest text-zinc-500">
+                Reset em:{" "}
+                <span className="font-bold text-yellow-300">{resetTime}</span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="p-5">
-        {alert && (
-          <Alert
-            variant={alert.type === "error" ? "destructive" : "default"}
-            className={`mb-4 ${
-              alert.type === "success"
-                ? "border-emerald-400/30 bg-emerald-400/10"
-                : alert.type === "warning"
-                  ? "border-yellow-400/30 bg-yellow-400/10"
-                  : ""
-            }`}
-          >
-            {alert.type === "success" && (
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            )}
-            {alert.type === "warning" && (
-              <AlertCircle className="h-4 w-4 text-yellow-400" />
-            )}
-            {alert.type === "error" && (
-              <AlertCircle className="h-4 w-4 text-rose-400" />
-            )}
-
-            <AlertDescription
-              className={
-                {
-                  success: "text-emerald-300",
-                  warning: "text-yellow-300",
-                  error: "text-rose-300",
-                }[alert.type]
-              }
-            >
-              {alert.message}
-            </AlertDescription>
-          </Alert>
-        )}
-
         <div className="flex flex-col gap-3">
           {visibleItems.map((item) => {
             const meta = getItemMeta(item);
@@ -486,20 +439,6 @@ export default function ItemShop({
                     >
                       {getEffectLabel(item)}
                     </span>
-
-                    {item.dailyLimit !== undefined && (
-                      <span
-                        className={`rounded-full border px-2 py-1 text-[10px] font-semibold ${
-                          isSoldOut
-                            ? "border-yellow-400/20 bg-yellow-400/10 text-yellow-300"
-                            : "border-white/10 bg-white/5 text-zinc-400"
-                        }`}
-                      >
-                        {isSoldOut
-                          ? "Volta às 00:00"
-                          : `${boughtToday}/${item.dailyLimit} hoje`}
-                      </span>
-                    )}
 
                     {isNoGold && (
                       <span className="rounded-full border border-rose-400/20 bg-rose-400/10 px-2 py-1 text-[10px] font-semibold text-rose-300">

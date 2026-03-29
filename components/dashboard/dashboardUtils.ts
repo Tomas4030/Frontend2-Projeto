@@ -137,16 +137,25 @@ export function getManaCost(difficulty: Difficulty) {
   return QUEST_DIFFICULTY_CONFIG[difficulty].mana;
 }
 
+const MAX_LEVEL = 999;
+
 export function handleLevelUp(xp: number, level: number) {
   let currentXP = xp;
   let currentLevel = level;
   let xpForNextLevel = 100 * currentLevel;
 
-  while (currentXP >= xpForNextLevel) {
+  while (currentXP >= xpForNextLevel && currentLevel < MAX_LEVEL) {
     currentXP -= xpForNextLevel;
     currentLevel += 1;
     xpForNextLevel = 100 * currentLevel;
   }
 
+  // Se atingiu o máximo, manter XP extra
+  if (currentLevel >= MAX_LEVEL) {
+    currentLevel = MAX_LEVEL;
+  }
+
   return { xp: currentXP, level: currentLevel };
 }
+
+export { MAX_LEVEL };

@@ -8,8 +8,9 @@ import { NewQuestSheet } from "@/components/dashboard/NewQuestSheet";
 import TaskFilter from "@/components/dashboard/TaskFilter";
 import TaskCard from "@/components/dashboard/TaskCard";
 import ItemShop from "@/components/dashboard/shop/ItemShop";
-import ToastMessage from "@/components/dashboard/ToastMessage";
+import BattleRewardAnimation from "@/components/dashboard/animatepopup/BattleRewardAnimation";
 import InventorySheet from "@/components/dashboard/equipment/InventorySheet";
+import AttributeGainAnimation from "@/components/dashboard/animatepopup/AttributeGainAnimation";
 import { useEquipment } from "@/hooks/useEquipment";
 import { applyGoldMultiplier, applyXpMultiplier } from "@/lib/equipment";
 import {
@@ -36,16 +37,42 @@ export default function DashboardPage() {
     msg: string;
     type: "xp" | "hp" | "lvl" | "dmg";
   } | null>(null);
+  const [attributeGains, setAttributeGains] = useState<{
+    forca: number;
+    inteligencia: number;
+    agilidade: number;
+    fe: number;
+  } | null>(null);
+  const [isDefeat, setIsDefeat] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
   const { equipment, finalStats, refreshEquipment } = useEquipment(character);
 
+  const toastTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+
   const showToast = (msg: string, type: "xp" | "hp" | "lvl" | "dmg") => {
     setToast({ msg, type });
-    setTimeout(() => setToast(null), 2800);
+
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+
+    toastTimeoutRef.current = setTimeout(() => {
+      setToast(null);
+    }, 2800);
   };
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const filteredTasks = tasks.filter(
     (t) => activeFilter === "todos" || t.type === activeFilter,
@@ -207,6 +234,28 @@ export default function DashboardPage() {
       const dmg = task.penalty_hp || 10;
       newHp = Math.max(0, character.hp - dmg);
 
+      const forcaPenalty = task.forca_reward ?? 0;
+      const inteligenciaPenalty = task.inteligencia_reward ?? 0;
+      const agilidadePenalty = task.agilidade_reward ?? 0;
+      const fePenalty = task.fe_reward ?? 0;
+
+      newForca = Math.max(0, character.forca - forcaPenalty);
+      newInteligencia = Math.max(
+        0,
+        character.inteligencia - inteligenciaPenalty,
+      );
+      newAgilidade = Math.max(0, character.agilidade - agilidadePenalty);
+      newFe = Math.max(0, character.fe - fePenalty);
+
+      // Trigger animation for attribute loss
+      setAttributeGains({
+        forca: -forcaPenalty,
+        inteligencia: -inteligenciaPenalty,
+        agilidade: -agilidadePenalty,
+        fe: -fePenalty,
+      });
+      setIsDefeat(true);
+
       showToast(`-${dmg} HP • -${manaCost} MP`, "dmg");
     } else {
       const baseXp = task.xp_reward || 0;
@@ -228,10 +277,31 @@ export default function DashboardPage() {
 
       newHp = Math.min(character.max_hp, character.hp + (task.hp_reward || 0));
 
-      newForca += task.forca_reward || 0;
-      newInteligencia += task.inteligencia_reward || 0;
-      newAgilidade += task.agilidade_reward || 0;
-      newFe += task.fe_reward || 0;
+      const gainedForca = task.forca_reward || 0;
+      const gainedInteligencia = task.inteligencia_reward || 0;
+      const gainedAgilidade = task.agilidade_reward || 0;
+      const gainedFe = task.fe_reward || 0;
+
+      newForca += gainedForca;
+      newInteligencia += gainedInteligencia;
+      newAgilidade += gainedAgilidade;
+      newFe += gainedFe;
+
+      // Trigger animation for attribute gains
+      if (
+        gainedForca !== 0 ||
+        gainedInteligencia !== 0 ||
+        gainedAgilidade !== 0 ||
+        gainedFe !== 0
+      ) {
+        setAttributeGains({
+          forca: gainedForca,
+          inteligencia: gainedInteligencia,
+          agilidade: gainedAgilidade,
+          fe: gainedFe,
+        });
+        setIsDefeat(false);
+      }
 
       if (leveled.level > character.level) {
         showToast(`NÍVEL ACIMA! • +${gainedGold} GOLD`, "lvl");
@@ -302,10 +372,11 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen text-white">
       <PixelBackground />
-      {toast && <ToastMessage toast={toast} />}
+      <BattleRewardAnimation reward={toast} />
+      <AttributeGainAnimation gains={attributeGains} isDefeat={isDefeat} />
 
       <main className="relative z-10 min-h-screen font-mono flex flex-col">
-        <div className="flex-1 flex items-center py-12">
+        <div className="flex flex-col pt-6">
           <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-4 md:px-6 xl:grid-cols-12">
             <aside className="xl:col-span-3 flex flex-col gap-4 h-175">
               {character && finalStats && (

@@ -1,129 +1,35 @@
 "use client";
-// components/dashboard/equipment/EquipmentPanel.tsx
 
 import React from "react";
-import { Sword, Shield, Gem, Sparkles } from "lucide-react";
+import { Sword, Shield, Gem, Sparkles, LucideIcon } from "lucide-react";
 import type {
   EquipmentSlots,
   FinalStats,
   ActiveSetBonus,
+  EquipmentItem,
 } from "@/types/equipment";
 import { RARITY_CONFIG } from "@/types/equipment";
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+type SlotKey = "weapon" | "armor" | "amulet";
 
 interface EquipmentPanelProps {
   equipment: EquipmentSlots;
-  onSlotClick?: (slot: "weapon" | "armor" | "amulet") => void;
+  onSlotClick?: (slot: SlotKey) => void;
   finalStats?: FinalStats;
 }
 
-// ─── Sub-componente: Slot ─────────────────────────────────────────────────────
-
-function EquipSlot({
-  label,
-  icon: Icon,
-  item,
-  emptyEmoji,
-  onClick,
-}: {
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-  item: EquipmentSlots["weapon"];
-  emptyEmoji: string;
-  onClick?: () => void;
-}) {
-  const rarity = item ? RARITY_CONFIG[item.rarity] : null;
-
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        group relative flex flex-col items-center gap-3
-        w-full rounded-2xl border p-5 text-center
-        transition-all duration-200
-        ${
-          item
-            ? `${rarity!.border} ${rarity!.glow} bg-[#1a162e]/70 hover:brightness-110 hover:scale-[1.02]`
-            : "border-[#2a2540] bg-[#1a162e]/30 hover:border-[#3a3558] hover:bg-[#1a162e]/50"
-        }
-      `}
-    >
-      {/* Ícone */}
-      <div
-        className={`
-          w-14 h-14 flex items-center justify-center rounded-xl text-3xl leading-none
-          ${
-            item
-              ? `${rarity!.bg} border ${rarity!.border}`
-              : "bg-[#0f0d1a] border border-[#2a2540]"
-          }
-        `}
-      >
-        {item ? item.icon : <span className="text-zinc-600">{emptyEmoji}</span>}
-      </div>
-
-      {/* Label do slot */}
-      <div className="flex items-center gap-1.5">
-        <Icon className="w-3 h-3 text-zinc-500" />
-        <span className="text-[9px] uppercase tracking-widest font-semibold text-zinc-500">
-          {label}
-        </span>
-      </div>
-
-      {/* Nome do item */}
-      {item ? (
-        <p
-          className={`text-[11px] font-bold leading-snug ${rarity!.color} line-clamp-2 px-1`}
-        >
-          {item.name}
-        </p>
-      ) : (
-        <p className="text-[10px] text-zinc-600 italic">vazio</p>
-      )}
-    </button>
-  );
-}
-
-// ─── Sub-componente: Set Bonus ────────────────────────────────────────────────
-
-function SetBonusBadge({ activeSetBonus }: { activeSetBonus: ActiveSetBonus }) {
-  return (
-    <div className="rounded-xl border border-purple-500/30 bg-purple-500/10 p-4 space-y-3">
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-lg bg-purple-500/20 border border-purple-500/30 flex items-center justify-center">
-          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-        </div>
-        <div className="flex-1">
-          <span className="text-[10px] font-bold uppercase tracking-widest text-purple-300">
-            Set Bonus Ativo
-          </span>
-        </div>
-        <span className="text-[10px] text-purple-400 font-bold bg-purple-500/20 border border-purple-500/30 px-2 py-0.5 rounded-full">
-          {activeSetBonus.pieces_equipped} peças
-        </span>
-      </div>
-
-      {/* Bonus Tags */}
-      <div className="flex flex-wrap gap-1.5">
-        {activeSetBonus.bonuses_active.flatMap((bonus, bi) =>
-          Object.entries(bonus).map(([key, val]) => (
-            <span
-              key={`${bi}-${key}`}
-              className="text-[9px] px-2.5 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-300 font-semibold"
-            >
-              {formatBonusKey(key, val)}
-            </span>
-          )),
-        )}
-      </div>
-    </div>
-  );
-}
+const SLOT_MAP: Record<
+  SlotKey,
+  { label: string; icon: LucideIcon; emoji: string }
+> = {
+  weapon: { label: "Arma", icon: Sword, emoji: "🗡️" },
+  armor: { label: "Armadura", icon: Shield, emoji: "🛡️" },
+  amulet: { label: "Amuleto", icon: Gem, emoji: "📿" },
+};
 
 function formatBonusKey(key: string, val: unknown): string {
   const n = Number(val);
+
   switch (key) {
     case "strength_bonus":
       return `+${n} Força`;
@@ -140,79 +46,139 @@ function formatBonusKey(key: string, val: unknown): string {
     case "boss_damage_bonus":
       return `+${n} Dano Boss`;
     case "streak_protection":
-      return "Streak Shield";
+      return "Proteção de Streak";
     default:
-      return `${key}: ${val}`;
+      return `${key}: ${String(val)}`;
   }
 }
 
-// ─── Componente Principal ─────────────────────────────────────────────────────
+function EquipSlot({
+  slotKey,
+  item,
+  onClick,
+}: {
+  slotKey: SlotKey;
+  item?: EquipmentItem | null;
+  onClick?: () => void;
+}) {
+  const config = SLOT_MAP[slotKey];
+  const rarity = item ? RARITY_CONFIG[item.rarity] : null;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group flex w-full flex-col items-center"
+    >
+      <div
+        className={`relative flex h-20 w-20 items-center justify-center rounded-2xl transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:scale-[1.04] group-active:scale-95 ${
+          item
+            ? `${rarity?.bg ?? ""} shadow-[0_8px_30px_rgba(0,0,0,0.18)]`
+            : "bg-[#1a162e]"
+        }`}
+      >
+        {item && (
+          <div
+            className={`pointer-events-none absolute inset-0 rounded-2xl opacity-20 blur-[2px] ${rarity?.glow ?? ""}`}
+          />
+        )}
+
+        <span
+          className={`relative z-10 text-3xl ${
+            item ? "drop-shadow-md" : "opacity-20 grayscale"
+          }`}
+        >
+          {item ? item.icon : config.emoji}
+        </span>
+      </div>
+
+      <div className="mt-3 flex w-20 flex-col items-center">
+        <div className="flex items-center gap-1 opacity-40">
+          <config.icon className="h-2.5 w-2.5" />
+          <span className="text-[8px] font-black uppercase tracking-widest">
+            {config.label}
+          </span>
+        </div>
+
+        <div className="mt-1.5 flex h-8 items-start justify-center">
+          <p
+            className={`line-clamp-2 text-center text-[10px] font-bold leading-tight ${
+              item ? (rarity?.color ?? "text-white") : "italic text-zinc-600"
+            }`}
+          >
+            {item ? item.name : "Vazio"}
+          </p>
+        </div>
+      </div>
+    </button>
+  );
+}
+
+function SetBonusCard({ bonus }: { bonus: ActiveSetBonus }) {
+  return (
+    <div className="mt-2 rounded-xl bg-purple-500/5 p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <div className="flex items-center gap-1.5 text-purple-400">
+          <Sparkles className="h-3 w-3" />
+          <span className="text-[9px] font-black uppercase tracking-wider">
+            Set Bonus
+          </span>
+        </div>
+
+        <span className="text-[9px] font-bold uppercase text-purple-300/50">
+          {bonus.pieces_equipped} Peças
+        </span>
+      </div>
+
+      <div className="flex flex-wrap gap-x-2 gap-y-1">
+        {bonus.bonuses_active.flatMap((entry, i) =>
+          Object.entries(entry).map(([key, value]) => (
+            <span
+              key={`${i}-${key}`}
+              className="text-[10px] font-medium text-purple-200/75"
+            >
+              • {formatBonusKey(key, value)}
+            </span>
+          )),
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function EquipmentPanel({
   equipment,
   finalStats,
   onSlotClick,
 }: EquipmentPanelProps) {
-  if (!finalStats) {
-    return (
-      <div className="bg-[#13111e] border border-[#2a2540] rounded-2xl p-6">
-        <p className="text-zinc-500 text-xs italic text-center">
-          Equipamento não carregado...
-        </p>
-      </div>
-    );
-  }
+  if (!finalStats) return null;
 
   return (
-    <div className="bg-[#13111e] border border-[#2a2540] rounded-2xl p-6 space-y-6">
-      {/* ── Header ── */}
-      <div className="flex items-center gap-3 pb-4 border-b border-[#2a2540]">
-        <div className="w-8 h-8 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-          <span className="text-sm">⚔️</span>
+    <div className="w-full space-y-6">
+      <div className="flex items-center gap-3 px-1">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ea9b08]/10 text-[#ea9b08]">
+          <Sword className="h-4 w-4" />
         </div>
-        <h4 className="text-yellow-300 text-xs font-bold uppercase tracking-[0.2em]">
-          Equipamento
+
+        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-[#ea9b08]">
+          Arsenal de Combate
         </h4>
       </div>
 
-      {/* ── Slots ── */}
-      <div className="grid grid-cols-3 gap-4">
-        <EquipSlot
-          label="Arma"
-          icon={Sword}
-          item={equipment.weapon}
-          emptyEmoji="🗡️"
-          onClick={() => onSlotClick?.("weapon")}
-        />
-        <EquipSlot
-          label="Armadura"
-          icon={Shield}
-          item={equipment.armor}
-          emptyEmoji="🛡️"
-          onClick={() => onSlotClick?.("armor")}
-        />
-        <EquipSlot
-          label="Amuleto"
-          icon={Gem}
-          item={equipment.amulet}
-          emptyEmoji="📿"
-          onClick={() => onSlotClick?.("amulet")}
-        />
+      <div className="grid grid-cols-3 gap-3">
+        {(Object.keys(SLOT_MAP) as SlotKey[]).map((key) => (
+          <EquipSlot
+            key={key}
+            slotKey={key}
+            item={equipment[key]}
+            onClick={() => onSlotClick?.(key)}
+          />
+        ))}
       </div>
 
-      {/* ── Divider só aparece se tiver set bonuses ── */}
-      {(finalStats?.active_set_bonuses?.length ?? 0) > 0 && (
-        <>
-          <div className="border-t border-[#2a2540]" />
-
-          {/* ── Set Bonuses ── */}
-          <div className="space-y-3">
-            {finalStats!.active_set_bonuses.map((sb) => (
-              <SetBonusBadge key={sb.set_id} activeSetBonus={sb} />
-            ))}
-          </div>
-        </>
-      )}
+      {finalStats.active_set_bonuses?.map((sb) => (
+        <SetBonusCard key={sb.set_id} bonus={sb} />
+      ))}
     </div>
   );
 }

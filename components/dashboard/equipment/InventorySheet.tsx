@@ -123,7 +123,7 @@ export default function InventorySheet({
   return (
     <Sheet open={open} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
-        <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#2a2540] bg-[#13111e] text-zinc-300 hover:border-yellow-400/30 hover:text-yellow-300 text-xs font-bold uppercase tracking-widest transition-all">
+        <button className="flex items-right gap-2 px-4 py-2 rounded-xl border border-[#2a2540] bg-[#13111e] text-zinc-300 hover:border-yellow-400/30 hover:text-yellow-300 text-xs font-bold uppercase tracking-widest transition-all">
           <Backpack className="w-4 h-4" />
           Inventário
         </button>
@@ -145,9 +145,9 @@ export default function InventorySheet({
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-2 py-1">
-                <Coins className="h-3 w-3 text-yellow-300" />
-                <span className="text-[10px] font-extrabold text-yellow-300">
+              <div className="flex items-center self-end whitespace-nowrap gap-1 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-2 py-1">
+                <Coins className="h-4 w-4 shrink-0 text-yellow-300" />
+                <span className="shrink-0 text-[10px] font-extrabold text-yellow-300">
                   {character.gold ?? 0} G
                 </span>
               </div>

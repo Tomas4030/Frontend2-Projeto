@@ -1,17 +1,17 @@
 🔋 Sistema de Mana
-Corrigir bug onde a mana não é consumida ao executar ações
-Corrigir regeneração de mana proveniente de itens da shop após X horas
-Rever e validar a lógica geral de consumo e regeneração de mana
+Corrigir bug onde a mana não é consumida ao executar ações ✅
+Corrigir regeneração de mana proveniente de itens da shop após X horas ✅
+Rever e validar a lógica geral de consumo e regeneração de mana ✅
 
 🛒 Shop / Loja
-Corrigir o sistema de reset dos itens da shop (24h)
-Garantir que os itens voltam a ficar disponíveis após o cooldown
-Ajustar títulos dos itens da shop (evitar overflow / texto demasiado grande)
-Substituir sistema de alertas atual por alertas do shadcn/ui
-Validar comportamento geral da shop:
-Refresh
-Timers
-Estados (disponível / comprado / cooldown)
+Corrigir o sistema de reset dos itens da shop (24h) ✅
+Garantir que os itens voltam a ficar disponíveis após o cooldown ✅
+Ajustar títulos dos itens da shop (evitar overflow / texto demasiado grande) ✅
+Substituir sistema de alertas atual por alertas do shadcn/ui ✅
+Validar comportamento geral da shop: ✅
+-Refresh
+-Timers
+-Estados (disponível / comprado / cooldown)
 
 📈 Sistema de Progressão
 Definir nível máximo (999x)
